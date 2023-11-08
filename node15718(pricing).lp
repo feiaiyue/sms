@@ -1,0 +1,40 @@
+\ LP format - for model browsing. Use MPS format to capture full model detail.
+Maximize
+  46.41463414634146 z1 + 23.24390243902438 z2 + 40.04878048780488 z3 + 14 z4
+   + 24.82926829268292 z5 + 22.70731707317071 z6 + 18.39024390243901 z7
+   + 10.21951219512195 z8 + 17.73170731707317 z9 + 33 z10
+   + 12.95121951219512 z11 + 45.95121951219512 z12 + 20 z13 + 32 z14
+   + 41 z15 + 37.78048780487804 z16 + 35.73170731707317 z17
+   + 40.51219512195121 z18 + 48 z19 + 39.56097560975608 z20
+Subject To
+ constraint1: 47 z1 + 24 z2 + 41 z3 + 14 z4 + 26 z5 + 23 z6 + 19 z7 + 11 z8
+   + 18 z9 + 33 z10 + 13 z11 + 46 z12 + 20 z13 + 32 z14 + 41 z15 + 39 z16
+   + 36 z17 + 41 z18 + 48 z19 + 40 z20 <= 200
+ constraints2_9_&_14: z9 - z14 = 0
+ constraints2_15_&_19: z15 - z19 = 0
+ constraints2_19_&_20: z19 - z20 = 0
+ constraints3_1_|_4: z1 + z4 <= 1
+ constraints3_1_|_15: z1 + z15 <= 1
+ constraints3_1_|_19: z1 + z19 <= 1
+ constraints3_1_|_20: z1 + z20 <= 1
+ constraints3_2_|_15: z2 + z15 <= 1
+ constraints3_3_|_12: z3 + z12 <= 1
+ constraints3_3_|_17: z3 + z17 <= 1
+ constraints3_4_|_10: z4 + z10 <= 1
+ constraints3_4_|_15: z4 + z15 <= 1
+ constraints3_4_|_19: z4 + z19 <= 1
+ constraints3_7_|_13: z7 + z13 <= 1
+ constraints3_8_|_18: z8 + z18 <= 1
+ constraints3_9_|_12: z9 + z12 <= 1
+ constraints3_9_|_15: z9 + z15 <= 1
+ constraints3_10_|_17: z10 + z17 <= 1
+ constraints3_12_|_15: z12 + z15 <= 1
+ constraints3_12_|_19: z12 + z19 <= 1
+ constraints3_13_|_17: z13 + z17 <= 1
+ constraints3_13_|_18: z13 + z18 <= 1
+ constraints3_15_|_16: z15 + z16 <= 1
+ constraints3_16_|_19: z16 + z19 <= 1
+Bounds
+Binaries
+ z1 z2 z3 z4 z5 z6 z7 z8 z9 z10 z11 z12 z13 z14 z15 z16 z17 z18 z19 z20
+End
