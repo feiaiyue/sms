@@ -11,15 +11,15 @@ public class ProblemIO {
     public static void makeFolders() {
         File resultFolder = new File(Param.resultPath);
         if (!resultFolder.exists() || !resultFolder.isDirectory()) {
-            resultFolder.mkdir();
+            resultFolder.mkdirs();
         }
         File algoFolder = new File(Param.algoPath);
         if (!algoFolder.exists() || !algoFolder.isDirectory()) {
-            algoFolder.mkdir();
+            algoFolder.mkdirs();
         }
         File solFolder = new File(Param.algoPath + "/sol");
         if (solFolder.exists() || !solFolder.isDirectory()) {
-            solFolder.mkdir();
+            solFolder.mkdirs();
         }
     }
 

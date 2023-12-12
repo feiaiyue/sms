@@ -9,191 +9,218 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Master {
-    public int nVar;
     Instance instance;
-    ArrayList<Column> columnPool;
+    int numJobs;
+    ColumnPool columnPool;
+
     GRBEnv env;
     GRBModel model;
-    GRBConstr[] constraints;// constraint1_1-100是第一组约束
-    GRBConstr constrUbNumBlocks;
+    GRBConstr[] constraints;// constraint1_1-n是第一组约束
     List<GRBVar> x;
+    int nVar;
     GRBVar[] y;
-    GRBVar slack;
-    double[] dual;
-    double obj;
+    GRBVar[] artificialVariable;
+
     Node node;
-    Node lastNode;
-    int cntCalls;// the num
-    double timeOnRmp;
 
+    long s0;
+    double timeOnRMPAddColumns;
+    double timeOnRMPSolve; // record only once time of solving master problem
 
-    public Master(Instance instance, ArrayList<Column> columnPool) throws GRBException {
+    public Master(Instance instance) throws GRBException {
         this.instance = instance;
-        this.columnPool = columnPool;
+        this.numJobs = instance.nJobs;
+        this.columnPool = new ColumnPool();
+
+        try {
+            formulate();
+        } catch (GRBException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void formulate() throws GRBException {
         this.env = new GRBEnv();
         env.set(GRB.IntParam.OutputFlag, 0);
         env.set(GRB.IntParam.Seed, Base.SEED);
         env.set(GRB.IntParam.Threads, Param.nThreads);
         this.model = new GRBModel(env);
-        this.constraints = new GRBConstr[instance.nJobs + 3];
-        this.constrUbNumBlocks = constraints[instance.nJobs + 2];
-        this.dual = new double[instance.nJobs + 3];
-        this.node = new Node();
-        buildModel();
-    }
-
-    public void buildModel() throws GRBException {
-        x = new ArrayList<>();
-        y = new GRBVar[instance.nJobs];
-        for (int i = 0; i < instance.nJobs; i++) {
-            y[i] = model.addVar(0.0, 1.0, instance.p[i], GRB.CONTINUOUS, "y_" + (i + 1));
+        this.x = new ArrayList<>();
+        this.y = new GRBVar[numJobs];
+        this.artificialVariable = new GRBVar[numJobs + 1];
+        // The constraint with lbNumOfBlocks and ubNumOfBlocks can only be written separately
+        this.constraints = new GRBConstr[numJobs + 3];
+        // y_i =[0,1] ====> y_i >= 0
+        for (int i = 0; i < numJobs; i++) {
+            y[i] = model.addVar(0.0, GRB.INFINITY, instance.p[i], GRB.CONTINUOUS, "y_" + (i + 1));
+        }
+        for (int i = 0; i < numJobs; i++) {
+            GRBLinExpr constr1 = new GRBLinExpr(); // firstly, only put y in the constraint ,x will be generated lately
+            constr1.addTerm(1, y[i]); // in the form of column
+            constraints[i] = model.addConstr(constr1, GRB.GREATER_EQUAL, 1, "constraint1_" + (i + 1));
         }
 
-        // [constraint 1] add constrJob to the model (partially without x)
-        for (int i = 0; i < instance.nJobs; i++) {
-            GRBLinExpr expr = new GRBLinExpr();
-            expr.addTerm(1, y[i]);
-            constraints[i] = model.addConstr(expr, GRB.GREATER_EQUAL, 1, "constraint1_" + (i + 1));
+        GRBLinExpr constr2 = new GRBLinExpr(); // sum_i (p[i]y[i]) <= T
+        for (int i = 0; i < numJobs; i++) {
+            constr2.addTerm(instance.p[i], y[i]);
         }
+        constraints[numJobs] = model.addConstr(constr2, GRB.LESS_EQUAL, instance.T, "constraint2");
 
-        // [constraint2] add constrLastBlock to the model
-        GRBLinExpr expr2 = new GRBLinExpr();
-        for (int i = 0; i < instance.nJobs; i++) {
-            expr2.addTerm(instance.p[i], y[i]);
-        }
-        constraints[instance.nJobs] = model.addConstr(expr2, GRB.LESS_EQUAL, instance.T, "constraint2");
+        GRBLinExpr constr3 = new GRBLinExpr(); // sum_p (x[p] >= lbNumOfBlocks)
+        constraints[numJobs + 1] = model.addConstr(constr3, GRB.GREATER_EQUAL, 0, "constraint3");
 
-        // add constrSumBlock[0] to the model
-        GRBLinExpr expr3 = new GRBLinExpr();
-        constraints[instance.nJobs + 1] = model.addConstr(expr3, GRB.GREATER_EQUAL, 0, "constraint3");
+        GRBLinExpr constr4 = new GRBLinExpr(); // sum_p (x[p] <= ubNumOfBlocks)
+        constraints[numJobs + 2] = model.addConstr(constr4, GRB.LESS_EQUAL, instance.nJobs, "constraint4");
 
-        // add constrSumBlock[1] to the model
-        GRBLinExpr expr4 = new GRBLinExpr();
-        constraints[instance.nJobs + 2] = model.addConstr(expr4, GRB.LESS_EQUAL, Integer.MAX_VALUE, "constraint4");
-        constrUbNumBlocks = constraints[instance.nJobs + 2];
-
-        // set the objective to the model
-        GRBLinExpr obj = new GRBLinExpr();
-        for (int i = 0; i < instance.nJobs; i++) {
+        GRBLinExpr obj = new GRBLinExpr(); // set the objective to the model
+        for (int i = 0; i < numJobs; i++) {
             obj.addTerm(instance.p[i], y[i]);
         }
         model.setObjective(obj, GRB.MINIMIZE);
+        addArtificialVariable();
+
     }
 
     public void set(Node node) throws GRBException {
         this.node = node;
-        if (Param.branchOnNum) {
-            this.constraints[instance.nJobs + 1].set(GRB.DoubleAttr.RHS, node.lbNumBlocks);
-            this.constraints[instance.nJobs + 2].set(GRB.DoubleAttr.RHS, node.ubNumBlocks);
+        // 第一种方法：只分支a和b在不在一起
+        // 第二种方法：先按照blocks的数量，再按照ab。此处采用第二种方法
+        if (!Base.equals(constraints[numJobs + 1].get(GRB.DoubleAttr.RHS), node.lbNumBlocks)) {
+            constraints[numJobs + 1].set(GRB.DoubleAttr.RHS, node.lbNumBlocks);
         }
-        // Restore the bound on variable x to >= 0
-        // if not restore, the update will be continued
-        for (int i = 0; i < x.size(); i++) {
-            x.get(i).set(GRB.DoubleAttr.LB, 0);
-            x.get(i).set(GRB.DoubleAttr.UB, 1);
+        if (!Base.equals(constraints[numJobs + 2].get(GRB.DoubleAttr.RHS), node.ubNumBlocks)) {
+            constraints[numJobs + 2].set(GRB.DoubleAttr.RHS, node.ubNumBlocks);
         }
         for (int i = 0; i < columnPool.size(); i++) {
             Column column = columnPool.get(i);
-            if (node.isValid(column)) {
-                if (x.get(i).get(GRB.DoubleAttr.LB) != 0 || x.get(i).get(GRB.DoubleAttr.UB) != 1) {
-                    x.get(i).set(GRB.DoubleAttr.LB, 0);
-                    x.get(i).set(GRB.DoubleAttr.UB, GRB.INFINITY);
-                }
+            // x should be restored to its original value theoretically
+            // but through the judgement of validity of this column, x will achieve the same effect
+            if (!node.isValid(column)) {
+                x.get(i).set(GRB.DoubleAttr.LB, 0);
+                x.get(i).set(GRB.DoubleAttr.UB, 0);
             } else {
-                if (x.get(i).get(GRB.DoubleAttr.LB) != 0 || x.get(i).get(GRB.DoubleAttr.UB) != 0) {
-                    x.get(i).set(GRB.DoubleAttr.LB, 0);
-                    x.get(i).set(GRB.DoubleAttr.UB, 0);
-                }
+                x.get(i).set(GRB.DoubleAttr.LB, 0);
+                x.get(i).set(GRB.DoubleAttr.UB, GRB.INFINITY);
             }
         }
     }
 
     public void addColumns(ArrayList<Column> columns) throws GRBException {
+        long s0 = System.currentTimeMillis();
         for (Column column : columns) {
-            if (columnPool.contains(column)) {
-                System.err.println("RMP.addColumns():column existed!" + column);
-                // System.exit(-1); // 退出的不是很自然
-            }
-            double[] columnCoeffs = new double[instance.nJobs + 3];
-            for (int i = 0; i < instance.nJobs; i++) {
-                if (column.jobs.contains(i)) {
-                    columnCoeffs[i] = 1;
+            if (Param.debug) {
+                if (columnPool.contains(column)) {
+                    System.err.println("RMP.addColumns():column existed!" + column);
+                    // System.exit(-1); // 退出的不是很自然
                 }
             }
-            columnCoeffs[instance.nJobs] = 0;
-            columnCoeffs[instance.nJobs + 1] = 1;
-            columnCoeffs[instance.nJobs + 2] = 1;
-            x.add(model.addVar(0.0, GRB.INFINITY, instance.T + instance.t, GRB.CONTINUOUS, constraints, columnCoeffs, "x_" + (nVar + 1)));
+            double[] coeffs = new double[numJobs + 3];
+            for (int job : column) {
+                coeffs[job] = 1;
+            }
+            coeffs[numJobs] = 0;
+            coeffs[numJobs + 1] = 1;
+            coeffs[numJobs + 2] = 1;
+            x.add(model.addVar(0.0, GRB.INFINITY, instance.T + instance.t, GRB.CONTINUOUS,
+                    constraints, coeffs, "x_" + (nVar + 1)));
             model.update();
             columnPool.add(column);
             nVar++;
+            timeOnRMPAddColumns = Base.getTimeCost(s0);
         }
     }
 
-    public void addSlackToCardinality() throws GRBException {
-        GRBColumn column = new GRBColumn();
-        column.addTerm(-1, constrUbNumBlocks);
-        double bigMCoeff = instance.nJobs * (instance.T + instance.t);
-        slack = model.addVar(0, Integer.MAX_VALUE, bigMCoeff, GRB.CONTINUOUS, column, "slack");
+    // model is feasible when all the artificial variables are equal to 0
+    public boolean isPrimalModelFeasible() throws GRBException {
+        double[] artificialValues = model.get(GRB.DoubleAttr.X, artificialVariable);
+        for (double value : artificialValues) {
+            if (!Base.equals(value, 0)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public double[] getDual() throws GRBException {
+    /**
+     * add artificial variable to all the constraints which are >= / =
+     * model is feasible when all the artificial variables are equal to 0
+     * because < / <= can be satisfied
+     *
+     * @throws GRBException
+     */
+    public void addArtificialVariable() throws GRBException {
+        for (int i = 0; i < numJobs; i++) {
+            GRBColumn column = new GRBColumn();
+            column.addTerm(1, constraints[i]);
+            double bigM = numJobs * (instance.T + instance.t);
+            artificialVariable[i] = model.addVar(0, GRB.INFINITY, bigM, GRB.CONTINUOUS, column, "artificial_var_" + (i + 1));
+        }
+        GRBColumn column = new GRBColumn();
+        column.addTerm(1, constraints[numJobs + 1]);
+        double bigM = numJobs * (instance.T + instance.t);
+        artificialVariable[numJobs] = model.addVar(0, GRB.INFINITY, bigM, GRB.CONTINUOUS, column, "artificial_var_" + (numJobs + 1));
+    }
+
+    public double[] getDualValues() throws GRBException {
         return model.get(GRB.DoubleAttr.Pi, constraints);
     }
 
-    public double getObj() throws GRBException {
-        return model.get(GRB.DoubleAttr.ObjVal);
+    public String[] getVarNames() throws GRBException {
+        return model.get(GRB.StringAttr.VarName, model.getVars());
     }
 
-    public double getSlackValue() throws GRBException {
-        return slack.get(GRB.DoubleAttr.X);
+    public double[] getVarValues() throws GRBException {
+        return model.get(GRB.DoubleAttr.X, model.getVars());
     }
 
-    public void removeSlack() throws GRBException {
-        model.remove(slack);
-    }
 
-    public LPsol getSol() throws GRBException {
-        ArrayList<Column> columns = new ArrayList<>();
-        ArrayList<Double> blocks = new ArrayList<>();
-        ArrayList<Integer> leftJobs = new ArrayList<>();
-
+    public LPsol getLPSol() throws GRBException {
+        LPsol lPsol = new LPsol();
+        lPsol.objVal = model.get(GRB.DoubleAttr.ObjVal);
         for (int i = 0; i < columnPool.size(); i++) {
-            columns.add(columnPool.get(i));
             double num = x.get(i).get(GRB.DoubleAttr.X);
-            blocks.add(num);
+            // columns whose value > 0 can be added in the lPsol
+            // not all columns in columnPool need be added;
+            if (num > Base.EPS) {
+                lPsol.columns.add(columnPool.get(i));
+                lPsol.nums.add(num);
+            }
         }
         for (int i = 0; i < y.length; i++) {
             if (y[i].get(GRB.DoubleAttr.X) == 1.0) {
-                leftJobs.add(i);
+                lPsol.leftJobs.add(i);
             }
         }
-        LPsol lpSol = new LPsol(columns, blocks, leftJobs);
-        return lpSol;
+        return lPsol;
     }
 
-    public boolean solve() throws GRBException {
-        long start = System.currentTimeMillis();
-
+    public void solve() throws GRBException {
+        this.s0 = System.currentTimeMillis();
         model.optimize();
-
-        cntCalls++;
-        timeOnRmp += Base.getTimeCost(start);
-        // System.out.println(model.get(GRB.IntAttr.Status));
-
-        // System.out.println("RMP的目标值大小为" + getObj());
-
-        if (model.get(GRB.IntAttr.Status) == GRB.INFEASIBLE) {
-            System.out.println("master model is infeasible");
-        }
-        // GRB.INFEASIBLE
-        // TODO: 2023/10/10 还需要再次修改、还不够完善。
+        this.timeOnRMPSolve = Base.getTimeCost(s0);
+        boolean feasible;
         if (model.get(GRB.IntAttr.Status) == GRB.OPTIMAL) {
-            return true;
+            feasible = true;
         } else {
-            return false;
+            feasible = false;
+        }
+        node.timeOnRMPAddColumns += timeOnRMPAddColumns;
+        node.timeOnRMPSolve += timeOnRMPSolve;
+        node.iter++;
+        if (Param.debug) {
+            String str = "--------------------------------------------------------------" + "\n";
+            // model.write(Param.algoPath + "/" + instance.instName + "-" + node.nodeID + "-" + "master_model.lp");
+            str += "node: " + node.nodeID + " node.iter: " + node.iter +  "\n";
+            // str += "Duals: " + Arrays.toString(getDualValues()) + "\n";
+            // str += "VarName: " + Arrays.toString(getVarNames()) + "\n";
+            // str += "VarValues: " + Arrays.toString(getVarValues()) + "\n";
+            str += "RMP: " + "solving master model is: " + feasible + "\n";
+            str += "--------------------------------------------------------------";
+            System.out.println(str);
         }
     }
+
     public void end() throws GRBException {
         model.dispose();
         env.dispose();

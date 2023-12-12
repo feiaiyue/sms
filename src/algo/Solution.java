@@ -1,61 +1,67 @@
 package algo;
 
+import comn.Base;
+
+import java.awt.event.WindowStateListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+// 需要特别注意最后一个Column
 public class Solution {
-    int numOfBlocks;
-    List<List<Integer>> blocks;
-    List<Integer> leftJobs;
-    int sumT;
+    ArrayList<Column> columns;
+    ArrayList<Integer> leftJobs;
+    int makespan;
 
-
-    public Solution(LPsol lPsol, Instance instance) {
-        this.numOfBlocks = (int) lPsol.getNumOfBlocks();
-        this.blocks = new ArrayList<>();
-
-        this.leftJobs = lPsol.leftJobs;
-        for (int i = 0; i < lPsol.blocks.size(); i++) {
-            if (lPsol.blocks.get(i) == 1) {
-                blocks.add(lPsol.columns.get(i).jobs);
-            }
-        }
-        this.sumT = numOfBlocks * (instance.T + instance.t);
-        for (Integer job : leftJobs) {
-            sumT += instance.p[job];
-        }
-    }
 
     public Solution() {
-        this.blocks = new ArrayList<>();
+        this.columns = new ArrayList<>();
         this.leftJobs = new ArrayList<>();
+        this.makespan = 0;
     }
-    public boolean isFeasible(Instance instance) {
-        int numOfJobs = 0;
-        int[] count = new int[instance.nJobs];
-        for (int i = 0; i < blocks.size(); i++) {
-            int sumT = 0;
-            for (int job : blocks.get(i)) {
-                numOfJobs++;
-                count[job]++;
-                sumT += instance.p[job];
-                if (sumT > instance.T) {
-                    return false;
-                }
-            }
-        }
-        numOfJobs += leftJobs.size();
+
+    public void computeCost(Instance instance) {
+        makespan = 0;
+        makespan += (instance.T + instance.t) * columns.size();
+        // add the last Block
         for (int job : leftJobs) {
-            count[job]++;
+            makespan += instance.p[job];
         }
-        if (numOfJobs < instance.nJobs) {
-            System.out.println("当前加进去的jobs的数量" + numOfJobs);
+    }
+
+    public void setSol(Solution other) {
+        this.columns.clear();
+        this.leftJobs.clear();
+        this.columns.addAll(other.columns);
+        this.leftJobs.addAll(other.leftJobs);
+        this.makespan = other.makespan;
+    }
+
+    public boolean isFeasible(Instance instance) {
+        double time = 0;
+        int[] visit = new int[instance.nJobs];
+        for (int i = 0; i < columns.size(); i++) {
+            if (!columns.get(i).isFeasible(instance)) {
+                System.err.println("error: infeasible solution");
+                return false;
+            }
+            for (int job : columns.get(i)) {
+                visit[job]++;
+            }
+            time += instance.T + instance.t;
+        }
+        // 多计算一次要减去
+        for (int job : leftJobs) {
+            visit[job]++;
+            time += instance.p[job];
+        }
+        if (!Base.equals(time, makespan)) {
+            System.err.println("error: infeasible solution");
             return false;
         }
-        for (int i = 0; i < count.length; i++) {
-            if (count[i] != 1) {
-                System.out.println("job" + i + "添加的次数为" + count[i]);
+        for (int count : visit) {
+            if (count != 1) {
+                System.err.println("error: infeasible solution");
+                return false;
             }
         }
         return true;
@@ -70,15 +76,17 @@ public class Solution {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Block的数量为: ").append(numOfBlocks).append("\n");
-        sb.append("所有job的处理时间为：").append(sumT).append("\n");
-        sb.append("每个Block里面放置的jobs的索引为:").append("\n");
-        for (List<Integer> jobs : blocks) {
-            sb.append(jobs).append("\n");
+        sb.append("The num of Blocks: ").append(columns.size()).append("\n");
+        sb.append("makespan: ").append(makespan).append("\n");
+        sb.append("The jobs in each Block: ").append("\n");
+        for (Column column : columns) {
+            sb.append(column.toString()).append("\n");
         }
-        sb.append("剩下的jobs为:" + leftJobs);
+        sb.append("leftJobs: " + leftJobs);
         return sb.toString();
     }
+
+
 
 }
 

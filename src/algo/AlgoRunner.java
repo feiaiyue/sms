@@ -11,7 +11,12 @@ import java.util.Arrays;
 
 public class AlgoRunner {
     public void run(String[] args) throws GRBException {
-        Param.debug = false;
+        /**
+         * 一般为了测试算法的准确性，在代码中加入check feasibility只会在测试阶段使用
+         * 最后的时候，不需要测试，debug = false ：不需要删掉每一块的check
+         */
+        Param.debug = true;
+        // algoname最好不要用空格
         // Param.algoName = "Mixed Integer Linear Programming";
         Param.algoName = "Branch And Price";
         readParams(args);
@@ -20,23 +25,19 @@ public class AlgoRunner {
         Instance[] instances = readInstances();
         switch (Param.algoName) {
             case "Mixed Integer Linear Programming":
-                runMILP(instances);
-                break;
+                // runMILP(instances);
+                // break;
             case "Greedy":
                 // runGreedy(instances);
                 // break;
             case "Branch And Price":
-                // runCGModelGurobi(instances);
-                // runBranchAndBound(instances);
                 runBranchAndBound(instances);
-                // runBranchAndBound(instances[130]);
                 break;
             default:
                 System.err.println("No such method");
                 break;
         }
     }
-
 
 
     void readParams(String[] args) {
@@ -67,18 +68,21 @@ public class AlgoRunner {
             Data data = new Data(files[i].getName(), strings);
             instances[i] = new Instance(data);
         }
+        // due to linux, instances will be disturbed randomly
         Arrays.sort(instances);
         return instances;
     }
 
     String makeCSVTitle() {
-        String title = "algoName, instName, numOfJobs, feasible, timeLimit, timeCost,";
+        String title = "instName, numOfJobs, algoName, timeLimit, feasible, ";
         if (Param.algoName.startsWith("Mixed Integer Linear Programming")) {
             // TODO: 2023/11/6 哪个是ub哪个是lb
             title += "ub, lb, status, numOfVariables, numOfConstraints, nThreads";
         }
         if (Param.algoName.startsWith("Branch And Price")) {
-            title += "ub, lb, status, numOfVariables, numOfConstraints, nThreads";
+            title += "optimal, globalUB, globalLB, gap, rootUB, rootLB, timeCost, timeOnRoot, timeOnCG, " +
+                    "timeOnRMP, timeOnPP, numSolvedNodes, numPrunedByInfeasibility, numPrunedByOptimality, numPrunedByBound, " +
+                    "numNodes, numLeftNodes";
         }
         return title;
     }
@@ -96,9 +100,7 @@ public class AlgoRunner {
     void writeResult(String instName, String csv, Solution sol, boolean feasible) {
         // CSV文件里的title已经写过了，所以每次只需要添加一行结果就好
         ProblemIO.writeCSV(csv, false);
-        if (!feasible || Param.debug) {
-            return;
-        }
+
         // to write the detailed result of each instance to the result/algo/sol folder
         String solPath = Param.solPath + "/" + instName;
         // String solPath = Param.algoPath + "/sol/" + Param.problemName + "_sol_" + instName + "_"  + ".csv";
@@ -106,53 +108,31 @@ public class AlgoRunner {
         ProblemIO.writeToFile(solFile, sol.toString());
     }
 
-    // void runGreedy(Instance[] instances) {
+
+    //  void runMILP(Instance[] instances) throws GRBException {
     //     for (Instance instance : instances) {
-    //        // to ensure the consistency of the algo results each time
     //         Base.renewRandom();
-    //         Greedy greedy = new Greedy(instance);
-    //         greedy.run(Param.timeLimit);
-    //         writeResult(instance.instName, greedy.makeCsvItem(), greedy.solution, greedy.feasible);
+    //         MILP milp = new MILP(instance);
+    //         milp.run(Param.timeLimit);
+    //         writeResult(instance.instName, milp.makeCsvItem(), milp.solution, milp.feasible);
+    //         milp.end();
     //     }
     // }
 
-     void runMILP(Instance[] instances) throws GRBException {
-        for (Instance instance : instances) {
-            Base.renewRandom();
-            MILP milp = new MILP(instance);
-            milp.run(Param.timeLimit);
-            writeResult(instance.instName, milp.makeCsvItem(), milp.solution, milp.feasible);
-            milp.end();
-        }
-    }
-
-    void runMILP(Instance instance) throws GRBException {
-        Base.renewRandom();
-        MILP milp = new MILP(instance);
-        milp.run(Param.timeLimit);
-        writeResult(instance.instName, milp.makeCsvItem(), milp.solution, milp.feasible);
-        milp.end();
-    }
-
-    void runBranchAndBound(Instance instance) throws GRBException {
-        BranchAndBound bnp = new BranchAndBound(instance);
-        bnp.solve(Param.timeLimit);
-        writeResult(instance.instName, bnp.makeCSVItem(), bnp.best, true);
-        bnp.columnGeneration.pricing.end();
-        bnp.columnGeneration.master.end();
-    }
 
     void runBranchAndBound(Instance[] instances) throws GRBException {
+        // using startRunning flag to debug start from a specific instance
         for (Instance instance : instances) {
-            if (instance.instName == "L_00000057") {
-                continue;
-            }
+            // if (Param.debug && !instance.instName.equals("L_00000050")) {
+            //    continue;
+            // }
             Base.renewRandom();
             BranchAndBound bnp = new BranchAndBound(instance);
-            bnp.solve(Param.timeLimit);
-            writeResult(instance.instName, bnp.makeCSVItem(), bnp.best,true);
-            bnp.columnGeneration.pricing.end();
+            System.out.println("当前求解的算例是" + instance.instName);
+            bnp.run(Param.timeLimit);
+            writeResult(instance.instName, bnp.makeCSVItem(), bnp.incumbentSol, true);
             bnp.columnGeneration.master.end();
+            System.gc();
         }
     }
 }

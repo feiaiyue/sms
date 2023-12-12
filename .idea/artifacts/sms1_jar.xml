@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="sms1:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/sms1_jar</output-path>
+    <root id="archive" name="sms1.jar">
+      <element id="module-output" name="sms1" />
+      <element id="extracted-dir" path="/Library/gurobi1002/macos_universal2/lib/gurobi.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

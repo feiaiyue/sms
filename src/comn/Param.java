@@ -1,7 +1,7 @@
 package comn;
 
 public class Param {
-    public static boolean debug = false;
+    public static boolean debug;
     public static String problemName;
     public static String dataPath;
     public static String resultPath;

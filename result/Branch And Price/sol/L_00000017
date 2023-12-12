@@ -1,5 +1,5 @@
-Block的数量为: 1
-所有job的处理时间为：367
-每个Block里面放置的jobs的索引为:
-[4, 6, 7, 8, 9]
-剩下的jobs为:[0, 1, 2, 3, 5]
+The num of Blocks: 1
+makespan: 367
+The jobs in each Block: 
+[1, 2, 4, 5, 7, 8]
+leftJobs: [0, 3, 6, 9]

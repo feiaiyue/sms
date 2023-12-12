@@ -1,28 +1,31 @@
 package algo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LPsol {
-    ArrayList<Column> columns;
-    ArrayList<Double> blocks; // 对于每一种cloumn（装箱情况）选取的次数，【0.1】被松弛为>0
+    ArrayList<Column> columns; // 最后一个column是放y的，
+    ArrayList<Double> nums; // 对于每一种cloumn（装箱情况）选取的次数，【0.1】被松弛为>0 ，最后一个num是1.
     ArrayList<Integer> leftJobs;
-    double obj;
+    double objVal;
 
     public LPsol() {
+        this.columns = new ArrayList<>();
+        this.nums  = new ArrayList<>();
+        this.leftJobs = new ArrayList<>();
+        this.objVal = 0;
 
     }
 
-    public LPsol(ArrayList<Column> columns, ArrayList<Double> blocks, ArrayList<Integer> leftJobs) {
+    public LPsol(ArrayList<Column> columns, ArrayList<Double> nums, ArrayList<Integer> leftJobs) {
         this.columns = columns;
-        this.blocks = blocks;
+        this.nums = nums;
         this.leftJobs = leftJobs;
     }
 
     public double getNumOfBlocks() {
         double num = 0;
-        for (int i = 0; i < blocks.size(); i++) {
-            num += blocks.get(i);
+        for (int i = 0; i < nums.size(); i++) {
+            num += nums.get(i);
         }
         return num;
     }
@@ -31,21 +34,21 @@ public class LPsol {
         double sum = 0;
         for (int j = 0; j < columns.size(); j++) {
             int a_ij = 0;
-            if (columns.get(j).jobs.contains(i)) {
+            if (columns.get(j).contains(i)) {
                 a_ij = 1;
             }
             int a_kj = 0;
-            if (columns.get(j).jobs.contains(k)) {
+            if (columns.get(j).contains(k)) {
                 a_kj = 1;
             }
-            double x_j = blocks.get(j);
+            double x_j = nums.get(j);
             sum += a_ij * a_kj * x_j;
         }
         return sum;
     }
 
-    public boolean integerFeasible() {
-        for (Double num : blocks) {
+    public boolean isIntegral() {
+        for (Double num : nums) {
             if (num != 0 && num != 1) {
                 return false;
             }

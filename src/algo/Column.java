@@ -1,38 +1,53 @@
 package algo;
 
-import gurobi.GRBVar;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import comn.Base;
 
-public class Column {
-    ArrayList<Integer> jobs;
-    String name;
-    int[] duration;
-    int sum;
+import java.util.*;
 
-    GRBVar x;
+/**
+ * Column represent the job indexes in a Block/Batch/Column
+ */
+public class Column extends HashSet<Integer> {
+    int makespan;
 
-    public Column(Instance instance, ArrayList<Integer> jobs) {
-        this.jobs = jobs;
-        for (int i = 0; i < instance.nJobs; i++) {
-            if (jobs.contains(i)) {
-                sum += instance.p[i];
-            }
-        }
+    public Column() {
+        makespan = 0;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Column columnVar = (Column) o;
-        return Objects.equals(jobs, columnVar.jobs);
+        if (this == o) {
+            return true;
+        }
+        // Ensure that the object 'o' is not null and
+        // belongs to the same class as the current class.
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        // after judging the class, Column can be cast
+        Column column = (Column) o;
+        return new HashSet<>(this).equals(new HashSet<>(column));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jobs);
+        return new HashSet<>(this).hashCode();
+    }
+
+    public boolean isFeasible(Instance instance) {
+        int time = 0;
+        for (int job : this) {
+            time += instance.p[job];
+        }
+        if (time > instance.T) {
+            System.out.println("ERROR:Infeasible Column");
+            return false;
+        }
+        if (!Base.equals(time, makespan)) {
+            System.out.println("ERROR:Infeasible Column");
+            return false;
+        }
+        return true;
     }
 }

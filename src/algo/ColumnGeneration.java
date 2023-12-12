@@ -1,51 +1,83 @@
 package algo;
 
-import comn.Base;
+import comn.Param;
 import gurobi.GRBException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
  * Column Generation
  */
 public class ColumnGeneration {
-    public long time;
     Instance instance;
+    int nJobs;
     Master master;
-    Pricing pricing;// pricing problem
-    ArrayList<Column> columnPool;
-    Node node;
+    // Pricing pricing;
+    PricingLabelSetting pricing;
 
-    public ColumnGeneration(Instance instance, Master master, Pricing pricing, ArrayList<Column> columnPool) throws GRBException {
+    public ColumnGeneration(Instance instance) throws GRBException {
         this.instance = instance;
-        this.master = master;
-        this.pricing = pricing;
-        this.columnPool = columnPool;
+        this.nJobs = instance.nJobs;
+        this.master = new Master(instance);
+        this.pricing = new PricingLabelSetting(instance);
     }
 
-    public boolean solve(Node node) throws GRBException {
-        this.node = node;
+    void solve(Node node, ColumnPool pool) {
+        try {
+            master.addColumns(pool);
+            solve(node);
+        } catch (GRBException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void solve(Node node) throws GRBException {
+        String str = "--------------------------------------------------------------" + "\n";
+        str += "node: " + node.nodeID + "\n";
+        double[] duals;
         master.set(node);
         pricing.set(node);
-        if (!master.solve()) {
-            node.status = NodeStatus.Infeasible;
-            master.lastNode = node;// 没理解。
-            return false;
+        master.solve();
+        duals = master.getDualValues();
+        pricing.solve(duals);
+
+        if (Param.debug) {
+            // Column optimal_instance50 = new Column();
+            // optimal_instance50.addAll(Set.of(1, 2, 3, 5, 6, 7, 8, 10, 11, 13, 15, 17, 19));
+            // for (int job : optimal_instance50) {
+            //     optimal_instance50.makespan += instance.p[job];
+            // }
+            // System.out.println("optimal_instance50.makespan" + optimal_instance50.makespan);
+            // if (pricing.newColumns.contains(optimal_instance50)) {
+            //     System.out.println("optimal_instance50 column is find");
+            // }
+
+
         }
-        double[] dual = master.getDual();
-        int cnt = 1;
-        ArrayList<Column> cols = pricing.genColumn1(dual);
-        while (cols.size() > 0) {
-            cnt++;
-            master.addColumns(cols);
+        while (pricing.findNewColumns()) {
+            master.addColumns(pricing.newColumns);
             master.solve();
-            dual = master.getDual();
-            cols = pricing.genColumn1(dual);
+            duals = master.getDualValues();
+            pricing.solve(duals);
         }
-        node.lpSol = master.getSol();
-        node.lbObj = master.getObj();
-        return true;
+        // TODO: 2023/11/12 是不是应该先判断完是否可行，再更新node的值
+        node.lpSol = master.getLPSol();
+        node.lbObj = node.lpSol.objVal;
+        if (master.isPrimalModelFeasible()) {
+            LPsol sol = master.getLPSol();
+            if (sol.isIntegral()) {
+                node.status = NodeStatus.INTEGRAL;
+            } else {
+                node.status = NodeStatus.FRACTIONAL;
+            }
+        } else {
+            node.status = NodeStatus.INFEASIBLE;
+        }
+
     }
+
+
 }
