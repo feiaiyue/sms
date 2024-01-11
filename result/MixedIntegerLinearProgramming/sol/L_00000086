@@ -1,0 +1,6 @@
+The num of Blocks: 2
+makespan: 517
+The jobs in each Block: 
+[0, 1, 11, 15, 17, 18]
+[2, 5, 8, 9, 12, 13, 14, 16, 19]
+leftJobs: [3, 4, 6, 7, 10]

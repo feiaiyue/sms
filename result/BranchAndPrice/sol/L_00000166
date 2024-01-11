@@ -1,0 +1,6 @@
+The num of Blocks: 2
+makespan: 0
+The jobs in each Block: 
+Column: [36, 27, 16, 15, 14, 13, 11, 10]processingTime=200}
+Column: [31, 20, 18, 17, 5, 1, 0]processingTime=200}
+leftJobs: []

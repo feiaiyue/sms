@@ -1,0 +1,2 @@
+instName, numOfJobs, numOfThreads, timeLimit, timeCost, feasible, optimal, numOfNodes, globalUB, globalLB, gap,rootUB, rootLB, timeOnRoot, timeOnCG, timeOnRMP, timeOnPP, numSolvedNodes, numPrunedByInfeasibility, numPrunedByOptimality, numPrunedByBound, numNodes, numLeftNodes, numNewLabel, numDominatedLabel, numPrunedLabel, timeOnLabelLb
+L_00000200 , 50 , 1 , 3600, 6.159,true, true, 865,1593.000, 1593.000, 0.000, 1653.000, 1578.300, 0.501, 5.565, 1.003, 2.395, 434, 1, 1, 431, 0,469450,357917,58081,0.46700000000000036

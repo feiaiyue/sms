@@ -1,0 +1,9 @@
+The num of Batches: 5
+makespan: 1248
+The jobs in each Block: 
+Column: [19, 3, 2, 1]processingTime=200}
+Column: [17, 15, 11, 9]processingTime=200}
+Column: [8, 6, 0]processingTime=200}
+Column: [16, 13, 14, 7]processingTime=200}
+Column: [18, 10, 5]processingTime=199}
+The last BatchColumn: [4, 12]processingTime=148}

@@ -1,0 +1,29 @@
+The num of Batches: 25
+makespan: 5699
+The jobs in each Block: 
+Column: [29, 20, 13, 12, 11, 10]processingTime=200}
+Column: [82, 81, 45]processingTime=200}
+Column: [79, 76, 68]processingTime=200}
+Column: [96, 95, 90]processingTime=200}
+Column: [97, 71, 69, 0]processingTime=200}
+Column: [34, 16, 14, 4]processingTime=200}
+Column: [66, 52, 39, 32]processingTime=200}
+Column: [98, 93, 77]processingTime=200}
+Column: [99, 91, 89, 87]processingTime=200}
+Column: [43, 38, 37, 22]processingTime=200}
+Column: [92, 75, 72]processingTime=200}
+Column: [83, 64, 63, 60]processingTime=200}
+Column: [74, 56, 31]processingTime=200}
+Column: [59, 58, 48, 46, 42]processingTime=200}
+Column: [44, 33, 30]processingTime=200}
+Column: [41, 40, 23, 1]processingTime=200}
+Column: [86, 80, 65]processingTime=200}
+Column: [84, 78, 54]processingTime=200}
+Column: [19, 9, 8, 7, 3]processingTime=200}
+Column: [55, 50, 47, 28]processingTime=200}
+Column: [88, 73, 57]processingTime=200}
+Column: [67, 49, 35]processingTime=200}
+Column: [27, 17, 2]processingTime=200}
+Column: [94, 85, 62, 51, 26]processingTime=200}
+Column: [70, 61, 18, 25]processingTime=200}
+The last BatchColumn: [24, 15, 6, 5, 36, 53, 21]processingTime=199}

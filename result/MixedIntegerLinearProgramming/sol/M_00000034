@@ -1,0 +1,10 @@
+The num of Batches: 5
+makespan: 1248
+The jobs in each Batch 
+Batch0:index:[] Processing Time: 0
+Batch1:index:[] Processing Time: 0
+Batch2:index:[] Processing Time: 0
+Batch3:index:[] Processing Time: 0
+Batch4:index:[] Processing Time: 0
+The last Batch
+index:[0, 8] Processing Time: 148

@@ -1,0 +1,1 @@
+instName, numOfJobs, numOfThreads, timeLimit, timeCost, feasible, optimal, numOfNodes, globalUB, globalLB, gap,timeOnModel, timeOnOptimize, numOfVariables, numOfConstraints
