@@ -9,13 +9,10 @@ import java.util.*;
  * Column represent the job indexes in a Block/Batch/Column
  */
 public class Column extends ArrayList<Integer> {
-    public Instance instance;
+    // public Instance instance;
     public int processingTime;
 
-    public Column(Instance instance) {
-        this.instance = instance;
-        processingTime = 0;
-    }
+
 
     public Column() {
         processingTime = 0;
@@ -24,7 +21,6 @@ public class Column extends ArrayList<Integer> {
     public Column(Column column) {
         super(column);
 
-        this.instance = column.instance;
         this.processingTime = column.processingTime;
     }
 

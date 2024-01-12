@@ -138,7 +138,7 @@ public class PricingLabelSetting {
                 label.pruned = true;
             }
             if (label.reducedCost  + Base.EPS < reducedcostUb && !label.pruned) {
-                Column newColumn = new Column(instance);
+                Column newColumn = new Column();
                 newColumn.processingTime = label.processingTime;
                 newColumn.addAll(label.getJobs(this.andItems));
                 newColumns.add(newColumn);
@@ -174,7 +174,7 @@ public class PricingLabelSetting {
                     }
                     if (label.reducedCost + Base.EPS < reducedcostUb) {
                         // System.out.println("reduced cost UB: " + reducedcostUb);
-                        Column newColumn = new Column(instance);
+                        Column newColumn = new Column();
                         newColumn.processingTime = label.processingTime;
                         newColumn.addAll(label.getJobs(this.andItems));
                         newColumns.add(newColumn);
@@ -220,7 +220,46 @@ public class PricingLabelSetting {
         Label b = states[j].get(states[j].size() - 1);
         for (int i = 0; i < states[j].size() - 1; i++) {
             Label a = states[j].get(i);
-            // 找到一个a各方面都比b好，那么刚加进来的这个Label b 就是被支配了，则需要被剪掉。
+
+            /**
+             * improved dominance rule ：Label a dominates Label b
+             */
+            if (a.processingTime < b.processingTime && a.reducedCost < b.reducedCost + Base.EPS) {
+                double sum = 0;
+                int h = b.nextJobs.nextSetBit(0);
+                while (h >= 0 && h < instance.nJobs) {
+                    if (!a.nextJobs.get(h)) {
+                        sum += duals[h];
+                    }
+                    h = b.nextJobs.nextSetBit(h + 1);
+                }
+                if (a.reducedCost + sum <= b.reducedCost + Base.EPS) {
+                    if (a.processingTime < b.processingTime || a.reducedCost + sum < b.reducedCost - Base.EPS) {
+                        b.pruned = true;
+                        numDominatedLabel++;
+                        break;
+                    }
+                }
+            }
+            if (b.processingTime < a.processingTime && b.reducedCost < a.reducedCost + Base.EPS) {
+                double sum = 0;
+                int h = a.nextJobs.nextSetBit(0);
+                while (h >= 0 && h < instance.nJobs) {
+                    if (!b.nextJobs.get(h)) {
+                        sum += duals[h];
+                    }
+                    h = a.nextJobs.nextSetBit(h + 1);
+                }
+                if (b.reducedCost + sum <= a.reducedCost + Base.EPS) {
+                    if (b.processingTime < a.processingTime || b.reducedCost + sum < a.reducedCost - Base.EPS) {
+                        a.pruned = true;
+                        numDominatedLabel++;
+                        break;
+                    }
+                }
+            }
+
+            /* // 找到一个a各方面都比b好，那么刚加进来的这个Label b 就是被支配了，则需要被剪掉。
             // TODO: 2023/12/4 containsAll可以被Bitset的and代替
             // 包含关系写错了
             BitSet aClone = (BitSet) a.nextJobs.clone();
@@ -237,7 +276,7 @@ public class PricingLabelSetting {
                 a.pruned = true;
                 numDominatedLabel++;
                 break;
-            }
+            } */
         }
         return b.pruned;
     }

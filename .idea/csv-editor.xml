@@ -304,6 +304,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2038.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice.csv">
           <value>
             <Attribute>

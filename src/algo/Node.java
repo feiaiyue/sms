@@ -95,12 +95,13 @@ public class Node {
         /**
          * 二维数组 为什么没有使用clone而是使用了System.arraycopy
          */
+
+
         this.orItems = new boolean[nJobs][nJobs];
         Base.copyTo(parent.orItems, orItems);
         removedItems = (BitSet) parent.removedItems.clone();
 
         this.status = NodeStatus.UNSOLVED;
-        this.lpSol = new LPsol();
         this.lb = parent.lb;
     }
 
@@ -145,7 +146,7 @@ public class Node {
             orItems[a][b] = orItems[b][a] = true;
         }
 
-        this.lpSol = new LPsol();
+        // this.lpSol = new LPsol();
         this.lb = parent.lb;
         this.status = NodeStatus.UNSOLVED;
     }
@@ -166,7 +167,7 @@ public class Node {
         this.orItems = orItems;
         this.removedItems = removedItems;
 
-        this.lpSol = new LPsol();
+        // this.lpSol = new LPsol();
         this.status = NodeStatus.UNSOLVED;
 
     }
@@ -180,7 +181,7 @@ public class Node {
      */
     public boolean isValid(Column column) {
         for (int i = 0; i < andItems.length; i++) {
-            if (removedItems.get(i) == true) {
+            if (removedItems.get(i)) {
                 continue;
             }
             boolean flag = column.contains(andItems[i][0]);
@@ -192,7 +193,7 @@ public class Node {
         }
         for (int i = 0; i < orItems.length; i++) {
             for (int j = 0; j < orItems[i].length; j++) {
-                if (orItems[i][j] == true) {
+                if (orItems[i][j]) {
                     if (column.contains(i) && column.contains(j)) {
                         return false;
                     }

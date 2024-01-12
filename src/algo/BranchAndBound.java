@@ -306,7 +306,7 @@ public class BranchAndBound {
     private ColumnPool generateInitialPool() {
         ColumnPool initialPool = new ColumnPool();
         for (int i = 0; i < nJobs; i++) {
-            Column column = new Column(instance);
+            Column column = new Column();
             column.add(i);
             column.processingTime += instance.p[i];
             incumbentSol.add(column);

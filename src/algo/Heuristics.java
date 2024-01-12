@@ -85,7 +85,7 @@ public class Heuristics {
             }
 
             if (!packed) {
-                Column newColumn = new Column(instance);
+                Column newColumn = new Column();
                 newColumn.add(job);
                 newColumn.processingTime += instance.p[job];
                 solution.add(newColumn);

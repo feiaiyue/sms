@@ -5,6 +5,7 @@ import comn.Param;
 import gurobi.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ModelGurobi {
@@ -170,6 +171,7 @@ public class ModelGurobi {
             }
             if (Base.roundToInt(b[i].get(GRB.DoubleAttr.X)) == 1.0) {
                 // solution.numOfBlocks++;
+                HashSet<Integer> set = new HashSet<>();
                 List<Integer> list = new ArrayList<>();
                 for (int j = 0; j < N; j++) {
                     if (Base.roundToInt(x[i][j].get(GRB.DoubleAttr.X)) == 1.0) {

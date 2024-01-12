@@ -11,12 +11,36 @@ public class Main {
     public static void main(String[] args) throws GRBException {
         System.out.println("Everything is OK!");
         System.out.println();
-        double num = 5.5;
-        System.out.println("the ceil of num: " + Math.ceil(num));
+        testBitSetOperator();
         new AlgoRunner().run(args);
         System.out.println("That is all");
     }
 
+    public static void testBitSetOperator() {
+        int bitSetSize = 100; // 假设bitset的大小是100
+
+        BitSet R2 = new BitSet(bitSetSize); // 表示集合 R(L^f_2)
+        BitSet R1 = new BitSet(bitSetSize); // 表示集合 R(L^f_1)
+
+        // 在 R(L^f_2) 中设置一些位
+        R2.set(2);
+        R2.set(5);
+        R2.set(8);
+
+        // 在 R(L^f_1) 中设置一些位
+        R1.set(5);
+        R1.set(8);
+        R1.set(7);
+
+        // 计算 R(L^f_2) \ R(L^f_1) 的结果
+        BitSet result = (BitSet) R2.clone();
+        result.andNot(R1);
+
+        System.out.println("R2: " + R2);
+        System.out.println("R1: " + R1);
+        // 输出结果
+        System.out.println("R(L^f_2) \\ R(L^f_1): " + result);
+    }
     public static void testSolution() {
         LPsol lPsol = new LPsol();
 
