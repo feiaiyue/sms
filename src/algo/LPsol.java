@@ -3,56 +3,90 @@ package algo;
 import java.util.ArrayList;
 
 public class LPsol {
-    ArrayList<Column> columns; // 最后一个column是放y的，
-    ArrayList<Double> nums; // 对于每一种cloumn（装箱情况）选取的次数，【0.1】被松弛为>0 ，最后一个num是1.
-    ArrayList<Integer> leftJobs;
-    double objVal;
+    public ArrayList<Column> xColumns;
+    public ArrayList<Double> xValues;
+
+    public ArrayList<Integer> leftJobs;
+    public ArrayList<Double> yValues;
+    public double leftJobsProcessingTime;
+
+    public double objVal;
+    public Instance instance;
 
     public LPsol() {
-        this.columns = new ArrayList<>();
-        this.nums  = new ArrayList<>();
+        this.xColumns = new ArrayList<>();
+        this.xValues = new ArrayList<>();
         this.leftJobs = new ArrayList<>();
+        this.yValues = new ArrayList<>();
+        this.leftJobsProcessingTime = 0;
         this.objVal = 0;
 
     }
 
-    public LPsol(ArrayList<Column> columns, ArrayList<Double> nums, ArrayList<Integer> leftJobs) {
-        this.columns = columns;
-        this.nums = nums;
-        this.leftJobs = leftJobs;
-    }
+    /* public LPsol(ArrayList<Column> xColumns, ArrayList<Double> xValues, Column leftJobs) {
+        this.xColumns = xColumns;
+        this.xValues = xValues;
+
+
+    } */
 
     public double getNumOfBlocks() {
         double num = 0;
-        for (int i = 0; i < nums.size(); i++) {
-            num += nums.get(i);
+        for (int i = 0; i < xValues.size(); i++) {
+            num += xValues.get(i);
         }
         return num;
     }
 
     public double getNumOfVisits(int i, int k) {
         double sum = 0;
-        for (int j = 0; j < columns.size(); j++) {
+        for (int j = 0; j < xColumns.size(); j++) {
             int a_ij = 0;
-            if (columns.get(j).contains(i)) {
+            if (xColumns.get(j).contains(i)) {
                 a_ij = 1;
             }
             int a_kj = 0;
-            if (columns.get(j).contains(k)) {
+            if (xColumns.get(j).contains(k)) {
                 a_kj = 1;
             }
-            double x_j = nums.get(j);
+            double x_j = xValues.get(j);
             sum += a_ij * a_kj * x_j;
         }
         return sum;
     }
 
     public boolean isIntegral() {
-        for (Double num : nums) {
+        for (Double num : xValues) {
             if (num != 0 && num != 1) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        double numOfBatches = 0;
+        for(double xValue : xValues){
+            numOfBatches += xValue;
+        }
+        sb.append("=".repeat(30) + "the information of lp Solution" + "=".repeat(30)).append("\n");
+        sb.append("The num of Batches: ").append(numOfBatches).append("\n");
+        sb.append("makespan: ").append(objVal).append("\n");
+        sb.append("The jobs in each Batch: ").append("\n");
+        for (int i = 0; i < xColumns.size(); i++) {
+            sb.append("Batch" + i + ":");
+            sb.append(xColumns.get(i)).append(" ");
+            sb.append("num:");
+            sb.append(xValues.get(i)).append("\n");
+        }
+        sb.append("The left jobs:");
+        sb.append(leftJobs).append("\n");
+        sb.append("The value of left jobs: ").append(yValues).append("\n");
+        sb.append("The processing time of left jobs: ").append(leftJobsProcessingTime);
+
+        return sb.toString();
+
     }
 }

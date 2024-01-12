@@ -32,13 +32,14 @@ public class ProblemIO {
      */
     public static void writeCSV(String text, boolean isTitle) {
         File csvFile = new File(Param.csvPath);
-
+        // In the debug mode, the text should be appended, thus the title should be skipped
+        if (csvFile.exists() && isTitle && Param.debug) {
+            return;
+        }
         if (isTitle || !csvFile.exists()) {
-            // If it's a title or the file does not exist, write in overwrite mode
-            writeToFile(csvFile, text);
+            writeToFile(csvFile, text); // write in overwrite mode
         } else {
-            // Otherwise, write in append mode
-            appendToFile(csvFile, text);
+            appendToFile(csvFile, text); // write in append mode
         }
     }
 

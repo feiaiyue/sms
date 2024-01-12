@@ -1,6 +1,9 @@
-The num of Blocks: 2
-makespan: 0
-The jobs in each Block: 
-Column: [8, 6, 3, 2, 1, 0]processingTime=200}
-Column: [28, 24, 21, 20, 19, 18]processingTime=200}
-leftJobs: []
+The num of Batches: 4
+makespan: 933.0
+The jobs in each Batch 
+Batch0:index:[8, 6, 3, 2, 1, 0] Processing Time: 200
+Batch1:index:[21, 19, 18, 14, 9] Processing Time: 200
+Batch2:index:[29, 27, 26, 25, 22, 17, 11] Processing Time: 200
+Batch3:index:[20, 13, 10, 28, 4, 7, 16] Processing Time: 199
+The last Batch
+index:[15, 24, 5, 23, 12] Processing Time: 53

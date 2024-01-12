@@ -1,6 +1,7 @@
-The num of Blocks: 2
-makespan: 545
-The jobs in each Block: 
-[0, 6, 7, 11, 15, 16, 18]
-[2, 3, 5, 8, 10, 14, 17, 19]
-leftJobs: [1, 4, 9, 12, 13]
+The num of Batches: 2
+makespan: 545.0
+The jobs in each Batch 
+Batch0:index:[0, 6, 7, 9, 10, 17, 18] Processing Time: 200
+Batch1:index:[1, 4, 8, 11, 13, 14, 16, 19] Processing Time: 200
+The last Batch
+index:[2, 3, 5, 12, 15] Processing Time: 105

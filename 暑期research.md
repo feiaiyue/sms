@@ -6,6 +6,7 @@
 - **基本架构搭建**，算法之外的全部代码搭建完毕，由于branch and price还在学习之中，感觉难度有些大。
 
 # BP（Bin Packing）-MILP Model
+
 $$
 min\sum_{i=1}^n b_{i}
 $$

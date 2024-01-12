@@ -9,6 +9,9 @@ public class PricingLabelSetting {
     Instance instance;
     int nJobs;
     Node node;
+
+    ArrayList<Integer> yOne;
+
     int[][] andItems;
     boolean[][] orItems;
     BitSet removedItems;
@@ -22,10 +25,14 @@ public class PricingLabelSetting {
     int[] p;
     double[] duals;
 
-    double reducedCostLB;
+    double reducedcostUb;
     long s0;
     double timeCost;
 
+    double timeLabelLb;
+    long numNewLabel;
+    long numPrunedLabel;
+    long numDominatedLabel;
     
 
     public PricingLabelSetting(Instance instance) {
@@ -38,16 +45,21 @@ public class PricingLabelSetting {
         }
         // TODO: 2023/12/12 用makespan替换reducedCost排序
         // 原因：如果用双向dp，makespan就会快一些。很适合做双向dp。
-        this.queue = new PriorityQueue<>(Comparator.comparing(o -> o.reducedCost));
+        this.queue = new PriorityQueue<>();
         this.ckp = new ContinousKnapSack();
+
+        numDominatedLabel = 0;
+        numNewLabel = 0;
+        numPrunedLabel = 0;
     }
 
     public void set(Node node) {
         this.node = node;
+        this.yOne = node.yOne;
         this.andItems = node.andItems;
         this.orItems = node.orItems;
         this.removedItems = node.removedItems;
-        this.reducedCostLB = 0;
+        this.reducedcostUb = 0;
         this.p = instance.p.clone();
         // p[] must be updated by node.And
         for (int i = 0; i < andItems.length; i++) {
@@ -64,7 +76,7 @@ public class PricingLabelSetting {
     }
 
     public void solve(double[] duals) {
-        timeCost = 0;
+        s0 = System.currentTimeMillis();
         this.duals = duals.clone();
         // Considering once new columnGeneration
         // only once new pricing
@@ -85,11 +97,15 @@ public class PricingLabelSetting {
         for (int i = 0; i < nJobs; i++) {
             states[i].clear();
         }
-        reducedCostLB = 0;
-        s0 = System.currentTimeMillis();
+        reducedcostUb = 0;
         initialLabels();
-        while (!queue.isEmpty() && newColumns.size() <= 8) {
+        /**
+         *
+         */
+        // while (!queue.isEmpty()) {
+        while (!queue.isEmpty() && newColumns.size() <= 32) {
             Label label = queue.poll();
+            // System.out.println(label.toString());
             if (label.pruned) {
                 // TODO: 2023/11/26 why pruned
                 // TODO: 2023/11/27 pruned之后需要做什么
@@ -99,13 +115,15 @@ public class PricingLabelSetting {
         }
         timeCost = Base.getTimeCost(s0);
         node.timeOnPP += timeCost;
-        if (Param.debug) {
-            String str = "--------------------------------------------------------------" + "\n";
-            str += "node: " + node.nodeID + "node.iter: " + node.iter + "\n";
-            str += "pp: " + "finding new columns: " + findNewColumns() + "\n";
-            str += "--------------------------------------------------------------" + "\n";
-            System.out.println(str);
-        }
+        node.cntPPCall++;
+        // if (Param.debug) {
+        //     // String str = "-".repeat(100) + "\n";
+        //     String str = "node: " + node.nodeID +  " | " + "iter: " + node.iter + "\n";
+        //     str += String.format("%-5s %-20s %s%n", "PP:", "find new columns:", findNewColumns());
+        //     // str += "pp: " + "\t" + "finding new columns: " + findNewColumns() + "\n";
+        //     str += "-".repeat(100) + "\n";
+        //     System.out.println(str);
+        // }
     }
 
     public void initialLabels() {
@@ -114,43 +132,55 @@ public class PricingLabelSetting {
                 continue;
             }
             Label label = new Label(i);
-            if (label.reducedCost  + Base.EPS < reducedCostLB) {
-                label.containJobs.makespan = label.makespan;
-                newColumns.add(label.containJobs);
-                reducedCostLB = label.reducedCost;
+            numNewLabel++;
+            computeLowerBound(label);
+            if (label.lb + Base.EPS > 0) {
+                label.pruned = true;
             }
-            states[label.curJob].add(label);
-            queue.offer(label);
+            if (label.reducedCost  + Base.EPS < reducedcostUb && !label.pruned) {
+                Column newColumn = new Column(instance);
+                newColumn.processingTime = label.processingTime;
+                newColumn.addAll(label.getJobs(this.andItems));
+                newColumns.add(newColumn);
+                reducedcostUb = label.reducedCost;
+            }
+            if (!label.pruned) {
+                states[label.curJob].add(label);
+                queue.offer(label);
+            }
         }
+
     }
 
     public void extend(Label parent) {
-        // TODO: 2023/12/4 放在一起的job可以只考虑第一个
-        for (int j : parent.nextJobs) {
-            // 可行性检验 这里要修改 ，就是和它在一起的都要做这个检验
-            int tmp = parent.makespan;
-            for (int job : andItems[j]) {
-                tmp += instance.p[job];
-            }
+        for (int j = parent.nextJobs.nextSetBit(0); j >= 0; j = parent.nextJobs.nextSetBit(j + 1)) {
+            int tmp = parent.processingTime;
+            tmp += p[j];
             if (tmp <= instance.T) {
                 Label label = new Label(parent, j);
+                // System.out.println(label.toString());
+                numNewLabel++;
                 states[j].add(label); // 必须要先放进去，不然dominance(j)就不好比较
                 // System.out.println("new label is " + label.toString());
                 if (!dominance(j)) {
                     computeLowerBound(label);
-                    if (label.lb + Base.EPS >= 0) {
+                    if (label.lb + Base.EPS >= reducedcostUb) {
                         label.pruned = true;
+                        numPrunedLabel++;
                     }
                     if (!label.pruned) {
                         queue.offer(label);
+                        // System.out.println(label.toString());
                     }
-                    // TODO: 2023/12/4 计算当前label下界的计算
-                    if (label.reducedCost + Base.EPS < reducedCostLB) {
-                        // 列有makespan这个属性
-                        label.containJobs.makespan = label.makespan;
-                        newColumns.add(label.containJobs);
-                        System.out.println("new label whose reducedCost is negative is " + label.toString());
-                        reducedCostLB = label.reducedCost;
+                    if (label.reducedCost + Base.EPS < reducedcostUb) {
+                        // System.out.println("reduced cost UB: " + reducedcostUb);
+                        Column newColumn = new Column(instance);
+                        newColumn.processingTime = label.processingTime;
+                        newColumn.addAll(label.getJobs(this.andItems));
+                        newColumns.add(newColumn);
+                        // System.out.println("new label's column " + newColumn.toString());
+                        // System.out.println("new label whose reducedCost is negative is " + label.toString());
+                        reducedcostUb = label.reducedCost;
                     }
                 } else {
                     states[j].remove(states[j].size() - 1);
@@ -163,23 +193,23 @@ public class PricingLabelSetting {
     }
 
     public void computeLowerBound(Label label) {
-        double capacity = instance.T - label.makespan;
-        int len = label.nextJobs.size();
+        double cur = System.currentTimeMillis();
+        double capacity = instance.T - label.processingTime;
+        int len = label.nextJobs.cardinality();
         double[] weights = new double[len];
-        for (int i = 0; i < len; i++) {
-            weights[i] = p[label.nextJobs.get(i)];
-        }
         double[] costs = new double[len];
-        for (int i = 0; i < len; i++) {
-            costs[i] = -duals[label.nextJobs.get(i)];
+        int cnt = 0;
+        for (int i = label.nextJobs.nextSetBit(0); i >= 0; i = label.nextJobs.nextSetBit(i + 1)) {
+            weights[cnt] = p[i];
+            costs[cnt] = -duals[i];
+            cnt++;
         }
         double opt = ckp.computeMinCost(capacity, weights, costs);
         label.lb = label.reducedCost + opt;
+        timeLabelLb += 0.001 * (System.currentTimeMillis() - cur);
+
     }
 
-    // private void computeLowerBound(Label label) {
-    //
-    // }
 
     /**
      * dominance between states[j][i](any Label a) and states[j][last](Label b)
@@ -192,13 +222,20 @@ public class PricingLabelSetting {
             Label a = states[j].get(i);
             // 找到一个a各方面都比b好，那么刚加进来的这个Label b 就是被支配了，则需要被剪掉。
             // TODO: 2023/12/4 containsAll可以被Bitset的and代替
-            if (a.reducedCost < b.reducedCost && a.makespan < b.makespan && a.nextJobs.containsAll(b.nextJobs)) {
+            // 包含关系写错了
+            BitSet aClone = (BitSet) a.nextJobs.clone();
+            aClone.and(b.nextJobs);
+            if (a.reducedCost < b.reducedCost && a.processingTime < b.processingTime && aClone.equals(b.nextJobs)) {
                 b.pruned = true;
+                numDominatedLabel++;
                 break;
             }
             // a 也可能被pruned
-            if (b.reducedCost < a.reducedCost && b.makespan < a.makespan && b.nextJobs.containsAll(a.nextJobs)) {
+            BitSet bClone = (BitSet) b.nextJobs.clone();
+            bClone.and(a.nextJobs);
+            if (b.reducedCost < a.reducedCost && b.processingTime < a.processingTime && bClone.equals(a.nextJobs)) {
                 a.pruned = true;
+                numDominatedLabel++;
                 break;
             }
         }
@@ -209,87 +246,104 @@ public class PricingLabelSetting {
         return !newColumns.isEmpty();
     }
 
-    class Label {
+    class Label implements Comparable<Label>{
+        Label parent;
         int curJob;
-        int makespan;
+        int processingTime;
         double reducedCost;
-        Column containJobs;
-        // TODO: 2023/12/12 containJobs 用 BitSet 尝试一下
-        // TODO: 2023/12/12 1、完全剔除nextJobs,可以用containJobs推断 2、用BitSet替换
-        // bitSet.get(i) <==> hashset.contains(i)
-        // bitSet.set(i) <==> hashset.set(i)
-        // 遍历方式：
-        // for .. if get(i) == false
-        //
-        ArrayList<Integer> nextJobs; // 未来可以拓展的job
+        ArrayList<Integer> jobs;
+
+        BitSet nextJobs; // 未来可以拓展的job
         double lb; // 根据当前的cost以及未来的nextJobs所可能带来的reducedCost的下界
         boolean pruned;
 
         public Label(int j) {
             this.curJob = j;
-            this.makespan = p[j];
+            this.processingTime = p[j];
             this.reducedCost = instance.T + instance.t - duals[nJobs + 1] - duals[nJobs + 2] - duals[j];// 初始化
-            this.containJobs = new Column();
-            for (int andJ : andItems[j]) {
-                containJobs.add(andJ);
-                containJobs.makespan += p[andJ]; // 因为和j要放在一起的jobs的权重都设置为0 所以增加也无所谓
-            }
-            this.nextJobs = new ArrayList<>();
+            this.nextJobs = new BitSet(nJobs);
             for (int i = j + 1; i < instance.nJobs; i++) {
+                if (yOne.contains(i)) {
+                    continue;
+                }
                 if (removedItems.get(i)) {
                     continue;
                 }
                 // 未来可以延伸到的i不可以和large j 中的任何一个job存在任何的冲突。
+                boolean conflict = false;
                 for (int andJ : andItems[j]) {
                     if (orItems[i][andJ]) {
+                        conflict = true;
                         break;
                     }
                 }
-                if (duals[i] == 0) {
+                if (conflict || duals[i] == 0) {
                     continue;
                 }
-                nextJobs.add(i);
+                nextJobs.set(i);
             }
         }
 
         public Label(Label parent, int j) {
+            this.parent = parent;
             this.curJob = j;
-            this.makespan = parent.makespan + p[j];
+            this.processingTime = parent.processingTime + p[j];
             this.reducedCost = parent.reducedCost - duals[j];
-            this.containJobs = new Column();
-            for (int job : parent.containJobs) {
-                this.containJobs.add(job);
+            this.nextJobs = (BitSet) parent.nextJobs.clone();
+            for (int i = this.nextJobs.nextSetBit(0); i < j; i = this.nextJobs.nextSetBit(i + 1)) {
+                if (i < j) {
+                    this.nextJobs.clear(i);
+                }
+
             }
             for (int andJ : andItems[j]) {
-                containJobs.add(andJ);
-                containJobs.makespan += p[andJ];
+                nextJobs.clear(andJ);
             }
-            this.nextJobs = new ArrayList<>();
             for (int i = j + 1; i < instance.nJobs; i++) {
                 if (removedItems.get(i)) {
                     continue;
                 }
-                // 未来可以延伸到的i不可以和large j 中的任何一个job存在任何的冲突。
                 for (int andJ : andItems[j]) {
-                    if (orItems[i][andJ]) {
-                        break;
+                    if (orItems[i][andJ] || duals[i] == 0) {
+                        nextJobs.clear(i);
                     }
                 }
-                nextJobs.add(i);
             }
         }
+
+        public LinkedList<Integer> getJobs(int[][] andJobs) {
+            LinkedList<Integer> jobs = new LinkedList<>();
+            Label x = this;
+            while (x != null) {
+                int j = x.curJob;
+                for (int i : andJobs[j]) {
+                    jobs.add(i);
+                }
+                x = x.parent;
+            }
+            return jobs;
+        }
+
+
+
+
 
         @Override
         public String toString() {
             return "Label{" +
-                    "curJob=" + curJob +
-                    ", makespan=" + makespan +
-                    ", reducedCost=" + reducedCost +
-                    ", containJobs=" + containJobs.toString() +
-                    ", nextJobs=" + nextJobs +
-                    ", lb=" + lb +
-                    ", pruned=" + pruned +
+                    "curJob =" + curJob +
+                    ", processingTime =" + processingTime +
+                    ", reducedCost =" + reducedCost +
+                    ", lb =" + lb +
+                    ", pruned =" + pruned +
                     '}';
+        }
+
+
+
+        @Override
+        public int compareTo(Label o) {
+            return Double.compare(this.reducedCost, o.reducedCost);
         }
     }
 

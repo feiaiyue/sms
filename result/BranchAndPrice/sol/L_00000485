@@ -1,19 +1,19 @@
 The num of Batches: 14
-makespan: 3170
+makespan: 3170.0
 The jobs in each Batch 
-Batch0:index:[51, 44, 41, 10, 6, 4, 3, 2, 1] Processing Time: 200
-Batch1:index:[91, 80, 77, 75, 73] Processing Time: 200
-Batch2:index:[60, 52, 48, 30, 24, 20] Processing Time: 200
+Batch0:index:[91, 80, 77, 75, 73] Processing Time: 200
+Batch1:index:[60, 52, 48, 30, 24, 20] Processing Time: 200
+Batch2:index:[85, 65, 55, 39, 38, 33, 15] Processing Time: 200
 Batch3:index:[25, 27, 42, 99] Processing Time: 200
 Batch4:index:[58, 17, 37, 12, 21] Processing Time: 200
 Batch5:index:[82, 87, 18, 72, 11] Processing Time: 200
-Batch6:index:[94, 59, 26, 53, 32] Processing Time: 200
+Batch6:index:[94, 59, 26, 53, 6] Processing Time: 200
 Batch7:index:[31, 61, 16, 81, 54] Processing Time: 200
-Batch8:index:[50, 71, 28, 40, 89, 68] Processing Time: 200
-Batch9:index:[15, 33, 34, 47, 43, 79] Processing Time: 200
+Batch8:index:[1, 50, 71, 2, 28, 92] Processing Time: 200
+Batch9:index:[40, 89, 34, 47, 43, 66] Processing Time: 200
 Batch10:index:[97, 78, 84, 7, 49, 9] Processing Time: 200
-Batch11:index:[76, 83, 90, 38, 29, 65, 5] Processing Time: 200
-Batch12:index:[88, 8, 23, 57, 39, 63, 96, 70] Processing Time: 200
-Batch13:index:[45, 22, 55, 56, 74, 85, 66, 93, 95, 36] Processing Time: 200
+Batch11:index:[76, 83, 90, 3, 29, 88, 10] Processing Time: 200
+Batch12:index:[8, 23, 57, 63, 96, 32, 45, 4] Processing Time: 200
+Batch13:index:[22, 56, 74, 79, 93, 95, 5, 41, 70, 44, 68] Processing Time: 200
 The last Batch
-index:[46, 69, 92, 19, 86, 62, 64, 13, 0, 67, 35, 98, 14] Processing Time: 90
+index:[46, 69, 19, 86, 62, 64, 36, 13, 0, 67, 35, 51, 98, 14] Processing Time: 90

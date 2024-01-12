@@ -1,6 +1,0 @@
-The num of Blocks: 2
-makespan: 500
-The jobs in each Block: 
-[16, 19, 11, 12, 13, 14, 15]
-[1, 17, 2, 18, 4, 5, 6, 7, 8, 10]
-leftJobs: [0, 3, 9]

@@ -1,23 +1,24 @@
 The num of Batches: 19
 makespan: 4378
-The jobs in each Block: 
-Column: [9, 7, 1, 0]processingTime=200}
-Column: [52, 29, 24, 6, 5]processingTime=200}
-Column: [68, 60, 55]processingTime=200}
-Column: [40, 37, 27, 22, 8]processingTime=200}
-Column: [76, 72, 70]processingTime=200}
-Column: [65, 62, 13]processingTime=200}
-Column: [78, 64, 49]processingTime=200}
-Column: [42, 33, 15, 14]processingTime=200}
-Column: [73, 54, 53, 16]processingTime=200}
-Column: [77, 59, 46, 43]processingTime=200}
-Column: [39, 32, 19, 18, 17]processingTime=200}
-Column: [11, 4, 3, 2]processingTime=200}
-Column: [63, 61, 41, 34]processingTime=200}
-Column: [79, 74, 20]processingTime=200}
-Column: [25, 21, 57]processingTime=200}
-Column: [50, 47, 10]processingTime=200}
-Column: [23, 28, 26, 69]processingTime=200}
-Column: [51, 44, 36]processingTime=200}
-Column: [56, 12, 31, 35, 75]processingTime=200}
-The last BatchColumn: [45, 30, 38, 48, 58, 67, 66, 71]processingTime=198}
+The jobs in each Batch 
+Batch0:index:[29, 26, 22, 18, 8] Processing Time: 200
+Batch1:index:[62, 42, 41, 34] Processing Time: 200
+Batch2:index:[73, 66, 38, 32, 27, 15] Processing Time: 200
+Batch3:index:[72, 23, 7] Processing Time: 200
+Batch4:index:[35, 11, 6, 1] Processing Time: 200
+Batch5:index:[59, 57, 52, 45, 43] Processing Time: 200
+Batch6:index:[78, 75, 58, 47] Processing Time: 200
+Batch7:index:[51, 13, 3] Processing Time: 200
+Batch8:index:[63, 46, 44, 19, 17] Processing Time: 200
+Batch9:index:[76, 67, 56, 49] Processing Time: 200
+Batch10:index:[74, 68, 50] Processing Time: 200
+Batch11:index:[77, 24, 20] Processing Time: 200
+Batch12:index:[39, 30, 12, 0] Processing Time: 200
+Batch13:index:[61, 31, 28] Processing Time: 200
+Batch14:index:[25, 14, 54] Processing Time: 200
+Batch15:index:[70, 21, 71, 69] Processing Time: 200
+Batch16:index:[2, 55, 40] Processing Time: 200
+Batch17:index:[16, 53, 48, 4] Processing Time: 200
+Batch18:index:[60, 65, 79, 9] Processing Time: 200
+The last Batch
+index:[5, 36, 10, 33, 37, 64] Processing Time: 198

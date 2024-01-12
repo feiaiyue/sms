@@ -1,22 +1,23 @@
 The num of Batches: 18
 makespan: 4050
-The jobs in each Block: 
-Column: [45, 12, 6, 4, 3, 2]processingTime=200}
-Column: [64, 60, 55, 54, 25, 16]processingTime=200}
-Column: [78, 77, 66]processingTime=200}
-Column: [63, 56, 11, 10]processingTime=200}
-Column: [52, 40, 18]processingTime=200}
-Column: [34, 28, 17]processingTime=200}
-Column: [62, 61, 57, 39]processingTime=200}
-Column: [76, 53, 47]processingTime=200}
-Column: [71, 70, 67]processingTime=200}
-Column: [49, 43, 36, 15, 7]processingTime=200}
-Column: [72, 51, 20]processingTime=200}
-Column: [68, 38, 31]processingTime=200}
-Column: [79, 74, 69, 65]processingTime=200}
-Column: [59, 50, 27, 22]processingTime=200}
-Column: [5, 19, 75]processingTime=200}
-Column: [23, 42, 14]processingTime=200}
-Column: [8, 73, 24, 1]processingTime=200}
-Column: [9, 46, 21, 33, 44, 48, 35, 37]processingTime=200}
-The last BatchColumn: [41, 13, 32, 30, 58, 0, 29, 26]processingTime=90}
+The jobs in each Batch 
+Batch0:index:[45, 12, 6, 4, 3, 2] Processing Time: 200
+Batch1:index:[69, 63, 57, 50, 38] Processing Time: 200
+Batch2:index:[54, 53, 17] Processing Time: 200
+Batch3:index:[76, 73, 7] Processing Time: 200
+Batch4:index:[72, 51, 20] Processing Time: 200
+Batch5:index:[65, 64, 39] Processing Time: 200
+Batch6:index:[78, 24, 19] Processing Time: 200
+Batch7:index:[71, 70, 40] Processing Time: 200
+Batch8:index:[27, 14, 13, 9, 5] Processing Time: 200
+Batch9:index:[66, 56, 31] Processing Time: 200
+Batch10:index:[75, 68, 46, 36, 59] Processing Time: 200
+Batch11:index:[52, 48, 42, 74] Processing Time: 200
+Batch12:index:[32, 22, 18, 44] Processing Time: 200
+Batch13:index:[23, 47, 21] Processing Time: 200
+Batch14:index:[8, 67, 34, 37] Processing Time: 200
+Batch15:index:[28, 10, 11, 26] Processing Time: 200
+Batch16:index:[15, 16, 77, 79, 58] Processing Time: 200
+Batch17:index:[62, 25, 33, 55, 35, 43, 60] Processing Time: 200
+The last Batch
+index:[61, 41, 1, 30, 49, 0, 29] Processing Time: 90

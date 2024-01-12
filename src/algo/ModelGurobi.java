@@ -4,13 +4,13 @@ import comn.Base;
 import comn.Param;
 import gurobi.*;
 
-import java.sql.ParameterMetaData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MILP {
+public class ModelGurobi {
     public double timeLimit;
-    public double timeCost;
+    public double timeOnModel;
+    public double timeOnOptimize;
     public Solution solution;
     public boolean feasible;
     public boolean optimal;
@@ -22,6 +22,7 @@ public class MILP {
     int t;
     GRBEnv env;
     GRBModel model;
+    GRBModel reducedModel;
     GRBVar[][] x;
     GRBVar[] b;
     GRBVar[] delta;
@@ -29,23 +30,18 @@ public class MILP {
     double M;
 
 
-    public MILP(Instance instance) {
+    public ModelGurobi(Instance instance) throws GRBException {
+        this.env = new GRBEnv();
         this.instance = instance;
         this.N = instance.nJobs;
         this.p = instance.p;
         this.T = instance.T;
         this.t = instance.t;
         this.solution = new Solution();
-
-        try {
-            formulate();
-        } catch (GRBException e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    public void formulate() throws GRBException {
-        env = new GRBEnv();
+    public void buildModel() throws GRBException {
+        long start = System.currentTimeMillis();
         model = new GRBModel(env);
 
         // create the decision variables
@@ -124,6 +120,7 @@ public class MILP {
         obj.addTerm(-1.0, maxslack);
         obj.addConstant(-t);
         model.setObjective(obj, GRB.MINIMIZE);
+        timeOnModel = 0.001 * (System.currentTimeMillis() - start);
         if (Param.debug) {
             model.write("sms_MILP_Model.lp");
         }
@@ -132,29 +129,25 @@ public class MILP {
     public void run(int timeLimit) {
         this.timeLimit = timeLimit;
         try {
-            if (timeLimit >= 0) {
-                model.set(GRB.DoubleParam.TimeLimit, timeLimit);
-                // env.set(GRB.DoubleParam.TimeLimit, timeLimit);
-            }
-            if (Param.nThreads > 0) {
-                // TODO: 2023/11/8 初始化为单线程为1
-                model.set(GRB.IntParam.Threads, Param.nThreads);
-            }
-            env.set(GRB.IntParam.Seed, Base.SEED);
             env.set(GRB.IntParam.OutputFlag, 0);
+            env.set(GRB.IntParam.Seed, Base.SEED);
+            env.set(GRB.IntParam.Threads, Param.nThreads);
             env.set(GRB.IntParam.LogToConsole, 0);
-
+            buildModel();
+            model.set(GRB.DoubleParam.TimeLimit, timeLimit);
+            // reducedModel = model.presolve();
             long start = System.currentTimeMillis();
             model.optimize();
+            timeOnOptimize = model.get(GRB.DoubleAttr.Runtime);
+
             if (model.get(GRB.IntAttr.Status) == GRB.Status.OPTIMAL) {
                 solution = getSolution();
                 feasible = solution.isFeasible(instance);
+                optimal = true;
             }
-            timeCost = Base.getTimeCost(start);
 
-            if (Param.algoName.startsWith("milp")) {
+            if (Param.debug == true) {
                 System.out.println(makeCsvItem());
-                System.out.println(solution.toString());
             }
         } catch (GRBException e) {
             throw new RuntimeException(e);
@@ -166,35 +159,40 @@ public class MILP {
         int indexMaxSlack = 0;
         // find the index of Block which offers maxSlack (not Block)
         for (int i = 0; i < N; i++) {
-            if (delta[i].get(GRB.DoubleAttr.X) == 1.0) {
+            if (Base.roundToInt(delta[i].get(GRB.DoubleAttr.X)) == 1.0) {
                 indexMaxSlack = i;
+                break;
             }
         }
         for (int i = 0; i < N; i++) {
             if (i == indexMaxSlack) {
                 continue;
             }
-            if (b[i].get(GRB.DoubleAttr.X) == 1.0) {
+            if (Base.roundToInt(b[i].get(GRB.DoubleAttr.X)) == 1.0) {
                 // solution.numOfBlocks++;
                 List<Integer> list = new ArrayList<>();
                 for (int j = 0; j < N; j++) {
-                    if (x[i][j].get(GRB.DoubleAttr.X) == 1.0) {
+                    if (Base.roundToInt(x[i][j].get(GRB.DoubleAttr.X)) == 1.0) {
                         list.add(j);
                     }
                 }
-                solution.columns.add((Column) list);
+                Column column = new Column(list);
+                for (int job : column) {
+                    column.processingTime += instance.p[job];
+                }
+                solution.add(column);
             }
 
         }
+        Column column = new Column();
+        solution.add(column);
         for (int j = 0; j < N; j++) {
-            if (x[indexMaxSlack][j].get(GRB.DoubleAttr.X) == 1.0) {
-                solution.leftJobs.add(j);
+            if (Base.roundToInt(x[indexMaxSlack][j].get(GRB.DoubleAttr.X)) == 1.0) {
+                solution.get(solution.size() - 1).add(j);
+                solution.get(solution.size() - 1).processingTime += instance.p[j];
             }
         }
-        solution.makespan = solution.columns.size() * (instance.T + instance.t);
-        for (Integer job : solution.leftJobs) {
-            solution.makespan += instance.p[job];
-        }
+        solution.computeMakespan(instance);
         return solution;
     }
 
@@ -205,22 +203,23 @@ public class MILP {
     }
 
     public String makeCsvItem() throws GRBException {
-        String str = Param.algoName + ","
-                + instance.instName + ","
-                + instance.nJobs + ","
-                + Param.algoName + ","
-                + timeLimit + ","
-                + feasible
-                + feasible + ", "
+        String str = instance.instName + ", "
+                + instance.nJobs + ", "
+                + Param.nThreads + ", "
                 + timeLimit + ", "
-                + String.format("%.3f", timeCost) + ", "
-                + (feasible ? Base.ceilToInt(model.get(GRB.DoubleAttr.ObjVal)) : "不可行") + ", "
+                + String.format("%.3f", timeOnModel + timeOnOptimize) + ", "
+                + feasible + ", "
+                + optimal + ", "
+                + (int)model.get(GRB.DoubleAttr.NodeCount) + ", "
+                + (feasible ? Base.ceilToInt(model.get(GRB.DoubleAttr.ObjVal)) : "infeasible") + ", "
                 + Base.ceilToInt(model.get(GRB.DoubleAttr.ObjBound)) + ", "
-                + model.get(GRB.IntAttr.Status) + ", "
+                + String.format("%.3f", 100 * model.get(GRB.DoubleAttr.MIPGap)) + " , "
+                + String.format("%.3f", timeOnModel) + ", "
+                + String.format("%.3f", timeOnOptimize) + ", "
                 + model.get(GRB.IntAttr.NumVars) + ", "
                 + model.get(GRB.IntAttr.NumConstrs) + ", "
-                + Param.nThreads;
-    return str;
+                + model.get(GRB.IntAttr.Status);
+        return str;
     }
 
 }

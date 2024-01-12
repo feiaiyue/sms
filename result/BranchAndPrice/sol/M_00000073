@@ -1,14 +1,15 @@
 The num of Batches: 10
 makespan: 2304
-The jobs in each Block: 
-Column: [36, 13, 2, 1, 0]processingTime=200}
-Column: [47, 32, 26, 20, 8]processingTime=200}
-Column: [48, 38, 34]processingTime=200}
-Column: [22, 15, 12, 11]processingTime=200}
-Column: [46, 33, 14]processingTime=200}
-Column: [43, 35, 24, 5]processingTime=200}
-Column: [42, 27, 23, 17]processingTime=200}
-Column: [44, 41, 39, 3]processingTime=200}
-Column: [45, 40, 30]processingTime=200}
-Column: [9, 28, 16, 10, 21, 49, 37]processingTime=200}
-The last BatchColumn: [29, 4, 25, 31, 19, 7, 18, 6]processingTime=104}
+The jobs in each Batch 
+Batch0:index:[25, 23, 5, 3] Processing Time: 200
+Batch1:index:[46, 42, 41, 33] Processing Time: 200
+Batch2:index:[22, 15, 12, 11] Processing Time: 200
+Batch3:index:[48, 38, 34] Processing Time: 200
+Batch4:index:[45, 28, 17] Processing Time: 200
+Batch5:index:[44, 29, 27, 24, 14] Processing Time: 200
+Batch6:index:[47, 39, 16, 13, 0] Processing Time: 200
+Batch7:index:[35, 8, 2] Processing Time: 200
+Batch8:index:[9, 30, 43, 18, 36] Processing Time: 200
+Batch9:index:[20, 40, 26, 1, 10] Processing Time: 200
+The last Batch
+index:[32, 4, 21, 31, 19, 7, 6, 49, 37] Processing Time: 104

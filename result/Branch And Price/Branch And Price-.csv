@@ -1,2 +1,0 @@
-instName, numOfJobs, algoName, timeLimit, feasible, optimal, globalUB, globalLB, gap, rootUB, rootLB, timeCost, timeOnRoot, timeOnCG, timeOnRMP, timeOnPP, numSolvedNodes, numPrunedByInfeasibility, numPrunedByOptimality, numPrunedByBound, numNodes, numLeftNodes, numNewLabel, numDominatedLabel, numPrunedLabel, timeOnLabelLb
-L_00000300, 70, Branch And Price, 3600, true, true, 1814.000, 1814.000, 0.000, 0.000, 1799.400, 36.291, 12.147, 35.697, 8.640, 26.964, 219, 1, 1, 207, 417,0,2193569,1872952,123171,1.5799999999999377,

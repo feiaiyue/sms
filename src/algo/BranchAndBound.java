@@ -16,13 +16,21 @@ public class BranchAndBound {
     // public long numNodes = 0; //
     Instance instance;
     int nJobs;
+
     ColumnGeneration columnGeneration;
+    Heuristics heuristics;
 
     double timeCost;
     double timeOnRoot;
     double timeOnCG;
+
     double timeOnRMP;
     double timeOnPP;
+    double timeOnHeuristic;
+
+    int cntRMPCall;
+    int cntPPCall;
+    int cntHeuristicCall;
 
 
     int numNodes;
@@ -32,6 +40,8 @@ public class BranchAndBound {
     int numLeftNodes;
     int numSolvedNodes;
 
+
+    double optimalGap = 1 - Base.EPS;
     double globalLB;
     double globalUB;
     double rootLB;
@@ -72,36 +82,55 @@ public class BranchAndBound {
      * （3）fractional：解为小数
      * （4）Integral：整数解
      */
-    public void run(long timeLimit) throws GRBException {
+    public void solve(long timeLimit) throws GRBException {
         this.timeLimit = timeLimit;
         this.start = System.currentTimeMillis();
         // branch and bound tree : Best Lower Bound-First search strategy, priority queue
         // tree is not defined in the class member which can implement different search strategies
-        PriorityQueue<Node> tree = new PriorityQueue<>(Comparator.comparing(node -> node.lbObj));
+        PriorityQueue<Node> tree = new PriorityQueue<>(Comparator.comparing(node -> node.lb));
+
         Node root = createRoot();
         tree.offer(root);
-        while (!tree.isEmpty()) {
-            if (timeIsOut()) {
-                break;
-            }
-            Node node = tree.poll();
+        int RHS = instance.T;
+        while (!tree.isEmpty() &&!timeIsOut() && !isOptimal()) {
+            Node node = tree.peek();
+            tree.poll();
+            // node.RHS = RHS;
             // in case globalUB is probably updated by other nodes
             if (isPrunedByBound(node)) {
                 continue;
             }
 
             solve(node);
+            String str = "=".repeat(30) + "solved node: " + node.nodeID + "=".repeat(30) + "\n";
+            str += "=".repeat(30) + "The branching information" + "=".repeat(30) + "\n";
+            str += node.getBranchInfo();
+            if (Param.debug) {
+                System.out.println(str);
+                System.out.println(node.lpSol.toString());
+            }
 
-            if (isPrunedByBound(node)) {
+            if (isPrunedByInfeasibility(node)) {
                 continue;
-            } else if (isPrunedByInfeasibility(node)) {
+            } else if (isPrunedByBound(node)) {
                 continue;
             } else if (isPrunedByOptimality(node)) {
-                if (node.lbObj + Base.EPS < globalUB) {
-                    globalUB = node.lbObj;
-                    // TODO: 2023/11/11 为什么incumbentSol不直接等于node.getIPSol(instance)
-                    Solution curSol = node.getIPSol(instance);
-                    incumbentSol.setSol(curSol);
+                if (node.lb + Base.EPS < globalUB) {
+                    incumbentSol.clear();
+                    incumbentSol = node.getIPSol(instance);
+                    // RHS = Math.min(incumbentSol.get(incumbentSol.size() - 1).processingTime, RHS);
+                    if (Param.debug) {
+                        System.out.println("=".repeat(30) + "RHS has been updated to:" + RHS + "=".repeat(30));
+                        String isIPSol = "=".repeat(30) + "node: " + node.nodeID + "'s solution is integral!" + "=".repeat(30);
+                        System.out.println(isIPSol);
+                    }
+                    incumbentSol.computeMakespan(instance);
+                    globalUB = incumbentSol.makespan;
+                    if (Param.debug) {
+                        System.out.println(incumbentSol.toString());
+                        System.out.println("bnp Integral to solve globalUB: " + globalUB );
+                    }
+
                 }
                 // determine it is root node by judging its has no parent
                 if (node.parent == null) {
@@ -109,41 +138,120 @@ public class BranchAndBound {
                 }
                 continue;
             }
-            // TODO: 2023/11/11 构造启发式算法
-            // Solution curSol = node.geneHeurSol(inst);
-            // timeOnHeur += node.timeOnHeur;
-            // if (ub > curSol.makespan + Param.EPS) {
-            //     // update primal bound and solution
-            //     ub = curSol.makespan;
-            //     incumSol.setSol(curSol);
-            //     if (node.parent == null) {
-            //         ub_root = ub;
-            //     }
-            // }
 
+
+            /**
+             * Heuristics to update globalUB based on Fractional solution
+             */
+            long s0 = System.currentTimeMillis();
+            Heuristics heuristics = new Heuristics(instance);
+            LPsol lPsol = node.lpSol;
+
+            Solution heuristicSol = heuristics.solve(lPsol.xColumns, lPsol.xValues);
+
+            timeOnHeuristic += 0.001 * (System.currentTimeMillis() - s0);
+            cntHeuristicCall++;
+
+            if (globalUB > heuristicSol.makespan + Base.EPS) {
+                // update primal bound and solution
+                globalUB = heuristicSol.makespan;
+                if (Param.debug) {
+                    System.out.println("globalUB has been updated by Heuristics: " + globalUB + " based on node: " + node.nodeID);
+                }
+                incumbentSol.clear();
+                for (Column column : heuristicSol) {
+                    incumbentSol.add(column);
+                }
+                incumbentSol.computeMakespan(instance);
+                // RHS = Math.min(incumbentSol.get(incumbentSol.size() - 1).processingTime, RHS);
+                // System.out.println("=".repeat(30) + "RHS has been updated to:" + RHS + "=".repeat(30));
+                if (node.parent == null) {
+                    rootUB = globalUB;
+                }
+            }
+
+            node.ubNumBlocks = Math.min(incumbentSol.size() - 1, node.ubNumBlocks);
+            // branch for fractional case
             ArrayList<Node> children = branch(node);
             for (Node child : children) {
                 tree.offer(child);
             }
+            // if (tree.peek() != null) {
+            //
+            // }
+            if (tree.peek() != null) {
+                globalLB = Math.max(globalLB, tree.peek().lb);
+            }
+            timeCost = Base.getTimeCost(start);
+            gap = 100 * (globalUB - globalLB) /globalUB;
+            String logNode = String.format("%3d  %4d  %s  %3d | %10f  %10f  %.2f%% | %.3f  %.3f  %.3f  %.3f  %.3f",
+                    tree.size(), numNodes - tree.size(), (node.status == NodeStatus.INFEASIBLE ? "Infeasible" : String.valueOf(String.format("%.2f", node.lb))), node.nodeID,
+                    globalLB, globalUB, gap,
+                    timeCost, timeOnRMP, timeOnPP, timeOnHeuristic, columnGeneration.pricing.timeLabelLb);
+
+            System.out.println(logNode);
+
+
         }
         if (tree.isEmpty()) {
             globalLB = globalUB;
+            String str = "tree is empty! " + "globalLB: " + globalLB;
+            if (Param.debug) {
+                System.out.println(str);
+            }
+
         } else {
-            globalLB = tree.peek().lbObj;
+            globalLB = Math.max(globalLB, tree.peek().lb);
             numLeftNodes = tree.size();
+            String str = "tree is not empty! " + "globalLB: " + globalLB;
+            if (Param.debug) {
+                System.out.println(str);
+            }
         }
-        // columnGeneration.end();
         timeCost = Base.getTimeCost(start);
         feasible = incumbentSol.isFeasible(instance);
         gap = 100 * (globalUB - globalLB) /globalUB;
         optimal = Base.equals(gap, 0);
-        String str = makeCSVItem();
+        String str = String.format("%-12s calls=%d \t time=%f \t avgTime=%f \t cols=%d \n",
+                "master:", cntRMPCall, timeOnRMP, (double)timeOnRMP / cntRMPCall, columnGeneration.master.columnPool.size());
+        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f " +
+                        "\t timeOnLB=%f \t avgTimeOnLB=%f \n",
+                "pricing:", cntPPCall, timeOnRMP, timeOnRMP / (double)cntPPCall,
+                columnGeneration.pricing.timeLabelLb, columnGeneration.pricing.timeLabelLb/ (double) cntPPCall);
+        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f \n",
+                "Heuristics:", cntHeuristicCall, timeOnHeuristic, (double)timeOnHeuristic / cntHeuristicCall);
+        str += "globalLB: " + globalLB + " globalUB: " + globalUB + "\n";
+        str += incumbentSol.toString();
         System.out.println(str);
 
     }
 
+
+
+
+    // public void solveRootNode() throws GRBException {
+    //     // heuristics to solve
+    //     incumbentSol = heuristics.solve(null, null);
+    //     incumbentSol.computeMakespan(instance);
+    //     System.out.println("The initial sol of the root node is : " + incumbentSol.isFeasible(instance));
+    //     globalUB = incumbentSol.makespan;
+    //     System.out.println("first ub: " + globalUB);
+    //
+    //     columnGeneration.master.addColumns(incumbentSol);
+    //
+    //     Node root = createRoot();
+    //
+    //     solve(root);
+    //
+    //
+    //
+    // }
     private boolean timeIsOut() {
-        return (timeLimit > 0 && Base.getTimeCost(start) > timeLimit);
+        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - start) > timeLimit);
+    }
+
+    private boolean isOptimal() {
+        return globalLB + optimalGap > globalUB;
     }
 
     /**
@@ -170,7 +278,7 @@ public class BranchAndBound {
     }
 
     private boolean isPrunedByBound(Node node) {
-        if (node.lbObj >= globalUB) {
+        if (node.lb + Base.EPS >= globalUB) {
             numPrunedByBound++;
             return true;
         }
@@ -198,13 +306,13 @@ public class BranchAndBound {
     private ColumnPool generateInitialPool() {
         ColumnPool initialPool = new ColumnPool();
         for (int i = 0; i < nJobs; i++) {
-            Column column = new Column();
+            Column column = new Column(instance);
             column.add(i);
-            column.makespan += instance.p[i];
-            incumbentSol.columns.add(column);
+            column.processingTime += instance.p[i];
+            incumbentSol.add(column);
             initialPool.add(column);
         }
-        incumbentSol.computeCost(instance);
+        incumbentSol.computeMakespan(instance);
         incumbentSol.isFeasible(instance);
         globalUB = Math.min(globalUB, incumbentSol.makespan);
         return initialPool;
@@ -217,24 +325,41 @@ public class BranchAndBound {
      * @throws GRBException
      */
     public void solve(Node node) throws GRBException {
+        String startStr = "=".repeat(30) + "solve node " + node.nodeID + " start" +
+                "=".repeat(30);
+        if (Param.debug) {
+            // System.out.println(startStr);
+        }
+
         long s0 = System.currentTimeMillis();
+
         if (node.parent == null) { // root node
             ColumnPool initialPool = generateInitialPool();
-            columnGeneration.solve(node, initialPool);
+            columnGeneration.master.addColumnsWithoutCheck(initialPool);
+            columnGeneration.solve(node);
             timeOnRoot += Base.getTimeCost(s0);
-            rootLB = node.lbObj;
+            rootLB = node.lb;
         } else {
             columnGeneration.solve(node);
         }
+
         node.timeCost = Base.getTimeCost(s0);
         timeOnCG += node.timeCost;
         timeOnRMP += node.timeOnRMPAddColumns;
         timeOnRMP += node.timeOnRMPSolve;
         timeOnPP += node.timeOnPP;
+        cntRMPCall += node.cntRMPCall;
+        cntPPCall += node.cntPPCall;
         numSolvedNodes++;
+
+
+        String endStr = "=".repeat(30) + "solve node " + node.nodeID + " end" +
+                "=".repeat(30);
         if (Param.debug) {
-            System.out.println("node " + node.nodeID + "has been solved: " + node.toString());
+            // System.out.println(endStr);
         }
+
+
 
 
         // boolean feasible = columnGeneration.solve(node);
@@ -293,6 +418,28 @@ public class BranchAndBound {
             Node right = new Node(parent, ++numNodes, v + 1, parent.ubNumBlocks); // >= v + 1
             children.add(left);
             children.add(right);
+        } else if (parent.lbNumBlocks == parent.ubNumBlocks) {
+            int yNearestIndex = -1; // the index of y nearest to 0.5
+            double minDeviation = 1;
+            for (int i = 0; i < parent.lpSol.leftJobs.size(); i++) {
+                double yValue = parent.lpSol.yValues.get(i);
+                if (!Base.isInt(yValue)) {
+                    double dev = Math.abs(yValue - 0.5);
+                    if (dev < minDeviation) {
+                        minDeviation = dev;
+                        yNearestIndex = parent.lpSol.leftJobs.get(i);
+                    }
+                }
+            }
+            if (Param.debug) {
+                assert (yNearestIndex != -1);
+            }
+            if (yNearestIndex != -1) {
+                Node left = new Node(parent, ++numNodes, yNearestIndex, true); // y_index = 0
+                Node right = new Node(parent, ++numNodes, yNearestIndex, false); // y_index = 1
+                children.add(left);
+                children.add(right);
+            }
         } else {
             int a = -1;
             int b = -1;
@@ -337,25 +484,27 @@ public class BranchAndBound {
 
 
     public String makeCSVItem() {
-        String str = instance.instName + ", "
-                + instance.nJobs + ", "
-                + Param.algoName + ", "
-                + timeLimit + ", "
-                + feasible + ", "
-                + optimal + ", "
-                + String.format("%.3f, %.3f, %.3f, %.3f, %.3f", globalUB, globalLB, gap, rootUB, rootLB) + ", "
-                // + ub + ", "
-                // + lb + ", "
-                // + gap + ", "
-                // + ub_root + ", "
-                // + lb_root + ", "
-                + String.format("%.3f, %.3f, %.3f, %.3f, %.3f", timeCost, timeOnRoot, timeOnCG, timeOnRMP, timeOnPP) + ", "
-                + numSolvedNodes + ", "
-                + numPrunedByInfeasibility + ", "
-                + numPrunedByOptimality+ ", "
-                + numPrunedByBound + ", "
-                + numNodes + ", "
-                + numLeftNodes;
+        String str = instance.instName + ","
+                + instance.nJobs + ","
+                + Param.nThreads + ","
+                + timeLimit + ","
+                + String.format("%.3f", timeCost) + ","
+                + feasible + ","
+                + optimal + ","
+                + numNodes + ","
+                + String.format("%.3f, %.3f, %.3f, %.3f, %.3f", globalUB, globalLB, gap, rootUB, rootLB) + ","
+                + String.format("%.3f, %.3f, %.3f, %.3f, %.3f", timeOnRoot, timeOnCG, timeOnRMP, timeOnPP, timeOnHeuristic) + ","
+                + String.format("%d, %d, %d", cntRMPCall, cntPPCall, cntHeuristicCall) + ","
+                + numSolvedNodes + ","
+                + numPrunedByInfeasibility + ","
+                + numPrunedByOptimality+ ","
+                + numPrunedByBound + ","
+                + numLeftNodes + ","
+                + columnGeneration.pricing.numNewLabel + ","
+                + columnGeneration.pricing.numPrunedLabel + ","
+                + columnGeneration.pricing.numDominatedLabel + ","
+                + columnGeneration.pricing.timeLabelLb
+                ;
         return str;
     }
 }

@@ -1,9 +1,9 @@
 package algo;
 
 import comn.Base;
+import comn.Param;
 
-import java.util.Arrays;
-import java.util.BitSet;
+import java.util.*;
 
 
 enum NodeStatus {
@@ -14,53 +14,108 @@ enum NodeStatus {
 }
 
 public class Node {
-    public long nodeID;
-    public Node parent;
-
     public int nJobs;
+
+    public Node parent;
+    public long nodeID;
+
     public int lbNumBlocks; // sum of Blocks >= lbNumBlocks
     public int ubNumBlocks; // sum of Blocks <= ubNumBlocks
+    // public int RHS;
 
-    public int[][] andItems; //  andItems[i] 代表可以索引到与i放在一起的item j 也包括i
-    public boolean[][] orItems;  // item i和 item j不放在一起
-    public BitSet removedItems; // removed[i] 代表 job i 不会再参与之后的分支，i已经被合并到别的里面去了
+    public ArrayList<Integer> yZero;
+    public ArrayList<Integer> yOne;
+
+    public int[][] andItems; //  andItems[i] 代表可以索引到与job i 放在一起的job j 也包括 i
+    public boolean[][] orItems;  // job i和 job j不放在一起
+    public BitSet removedItems; // removed[i] 代表 job i 不会再参与之后的分支，i 已经被合并到别的里面去了
 
     public NodeStatus status;
     public LPsol lpSol;
-    public double lbObj;
+    public double lb;
+
     public String branchInfo;
 
     double timeCost;
     double timeOnRMPAddColumns;
     double timeOnRMPSolve;
+    int cntRMPCall;
     double timeOnPP;
+    int cntPPCall;
+
     int iter;
 
-    public Node(Node parent, long nodeID, int lbNumOfBlocks, int ubNumOfBlocks) {
+    public Node(Node parent, long nodeID, int yIndex, boolean ySetZero) {
+        this.nJobs = parent.nJobs;
+
         this.parent = parent;
         this.nodeID = nodeID;
-        this.lbNumBlocks = lbNumOfBlocks;
-        this.ubNumBlocks = ubNumOfBlocks;
-        this.status = NodeStatus.UNSOLVED;
-        this.nJobs = parent.nJobs;
+
+        this.lbNumBlocks = parent.lbNumBlocks;
+        this.ubNumBlocks = parent.ubNumBlocks;
+
+        this.yZero = (ArrayList) parent.yZero.clone();
+        this.yOne = (ArrayList) parent.yOne.clone();
+        if (ySetZero && !yZero.contains(yIndex)) {
+            this.yZero.add(yIndex);
+        } else if (!ySetZero && !yOne.contains(yIndex)){
+            this.yOne.add(yIndex);
+        }
+
         this.andItems = new int[nJobs][];
-        this.orItems = new boolean[nJobs][nJobs];
-        this.lbObj = parent.lbObj;
         for (int i = 0; i < nJobs; i++) {
             andItems[i] = parent.andItems[i].clone();
         }
-        // TODO: 2023/11/8 思考如何优化内存，是否可以采用不clone（这种情况可以不用clone，会影响时间） 为何使用clone。子节点会引起父节点的变化。
+
+        this.orItems = new boolean[nJobs][nJobs];
+        Base.copyTo(parent.orItems, orItems);
+
+        removedItems = (BitSet) parent.removedItems.clone();
+
+        this.status = NodeStatus.UNSOLVED;
+        this.lpSol = new LPsol();
+        this.lb = parent.lb;
+    }
+
+    public Node(Node parent, long nodeID, int lbNumOfBlocks, int ubNumOfBlocks) {
+        this.nJobs = parent.nJobs;
+        this.parent = parent;
+        this.nodeID = nodeID;
+
+        this.lbNumBlocks = lbNumOfBlocks;
+        this.ubNumBlocks = ubNumOfBlocks;
+
+        this.yZero = (ArrayList<Integer>) parent.yZero.clone();
+        this.yOne = (ArrayList<Integer>) parent.yOne.clone();
+
+        this.andItems = new int[nJobs][];
+        for (int i = 0; i < nJobs; i++) {
+            andItems[i] = parent.andItems[i].clone();
+        }
+        /**
+         * 二维数组 为什么没有使用clone而是使用了System.arraycopy
+         */
+        this.orItems = new boolean[nJobs][nJobs];
         Base.copyTo(parent.orItems, orItems);
         removedItems = (BitSet) parent.removedItems.clone();
-        branchInfo = "numOfBlocks " + "lbNumOfBlocks: " + lbNumOfBlocks + " ubNumOfBlocks :" + ubNumOfBlocks;
+
+        this.status = NodeStatus.UNSOLVED;
+        this.lpSol = new LPsol();
+        this.lb = parent.lb;
     }
 
     public Node(Node parent, long nodeID, int a, int b, boolean anb) {
         this.nJobs = parent.andItems.length;
+
         this.parent = parent;
         this.nodeID = nodeID;
+
         this.lbNumBlocks = parent.lbNumBlocks;
         this.ubNumBlocks = parent.ubNumBlocks;
+
+        this.yZero = parent.yZero;
+        this.yOne = parent.yOne;
+
         this.andItems = new int[nJobs][];
         this.orItems = new boolean[nJobs][nJobs];
         for (int i = 0; i < nJobs; i++) {
@@ -69,8 +124,14 @@ public class Node {
         Base.copyTo(parent.orItems, orItems);
         // removed[i] 表示 item i 不参与分支
         removedItems = (BitSet) parent.removedItems.clone();
-        this.lbObj = parent.lbObj;
 
+
+
+        if (Param.debug) {
+            assert (a < b); // ensure a < b
+            assert (!parent.removedItems.get(a));
+            assert (!parent.removedItems.get(b));
+        }
 
         if (anb) { // if item a and item b are packed in the same Block
             andItems[a] = Base.mergeSort(parent.andItems[a], parent.andItems[b]);
@@ -83,25 +144,40 @@ public class Node {
         } else {
             orItems[a][b] = orItems[b][a] = true;
         }
-        this.status = NodeStatus.UNSOLVED;
-        branchInfo = a + (anb ? " And " : " Or ") + b;
 
+        this.lpSol = new LPsol();
+        this.lb = parent.lb;
+        this.status = NodeStatus.UNSOLVED;
     }
 
     public Node(long nodeID, Node parent, int nJobs, int lbNumBlocks, int ubNumBlocks,
                 int[][] andItems, boolean[][] orItems, BitSet removedItems) {
+        this.nJobs = nJobs;
         this.nodeID = nodeID;
         this.parent = parent;
-        this.nJobs = nJobs;
+
         this.lbNumBlocks = lbNumBlocks;
         this.ubNumBlocks = ubNumBlocks;
+
+        this.yZero = new ArrayList<>();
+        this.yOne = new ArrayList<>();
+
         this.andItems = andItems;
         this.orItems = orItems;
         this.removedItems = removedItems;
+
+        this.lpSol = new LPsol();
+        this.status = NodeStatus.UNSOLVED;
+
     }
 
-    // due to node store the information of branching conflict
-    // whether the column is valid or not
+
+    /**
+     * Check whether the given column satisfies the requirements of the node's branching information
+     *
+     * @param column the column to be checked against the node's branching information(1.y_i 2. (a,b))
+     * @return True if the column meets the demand of node's branching information
+     */
     public boolean isValid(Column column) {
         for (int i = 0; i < andItems.length; i++) {
             if (removedItems.get(i) == true) {
@@ -123,21 +199,30 @@ public class Node {
                 }
             }
         }
+        for (int index : yOne) {
+            if (column.contains(index)) {
+                return false;
+            }
+        }
         return true;
     }
 
     // if node.lPsol is Integral ==> lPsol - > Solution
     public Solution getIPSol(Instance instance) {
         Solution solution = new Solution();
-        for (int i = 0; i < lpSol.nums.size(); i++) {
-            if (Base.equals(lpSol.nums.get(i), 1)) {
-                solution.columns.add(lpSol.columns.get(i));
+        for (int i = 0; i < lpSol.xValues.size(); i++) {
+            if (Base.equals(lpSol.xValues.get(i), 1)) {
+                solution.add(lpSol.xColumns.get(i));
             }
         }
-        solution.leftJobs = lpSol.leftJobs;
-        solution.computeCost(instance);
+        solution.add(new Column(lpSol.leftJobs));
+        solution.get(solution.size() - 1).processingTime = (int) lpSol.leftJobsProcessingTime;
+        solution.computeMakespan(instance);
         return solution;
     }
+
+
+
 
     String getStatusString() {
         switch (status) {
@@ -153,6 +238,42 @@ public class Node {
         }
     }
 
+    public String getBranchInfo() {
+        StringBuilder b = new StringBuilder();
+        b.append(lbNumBlocks).append("<= the num of Batches <=").append(ubNumBlocks).append("\n");
+        b.append("yZero: ").append(yZero).append("\n");
+        b.append("yOne: ").append(yOne).append("\n");
+        b.append("And Jobs: ").append("\n");
+        for (int[] a : andItems) {
+            if (removedItems.get(a[0])) {
+                continue;
+            }
+            if (a.length > 1) {
+                b.append(Arrays.toString(a) + "\t");
+            }
+        }
+        b.append("\n");
+        b.append("Conflict Jobs: ").append("\n");
+        for (int i = 0; i < orItems.length; i++) {
+            for (int j = i + 1; j < orItems[i].length; j++) {
+                if (orItems[i][j]) {
+                    b.append("[" + i + ", " + j + "]" + "\t");
+                }
+            }
+        }
+        return b.toString();
+    }
+
+    public boolean checkLPSolution() {
+        for (Column column : lpSol.xColumns) {
+            if (!column.isFeasible(this.lpSol.instance, this)) {
+                System.err.println("node: " + nodeID + "'s lpSol is not valid" + column.toString());
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         return "Node{" +
@@ -166,7 +287,7 @@ public class Node {
                 // ", removedItems=" + removedItems +
                 ", status=" + getStatusString() +
                 // ", lpSol=" + lpSol +
-                ", lbObj=" + lbObj +
+                ", lbObj=" + lb +
                 ", branchInfo='" + branchInfo + '\'' +
                 ", timeCost=" + timeCost +
                 ", timeOnRMPAddColumns=" + timeOnRMPAddColumns +

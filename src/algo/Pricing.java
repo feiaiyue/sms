@@ -115,7 +115,7 @@ public class Pricing {
         for (int i = 0; i < nJobs; i++) {
             if (z[i].get(GRB.DoubleAttr.X) == 1.0) {
                 column.add(i);
-                column.makespan += instance.p[i];
+                column.processingTime += instance.p[i];
             }
         }
         // System.out.println("(不一定加入到结果里去）新生成的列为" + jobs);

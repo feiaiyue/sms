@@ -1,5 +1,5 @@
 The num of Batches: 11
-makespan: 2522
+makespan: 2522.0
 The jobs in each Batch 
 Batch0:index:[96, 91, 85, 76, 59, 31, 25, 23, 21, 16] Processing Time: 200
 Batch1:index:[86, 77, 46, 28, 19] Processing Time: 200

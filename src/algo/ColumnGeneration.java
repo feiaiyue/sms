@@ -1,10 +1,9 @@
 package algo;
 
+import comn.Base;
 import comn.Param;
 import gurobi.GRBException;
 
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -16,34 +15,33 @@ public class ColumnGeneration {
     Master master;
     // Pricing pricing;
     PricingLabelSetting pricing;
+    double[] duals;
+
+    long start;
+    long timeLimit;
+
 
     public ColumnGeneration(Instance instance) throws GRBException {
         this.instance = instance;
         this.nJobs = instance.nJobs;
         this.master = new Master(instance);
         this.pricing = new PricingLabelSetting(instance);
+        this.duals = new double[nJobs + 3];
     }
 
-    void solve(Node node, ColumnPool pool) {
-        try {
-            master.addColumns(pool);
-            solve(node);
-        } catch (GRBException e) {
-            throw new RuntimeException(e);
-        }
 
-    }
-
-    public void solve(Node node) throws GRBException {
-        String str = "--------------------------------------------------------------" + "\n";
-        str += "node: " + node.nodeID + "\n";
-        double[] duals;
+    public boolean solve(Node node) throws GRBException {
+        // String str = "-".repeat(30) + "Column Generation to solve node :"+node.nodeID + "-".repeat(30) + "\n";
+        // System.out.println(str);
         master.set(node);
         pricing.set(node);
-        master.solve();
+        if (!master.solve()) {
+            return false;
+        }
+
         duals = master.getDualValues();
         pricing.solve(duals);
-
+        // System.out.println("initial pricing problem has been solved");
         if (Param.debug) {
             // Column optimal_instance50 = new Column();
             // optimal_instance50.addAll(Set.of(1, 2, 3, 5, 6, 7, 8, 10, 11, 13, 15, 17, 19));
@@ -57,18 +55,50 @@ public class ColumnGeneration {
 
 
         }
+        long start = System.currentTimeMillis();
+        if (node.parent == null) {
+            System.out.println("=".repeat(30) + "solve root node" + "=".repeat(30));
+        }
         while (pricing.findNewColumns()) {
+            // System.out.println(pricing.newColumns.toString());
             master.addColumns(pricing.newColumns);
             master.solve();
+            /**
+             * print the iteration information of root node
+             */
+            if (node.parent == null) {
+                System.out.println("master : objVal = " + String.format("%.8f", master.getObjValue()) +
+                        "  colSize = " + master.columnPool.size() +
+                        "  time = " + String.format("%.3f", 0.001 * (System.currentTimeMillis() - start)));
+
+            }
             duals = master.getDualValues();
             pricing.solve(duals);
         }
-        // TODO: 2023/11/12 是不是应该先判断完是否可行，再更新node的值
-        node.lpSol = master.getLPSol();
-        node.lbObj = node.lpSol.objVal;
+
+
+        /**
+         * Firstly, check whether the Primal Model is feasible
+         * and then update the status of Node
+         */
         if (master.isPrimalModelFeasible()) {
-            LPsol sol = master.getLPSol();
-            if (sol.isIntegral()) {
+            node.lpSol = master.getLPSol();
+            node.lb = Base.ceilToInt(node.lpSol.objVal);
+            if (Param.debug) {
+                node.checkLPSolution();
+            }
+
+            // if (Param.debug) {
+            //     System.out.println("nodeID: " + node.nodeID);
+            //
+            //     // System.out.println(master.getVarNames());
+            //     System.out.println(master.getPositiveVarNameAndValue());
+            //     // System.out.println(node.lpSol.toString());
+            //     System.out.println("node: " + node.nodeID + "'lb: " + node.lb);
+            //
+            // }
+
+            if (node.lpSol.isIntegral()) {
                 node.status = NodeStatus.INTEGRAL;
             } else {
                 node.status = NodeStatus.FRACTIONAL;
@@ -76,6 +106,14 @@ public class ColumnGeneration {
         } else {
             node.status = NodeStatus.INFEASIBLE;
         }
+
+
+        return true;
+
+    }
+
+    private boolean timeisOut() {
+        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - start) > timeLimit);
 
     }
 

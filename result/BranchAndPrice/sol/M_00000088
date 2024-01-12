@@ -1,24 +1,25 @@
 The num of Batches: 20
 makespan: 4443
-The jobs in each Block: 
-Column: [73, 63, 38, 36]processingTime=200}
-Column: [68, 54, 52]processingTime=200}
-Column: [78, 77, 74, 62]processingTime=200}
-Column: [48, 27, 25, 19, 16]processingTime=200}
-Column: [75, 43, 41]processingTime=200}
-Column: [59, 47, 44, 42]processingTime=200}
-Column: [35, 33, 3]processingTime=200}
-Column: [79, 70, 40, 37]processingTime=200}
-Column: [64, 24, 21]processingTime=200}
-Column: [30, 17, 15, 10, 11]processingTime=200}
-Column: [76, 66, 58, 39]processingTime=200}
-Column: [28, 13, 2, 60]processingTime=200}
-Column: [34, 22, 8, 46]processingTime=200}
-Column: [32, 31, 29, 18]processingTime=200}
-Column: [65, 57, 26]processingTime=200}
-Column: [69, 1, 0]processingTime=200}
-Column: [49, 56, 55]processingTime=200}
-Column: [4, 9, 71]processingTime=200}
-Column: [12, 23, 67, 6, 7]processingTime=200}
-Column: [45, 61, 72, 14, 51, 50]processingTime=200}
-The last BatchColumn: [53, 5, 20]processingTime=43}
+The jobs in each Batch 
+Batch0:index:[74, 69, 60] Processing Time: 200
+Batch1:index:[66, 63, 56, 41] Processing Time: 200
+Batch2:index:[79, 50, 25, 15, 14, 9] Processing Time: 200
+Batch3:index:[72, 68, 28, 6] Processing Time: 200
+Batch4:index:[73, 49, 26] Processing Time: 200
+Batch5:index:[36, 34, 30, 18] Processing Time: 200
+Batch6:index:[38, 32, 10] Processing Time: 200
+Batch7:index:[75, 33, 22] Processing Time: 200
+Batch8:index:[76, 44, 24] Processing Time: 200
+Batch9:index:[71, 67, 13, 11] Processing Time: 200
+Batch10:index:[12, 2, 21] Processing Time: 200
+Batch11:index:[43, 37, 19, 17, 40] Processing Time: 200
+Batch12:index:[46, 3, 4] Processing Time: 200
+Batch13:index:[57, 29, 27, 23] Processing Time: 200
+Batch14:index:[65, 31, 16] Processing Time: 200
+Batch15:index:[42, 52, 7] Processing Time: 200
+Batch16:index:[62, 8, 5, 47] Processing Time: 200
+Batch17:index:[39, 64, 58, 20] Processing Time: 200
+Batch18:index:[0, 1, 45, 59] Processing Time: 200
+Batch19:index:[61, 77, 35, 48, 55, 51] Processing Time: 200
+The last Batch
+index:[53, 70, 78, 54] Processing Time: 43

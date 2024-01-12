@@ -1,4 +1,9 @@
-The num of Blocks: 0
-makespan: 0
-The jobs in each Block: 
-leftJobs: []
+The num of Batches: 4
+makespan: 1005.0
+The jobs in each Batch 
+Batch0:index:[35, 34, 32, 28, 27, 26, 24, 5, 2] Processing Time: 200
+Batch1:index:[11, 20, 37, 29, 39] Processing Time: 200
+Batch2:index:[10, 25, 14, 30, 38, 16] Processing Time: 200
+Batch3:index:[9, 22, 6, 3, 12, 31, 4, 8, 33] Processing Time: 200
+The last Batch
+index:[21, 23, 7, 17, 0, 18, 19, 1, 15, 13, 36] Processing Time: 125

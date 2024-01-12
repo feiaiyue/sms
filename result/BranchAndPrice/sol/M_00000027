@@ -1,8 +1,9 @@
 The num of Batches: 4
 makespan: 967
-The jobs in each Block: 
-Column: [14, 8, 7]processingTime=200}
-Column: [15, 12, 17, 1]processingTime=200}
-Column: [19, 13, 6, 2]processingTime=200}
-Column: [0, 3, 11, 16]processingTime=200}
-The last BatchColumn: [9, 4, 5, 10, 18]processingTime=87}
+The jobs in each Batch 
+Batch0:index:[11, 9, 6, 3] Processing Time: 200
+Batch1:index:[14, 8, 0] Processing Time: 200
+Batch2:index:[15, 12, 17, 1] Processing Time: 200
+Batch3:index:[19, 13, 16, 5, 18, 2] Processing Time: 200
+The last Batch
+index:[7, 4, 10] Processing Time: 87
