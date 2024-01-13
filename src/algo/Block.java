@@ -8,26 +8,36 @@ import java.util.*;
 /**
  * Column represent the job indexes in a Block/Batch/Column
  */
-public class Column extends ArrayList<Integer> {
+public class Block extends ArrayList<Integer> {
     // public Instance instance;
     public int processingTime;
 
 
 
-    public Column() {
+    public Block() {
         processingTime = 0;
     }
 
-    public Column(Column column) {
-        super(column);
+    public Block(Block block) {
+        super(block);
 
-        this.processingTime = column.processingTime;
+        this.processingTime = block.processingTime;
     }
 
-    public Column(List<Integer> list) {
+    public Block(List<Integer> list) {
         super(list);
         this.processingTime = 0;
 
+    }
+
+    public void add(int j, Instance inst) {
+        add(j);
+        processingTime += inst.p[j];
+    }
+
+    public void remove(int j, Instance inst) {
+        remove(j);
+        processingTime -= inst.p[j];
     }
 
 
@@ -40,10 +50,10 @@ public class Column extends ArrayList<Integer> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Column column = (Column) o;
+        Block block = (Block) o;
         // 这两种方式都可以作为比较里面的元素是否都相同，第二种方式需要双方都containsAll
         // return new HashSet<>(this).equals(new HashSet<>(column));
-        return this.containsAll(column) && column.containsAll(this);
+        return this.containsAll(block) && block.containsAll(this);
     }
 
     @Override
@@ -86,7 +96,7 @@ public class Column extends ArrayList<Integer> {
     public boolean isFeasible(Instance instance, Node node) {
         // check feasibility with node branching constraints
         boolean feasible = true;
-        for (int[] and : node.andItems) {
+        for (int[] and : node.andJobs) {
             if (and.length > 1) {
                 int count = 0;
                 for (int j : and) {
@@ -100,9 +110,9 @@ public class Column extends ArrayList<Integer> {
                 }
             }
         }
-        for (int i = 0; i < node.orItems.length; i++) {
-            for (int j = i + 1; j < node.orItems[i].length; j++) {
-                if (node.orItems[i][j] && this.contains(i) && this.contains(j)) {
+        for (int i = 0; i < node.orJobs.length; i++) {
+            for (int j = i + 1; j < node.orJobs[i].length; j++) {
+                if (node.orJobs[i][j] && this.contains(i) && this.contains(j)) {
                     feasible = false;
                     System.err.println("Error : the column is in feasible by orItems in branching constraints");
                 }

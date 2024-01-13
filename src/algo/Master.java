@@ -122,10 +122,10 @@ public class Master {
          * set the columns in columnPool 0/1 according to the branch(and - or) information
          */
         for (int i = 0; i < columnPool.size(); i++) {
-            Column column = columnPool.get(i);
+            Block block = columnPool.get(i);
             // x should be restored to its original value theoretically
             // but through the judgement of validity of this column, x will achieve the same effect
-            if (!node.isValid(column)) {
+            if (!node.isValid(block)) {
                 x.get(i).set(GRB.DoubleAttr.LB, 0);
                 x.get(i).set(GRB.DoubleAttr.UB, 0);
             } else {
@@ -136,22 +136,22 @@ public class Master {
 
     }
 
-    public void addColumns(ArrayList<Column> columns) throws GRBException {
+    public void addColumns(ArrayList<Block> blocks) throws GRBException {
         long s0 = System.currentTimeMillis();
         if (Param.debug) {
             double[] dual = getDualValues();
-            for (Column column : columns) {
+            for (Block block : blocks) {
                 boolean feasible = true;
-                int index = columnPool.indexOf(column);
+                int index = columnPool.indexOf(block);
                 if (index > -1) {
-                    double rc1 = column.calculateReducedCost(instance, dual);
+                    double rc1 = block.calculateReducedCost(instance, dual);
                     GRBVar var = x.get(index);
                     // 不知道是怎么计算的，但是可以计算出来？？
                     double rc2 = var.get(GRB.DoubleAttr.RC);
                     double ub = var.get(GRB.DoubleAttr.UB);
 
 
-                    System.err.println("RMP.addColumns():column existed!" + column + "\t" + "rc1: " + rc1 + "\t" +
+                    System.err.println("RMP.addColumns():column existed!" + block + "\t" + "rc1: " + rc1 + "\t" +
                             "rc2: " + rc2 + "\t" + "ub: " + ub + "\t" +
                             instance.instName + "dual: " + Arrays.toString(dual) + "dual[22]");
                     if (ub == 0) {
@@ -160,7 +160,7 @@ public class Master {
                     Gson g = new Gson();
                     String json_node = g.toJson(node);
                     String json_dual = g.toJson(dual);
-                    String json_column = g.toJson(column);
+                    String json_column = g.toJson(block);
                     feasible = false;
                 }
                 if (!feasible) {
@@ -170,9 +170,9 @@ public class Master {
             }
         }
 
-        for (Column column : columns) {
+        for (Block block : blocks) {
             double[] coeffs = new double[numJobs + 3];
-            for (int job : column) {
+            for (int job : block) {
                 coeffs[job] = 1;
             }
             coeffs[numJobs] = 0;
@@ -181,19 +181,19 @@ public class Master {
             x.add(model.addVar(0.0, GRB.INFINITY, instance.T + instance.t, GRB.CONTINUOUS,
                     constraints, coeffs, "x_" + (nVar + 1)));
             model.update();
-            columnPool.add(column);
+            columnPool.add(block);
             nVar++;
             timeOnRMPAddColumns = Base.getTimeCost(s0);
         }
     }
 
 
-    public void addColumnsWithoutCheck(ArrayList<Column> columns) throws GRBException {
+    public void addColumnsWithoutCheck(ArrayList<Block> blocks) throws GRBException {
         long s0 = System.currentTimeMillis();
 
-        for (Column column : columns) {
+        for (Block block : blocks) {
             double[] coeffs = new double[numJobs + 3];
-            for (int job : column) {
+            for (int job : block) {
                 coeffs[job] = 1;
             }
             coeffs[numJobs] = 0;
@@ -202,7 +202,7 @@ public class Master {
             x.add(model.addVar(0.0, GRB.INFINITY, instance.T + instance.t, GRB.CONTINUOUS,
                     constraints, coeffs, "x_" + (nVar + 1)));
             model.update();
-            columnPool.add(column);
+            columnPool.add(block);
 
             nVar++;
             timeOnRMPAddColumns = Base.getTimeCost(s0);
@@ -284,7 +284,7 @@ public class Master {
             // columns whose value > 0 can be added in the lPsol
             // not all columns in columnPool need be added;
             if (num > Base.EPS) {
-                lPsol.xColumns.add(columnPool.get(i));
+                lPsol.xBlocks.add(columnPool.get(i));
                 lPsol.xValues.add(num);
             }
         }

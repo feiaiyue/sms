@@ -3,7 +3,7 @@ package algo;
 import java.util.ArrayList;
 
 public class LPsol {
-    public ArrayList<Column> xColumns;
+    public ArrayList<Block> xBlocks;
     public ArrayList<Double> xValues;
 
     public ArrayList<Integer> leftJobs;
@@ -14,7 +14,7 @@ public class LPsol {
     public Instance instance;
 
     public LPsol() {
-        this.xColumns = new ArrayList<>();
+        this.xBlocks = new ArrayList<>();
         this.xValues = new ArrayList<>();
         this.leftJobs = new ArrayList<>();
         this.yValues = new ArrayList<>();
@@ -40,13 +40,13 @@ public class LPsol {
 
     public double getNumOfVisits(int i, int k) {
         double sum = 0;
-        for (int j = 0; j < xColumns.size(); j++) {
+        for (int j = 0; j < xBlocks.size(); j++) {
             int a_ij = 0;
-            if (xColumns.get(j).contains(i)) {
+            if (xBlocks.get(j).contains(i)) {
                 a_ij = 1;
             }
             int a_kj = 0;
-            if (xColumns.get(j).contains(k)) {
+            if (xBlocks.get(j).contains(k)) {
                 a_kj = 1;
             }
             double x_j = xValues.get(j);
@@ -75,9 +75,9 @@ public class LPsol {
         sb.append("The num of Batches: ").append(numOfBatches).append("\n");
         sb.append("makespan: ").append(objVal).append("\n");
         sb.append("The jobs in each Batch: ").append("\n");
-        for (int i = 0; i < xColumns.size(); i++) {
+        for (int i = 0; i < xBlocks.size(); i++) {
             sb.append("Batch" + i + ":");
-            sb.append(xColumns.get(i)).append(" ");
+            sb.append(xBlocks.get(i)).append(" ");
             sb.append("num:");
             sb.append(xValues.get(i)).append("\n");
         }

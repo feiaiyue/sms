@@ -16,17 +16,17 @@ public class Heuristics {
 
     /**
      *
-     * @param column
+     * @param block
      * @param a remove a
      * @param b remove b
      * @return after exchange operator, whether column's processing time fulfill the constraint
      */
-    public boolean exchangeFeasible(Column column, int a, int b) {
-        return (column.processingTime - instance.p[a] + instance.p[b]) <= instance.T;
+    public boolean exchangeFeasible(Block block, int a, int b) {
+        return (block.processingTime - instance.p[a] + instance.p[b]) <= instance.T;
 
     }
 
-    public Solution construct(ArrayList<Column> columns, ArrayList<Double> values) {
+    public Solution construct(ArrayList<Block> blocks, ArrayList<Double> values) {
         Solution heuristicsSol = new Solution();
 
         int nJobs = instance.nJobs;
@@ -34,13 +34,13 @@ public class Heuristics {
         remainJobs.set(0, nJobs);
 
         // System.out.println("initial remainJobs : " + remainJobs.toString());
-        for (int i = 0; i < columns.size(); i++) {
-            Column column = columns.get(i);
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
             double value = values.get(i);
             if (value  > 0.5 + Base.EPS) {
                 // System.out.println("column's value > 0.5 : " + column + "value" + value);
-                heuristicsSol.add(column);
-                for (int job : column) {
+                heuristicsSol.add(block);
+                for (int job : block) {
                     remainJobs.clear(job);
                 }
             }
@@ -85,10 +85,10 @@ public class Heuristics {
             }
 
             if (!packed) {
-                Column newColumn = new Column();
-                newColumn.add(job);
-                newColumn.processingTime += instance.p[job];
-                solution.add(newColumn);
+                Block newBlock = new Block();
+                newBlock.add(job);
+                newBlock.processingTime += instance.p[job];
+                solution.add(newBlock);
                 colSize.set(solution.size() - 1);
             }
         }
@@ -132,7 +132,7 @@ public class Heuristics {
         }
 
         // 有些 column 空了就删掉
-        sol.removeIf(Column::isEmpty);
+        sol.removeIf(Block::isEmpty);
         String afterRelocateSol = "-".repeat(30) + "after relocate operator: " + "-".repeat(30) + "\n"
                 + sol.toString();
         if (Param.debug) {
@@ -208,11 +208,11 @@ public class Heuristics {
 
     }
 
-    public Solution solve(ArrayList<Column> columns, ArrayList<Double> values) {
+    public Solution solve(ArrayList<Block> blocks, ArrayList<Double> values) {
         long start = System.currentTimeMillis();
 
 
-        Solution sol = construct(columns, values);
+        Solution sol = construct(blocks, values);
         return sol;
         // sol = localSearch(sol);
         // return sol;

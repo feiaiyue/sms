@@ -19,14 +19,14 @@ public class Pricing {
     GRBVar[] z;
     GRBConstr constrBlock;
 
-    ArrayList<Column> newColumns;
+    ArrayList<Block> newBlocks;
 
     Node node;
 
     public Pricing(Instance instance) {
         this.instance = instance;
         this.nJobs = instance.nJobs;
-        this.newColumns = new ArrayList<>();
+        this.newBlocks = new ArrayList<>();
         try{
             formulate();
         } catch (GRBException e) {
@@ -59,21 +59,21 @@ public class Pricing {
         }
 
         // add constraints with andItems to the model
-        for (int i = 0; i < node.andItems.length; i++) {
-            if (node.removedItems.get(i) == true) {
+        for (int i = 0; i < node.andJobs.length; i++) {
+            if (node.removedJobs.get(i) == true) {
                 continue;
             }
-            for (int j = 0; j < node.andItems[i].length - 1; j++) {
-                int job1 = node.andItems[i][j];
-                int job2 = node.andItems[i][j + 1];
+            for (int j = 0; j < node.andJobs[i].length - 1; j++) {
+                int job1 = node.andJobs[i][j];
+                int job2 = node.andJobs[i][j + 1];
                 model.addConstr(z[job1], GRB.EQUAL, z[job2], "constraints2_" + (job1 + 1) + " & " + (job2 + 1));
             }
         }
 
-        for (int i = 0; i < node.orItems.length; i++) {
+        for (int i = 0; i < node.orJobs.length; i++) {
             // 这样就不会加重复，node.orItmes[i][j]和node.orItems[j][i]代表同一个含义。
-            for (int j = i + 1; j < node.orItems[i].length; j++) {
-                if (node.orItems[i][j] == true) {
+            for (int j = i + 1; j < node.orJobs[i].length; j++) {
+                if (node.orJobs[i][j] == true) {
                     GRBLinExpr expr = new GRBLinExpr();
                     expr.addTerm(1 ,z[i]);
                     expr.addTerm(1, z[j]);
@@ -92,8 +92,8 @@ public class Pricing {
      * @return new columns
      * @throws GRBException
      */
-    public ArrayList<Column> genColumn1(double[] dual) throws GRBException {
-        this.newColumns.clear();
+    public ArrayList<Block> genColumn1(double[] dual) throws GRBException {
+        this.newBlocks.clear();
         GRBLinExpr obj = new GRBLinExpr();
         for (int i = 0; i < nJobs; i++) {
             obj.addTerm(dual[i], z[i]);
@@ -111,29 +111,29 @@ public class Pricing {
             // model.write(Param.algoPath + "/" + instance.instName + node.nodeID+"pricingModel.ilp");
         }
 
-        Column column = new Column();
+        Block block = new Block();
         for (int i = 0; i < nJobs; i++) {
             if (z[i].get(GRB.DoubleAttr.X) == 1.0) {
-                column.add(i);
-                column.processingTime += instance.p[i];
+                block.add(i);
+                block.processingTime += instance.p[i];
             }
         }
         // System.out.println("(不一定加入到结果里去）新生成的列为" + jobs);
         double alpha = dual[nJobs + 1];
         double beta = dual[nJobs + 2];
         double reducedCost = instance.T + instance.t - alpha - beta;
-        for (int job : column) {
+        for (int job : block) {
             reducedCost -= dual[job];
         }
         if (reducedCost + Base.EPS < 0) {
-            newColumns.add(column);
+            newBlocks.add(block);
         }
 
         if (Param.debug) {
             String str = "";
             // model.write(Param.algoPath + "/" + instance.instName + "-" + node.nodeID + "-" + "pricing_model.lp");
             str += "----------------------------------------------------------------------------\n";
-            str += "New Column: " + column.toString() + "\n";
+            str += "New Column: " + block.toString() + "\n";
             str += "Reduced Cost: " + reducedCost + "\n";
             str += "PP:node " + node.nodeID + " " + "Pricing Problem Model is Feasible: " + feasible;
 
@@ -141,11 +141,11 @@ public class Pricing {
 
         }
 
-        return newColumns;
+        return newBlocks;
     }
 
     public boolean findNewColumns() {
-        return !newColumns.isEmpty();
+        return !newBlocks.isEmpty();
     }
 
     //

@@ -1,19 +1,38 @@
 import algo.*;
 import gurobi.GRBException;
 
-import java.awt.*;
 import java.util.*;
 
-import comn.ProblemIO;
-import algo.*;
+class Label {
+    int i;
+    double time;
+
+    public Label(int i, double time) {
+        this.i = i;
+        this.time = time;
+    }
+}
 
 public class Main {
     public static void main(String[] args) throws GRBException {
         System.out.println("Everything is OK!");
         System.out.println();
-        testBitSetOperator();
         new AlgoRunner().run(args);
         System.out.println("That is all");
+    }
+
+    public static void testLabelSort() {
+        Label a = new Label(1, 3);
+        Label b = new Label(2, 5);
+        Label c = new Label(3,4);
+        ArrayList<Label> labels = new ArrayList<>();
+        labels.add(a);
+        labels.add(b);
+        labels.add(c);
+        System.out.println("before sort: " + labels);
+        Collections.sort(labels, Comparator.comparing(label -> label.time));
+        System.out.println("after sort: "+ labels);
+
     }
 
     public static void testBitSetOperator() {
@@ -44,14 +63,14 @@ public class Main {
     public static void testSolution() {
         LPsol lPsol = new LPsol();
 
-        Column column1 = new Column(Arrays.asList(1, 2, 3));
-        column1.processingTime = 30;
+        Block block1 = new Block(Arrays.asList(1, 2, 3));
+        block1.processingTime = 30;
 
-        lPsol.leftJobs = column1;
+        lPsol.leftJobs = block1;
 
 
         Solution solution1 = new Solution();
-        solution1.add(new Column(lPsol.leftJobs));
+        solution1.add(new Block(lPsol.leftJobs));
 
 
         System.out.println("initial solution : " + "\n" + lPsol.toString());

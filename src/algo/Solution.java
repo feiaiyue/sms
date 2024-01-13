@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * the class of Column need to be overwritten
  */
-public class Solution extends ArrayList<Column> {
+public class Solution extends ArrayList<Block> {
     public double makespan;
 
 
@@ -15,7 +15,7 @@ public class Solution extends ArrayList<Column> {
     }
 
     public Solution(Solution other) {
-        for (Column col : other) {
+        for (Block col : other) {
             this.add(col);
         }
         this.makespan = other.makespan;
@@ -35,16 +35,16 @@ public class Solution extends ArrayList<Column> {
     }
 
     public boolean isFeasible(Instance instance) {
-        for (Column column : this) {
-            if (!column.isFeasible(instance)) {
+        for (Block block : this) {
+            if (!block.isFeasible(instance)) {
                 return false;
             }
         }
 
         // job must be processed once, use int[] instead of bitset
         int[] visit = new int[instance.nJobs];
-        for (Column column : this) {
-            for (int job : column) {
+        for (Block block : this) {
+            for (int job : block) {
                 visit[job]++;
             }
         }

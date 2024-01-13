@@ -61,7 +61,7 @@ public class ColumnGeneration {
         }
         while (pricing.findNewColumns()) {
             // System.out.println(pricing.newColumns.toString());
-            master.addColumns(pricing.newColumns);
+            master.addColumns(pricing.newBlocks);
             master.solve();
             /**
              * print the iteration information of root node

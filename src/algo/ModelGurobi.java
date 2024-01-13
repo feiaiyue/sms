@@ -178,16 +178,16 @@ public class ModelGurobi {
                         list.add(j);
                     }
                 }
-                Column column = new Column(list);
-                for (int job : column) {
-                    column.processingTime += instance.p[job];
+                Block block = new Block(list);
+                for (int job : block) {
+                    block.processingTime += instance.p[job];
                 }
-                solution.add(column);
+                solution.add(block);
             }
 
         }
-        Column column = new Column();
-        solution.add(column);
+        Block block = new Block();
+        solution.add(block);
         for (int j = 0; j < N; j++) {
             if (Base.roundToInt(x[indexMaxSlack][j].get(GRB.DoubleAttr.X)) == 1.0) {
                 solution.get(solution.size() - 1).add(j);

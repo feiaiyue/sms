@@ -147,7 +147,7 @@ public class BranchAndBound {
             Heuristics heuristics = new Heuristics(instance);
             LPsol lPsol = node.lpSol;
 
-            Solution heuristicSol = heuristics.solve(lPsol.xColumns, lPsol.xValues);
+            Solution heuristicSol = heuristics.solve(lPsol.xBlocks, lPsol.xValues);
 
             timeOnHeuristic += 0.001 * (System.currentTimeMillis() - s0);
             cntHeuristicCall++;
@@ -159,8 +159,8 @@ public class BranchAndBound {
                     System.out.println("globalUB has been updated by Heuristics: " + globalUB + " based on node: " + node.nodeID);
                 }
                 incumbentSol.clear();
-                for (Column column : heuristicSol) {
-                    incumbentSol.add(column);
+                for (Block block : heuristicSol) {
+                    incumbentSol.add(block);
                 }
                 incumbentSol.computeMakespan(instance);
                 // RHS = Math.min(incumbentSol.get(incumbentSol.size() - 1).processingTime, RHS);
@@ -187,7 +187,7 @@ public class BranchAndBound {
             String logNode = String.format("%3d  %4d  %s  %3d | %10f  %10f  %.2f%% | %.3f  %.3f  %.3f  %.3f  %.3f",
                     tree.size(), numNodes - tree.size(), (node.status == NodeStatus.INFEASIBLE ? "Infeasible" : String.valueOf(String.format("%.2f", node.lb))), node.nodeID,
                     globalLB, globalUB, gap,
-                    timeCost, timeOnRMP, timeOnPP, timeOnHeuristic, columnGeneration.pricing.timeLabelLb);
+                    timeCost, timeOnRMP, timeOnPP, timeOnHeuristic, columnGeneration.pricing.timeOnLowerBound);
 
             System.out.println(logNode);
 
@@ -212,17 +212,17 @@ public class BranchAndBound {
         feasible = incumbentSol.isFeasible(instance);
         gap = 100 * (globalUB - globalLB) /globalUB;
         optimal = Base.equals(gap, 0);
-        String str = String.format("%-12s calls=%d \t time=%f \t avgTime=%f \t cols=%d \n",
-                "master:", cntRMPCall, timeOnRMP, (double)timeOnRMP / cntRMPCall, columnGeneration.master.columnPool.size());
-        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f " +
-                        "\t timeOnLB=%f \t avgTimeOnLB=%f \n",
-                "pricing:", cntPPCall, timeOnRMP, timeOnRMP / (double)cntPPCall,
-                columnGeneration.pricing.timeLabelLb, columnGeneration.pricing.timeLabelLb/ (double) cntPPCall);
-        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f \n",
-                "Heuristics:", cntHeuristicCall, timeOnHeuristic, (double)timeOnHeuristic / cntHeuristicCall);
-        str += "globalLB: " + globalLB + " globalUB: " + globalUB + "\n";
-        str += incumbentSol.toString();
-        System.out.println(str);
+        // String str = String.format("%-12s calls=%d \t time=%f \t avgTime=%f \t cols=%d \n",
+        //         "master:", cntRMPCall, timeOnRMP, (double)timeOnRMP / cntRMPCall, columnGeneration.master.columnPool.size());
+        // str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f " +
+        //                 "\t timeOnLB=%f \t avgTimeOnLB=%f \n",
+        //         "pricing:", cntPPCall, timeOnRMP, timeOnRMP / (double)cntPPCall,
+        //         columnGeneration.pricing.timeLabelLb, columnGeneration.pricing.timeLabelLb/ (double) cntPPCall);
+        // str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f \n",
+        //         "Heuristics:", cntHeuristicCall, timeOnHeuristic, (double)timeOnHeuristic / cntHeuristicCall);
+        // str += "globalLB: " + globalLB + " globalUB: " + globalUB + "\n";
+        // str += incumbentSol.toString();
+        // System.out.println(str);
 
     }
 
@@ -306,11 +306,11 @@ public class BranchAndBound {
     private ColumnPool generateInitialPool() {
         ColumnPool initialPool = new ColumnPool();
         for (int i = 0; i < nJobs; i++) {
-            Column column = new Column();
-            column.add(i);
-            column.processingTime += instance.p[i];
-            incumbentSol.add(column);
-            initialPool.add(column);
+            Block block = new Block();
+            block.add(i);
+            block.processingTime += instance.p[i];
+            incumbentSol.add(block);
+            initialPool.add(block);
         }
         incumbentSol.computeMakespan(instance);
         incumbentSol.isFeasible(instance);
@@ -445,11 +445,11 @@ public class BranchAndBound {
             int b = -1;
             double minDeviation = 1;
             for (int i = 0; i < instance.nJobs; i++) {
-                if (parent.removedItems.get(i)) {
+                if (parent.removedJobs.get(i)) { // 就是没有这个job了。再也不会出现了。
                     continue;
                 }
                 for (int j = i + 1; j < instance.nJobs; j++) {
-                    if (parent.orItems[i][j] || parent.removedItems.get(j)) {
+                    if (parent.orJobs[i][j] || parent.removedJobs.get(j)) {
                         continue;
                     }
                     double numOfVisits = parent.lpSol.getNumOfVisits(i, j);
@@ -460,10 +460,10 @@ public class BranchAndBound {
                             a = i;
                             b = j;
                         } else if (Base.equals(dev, minDeviation)) {
-                            double w_i = instance.mergedWeight(parent.andItems[i]);
-                            double w_j = instance.mergedWeight(parent.andItems[j]);
-                            double w_a = instance.mergedWeight(parent.andItems[a]);
-                            double w_b = instance.mergedWeight(parent.andItems[b]);
+                            double w_i = instance.mergedWeight(parent.andJobs[i]);
+                            double w_j = instance.mergedWeight(parent.andJobs[j]);
+                            double w_a = instance.mergedWeight(parent.andJobs[a]);
+                            double w_b = instance.mergedWeight(parent.andJobs[b]);
                             if (w_i + w_j > w_a + w_b) {
                                 a = i;
                                 b = j;
@@ -503,7 +503,7 @@ public class BranchAndBound {
                 + columnGeneration.pricing.numNewLabel + ","
                 + columnGeneration.pricing.numPrunedLabel + ","
                 + columnGeneration.pricing.numDominatedLabel + ","
-                + columnGeneration.pricing.timeLabelLb
+                + columnGeneration.pricing.timeOnLowerBound
                 ;
         return str;
     }

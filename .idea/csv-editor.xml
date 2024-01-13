@@ -311,7 +311,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2154.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/bnp(450-499)-donimanceRule.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

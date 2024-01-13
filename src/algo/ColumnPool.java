@@ -2,5 +2,5 @@ package algo;
 
 import java.util.ArrayList;
 
-public class ColumnPool extends ArrayList<Column> {
+public class ColumnPool extends ArrayList<Block> {
 }
