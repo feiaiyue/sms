@@ -68,7 +68,7 @@ public class PricingLabelSetting {
         this.newBlocks = new ArrayList<>();
 
         this.searchDirection = SearchDirection.FORWARD;
-        this.maxNumOfBlocks = 32; // 这个可以替换 比如32等等
+        this.maxNumOfBlocks = 50; // 这个可以替换 比如32等等
     }
 
     public void set(Node node) {
@@ -126,7 +126,7 @@ public class PricingLabelSetting {
     }
 
     private void forwardLabelSetting() {
-        PriorityQueue<Label> unexplored = new PriorityQueue<>(Comparator.comparing(label -> label.processingTime));
+        PriorityQueue<Label> unexplored = new PriorityQueue<>(Comparator.comparing(label -> label.reducedCost));
         ArrayList<Label>[] states = new ArrayList[nJobs];
         double[] minCost = new double[nJobs];
         for (int i = 0; i < nJobs; i++) {
@@ -200,6 +200,9 @@ public class PricingLabelSetting {
                 continue;
             }
             if (removedJobs.get(i)) {
+                continue;
+            }
+            if (mergedDuals[i] < Base.EPS) {
                 continue;
             }
             nextJobs.set(i);
@@ -343,8 +346,11 @@ public class PricingLabelSetting {
          */
         if (l1.processingTime <= l2.processingTime && l2.reducedCost <= l1.reducedCost + Base.EPS) {
             double sum = 0;
-            for (int h = l2.nextJobs.nextSetBit(0); h >= 0 && !l1.nextJobs.get(h); h = l2.nextJobs.nextSetBit(h + 1)) {
-                sum += mergedDuals[h];
+            for (int h = l2.nextJobs.nextSetBit(0); h >= 0; h = l2.nextJobs.nextSetBit(h + 1)) {
+                if (!l1.nextJobs.get(h)) {
+                    sum += mergedDuals[h];
+
+                }
             }
             if (l1.reducedCost + sum <= l2.reducedCost + Base.EPS) {
                 if (l1.processingTime < l2.processingTime || l1.reducedCost + sum < l2.reducedCost - Base.EPS) {
@@ -357,7 +363,7 @@ public class PricingLabelSetting {
 
     private Label createLabel(Label parent, int j, Direction dir) {
         int processingTime = parent.processingTime + mergedP[j];
-        double reducedCost = parent.reducedCost - duals[j];
+        double reducedCost = parent.reducedCost - mergedDuals[j];
         BitSet containJobs = (BitSet) parent.containJobs.clone();
         BitSet nextJobs = (BitSet) parent.nextJobs.clone();
         containJobs.set(j); // 此处放的是合并之后的job j 想要获得真实的，还需要倒推。但是只需要在最后的时候考虑就好了

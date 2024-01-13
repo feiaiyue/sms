@@ -142,7 +142,7 @@ public class AlgoRunner {
 
 
     void runBranchAndBound(Instance[] instances) throws GRBException {
-        for (int i = 0; i < 500 ;i++) {
+        for (int i = 450; i < 500 ;i++) {
         // for (int i = 0; i < instances.length; i++) {
             Instance instance = instances[i];
             // using startRunning flag to debug start from a specific instance
