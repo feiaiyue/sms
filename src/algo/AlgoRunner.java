@@ -66,8 +66,8 @@ public class AlgoRunner {
 
     //    used to do debug
     boolean belongToTest(Instance inst) {
-        // Param.instancePrefix = "L_00000445";
-        // Param.instancePrefix = "L_00000518";
+        // Param.instancePrefix = "L_00000695";
+        // Param.instancePrefix = "L_00000496";
         // Param.instancePrefix = "L_00000076";
 
         // Param.instancePrefix = "G_00000001";
@@ -142,8 +142,8 @@ public class AlgoRunner {
 
 
     void runBranchAndBound(Instance[] instances) throws GRBException {
-        for (int i = 450; i < 500 ;i++) {
-        // for (int i = 0; i < instances.length; i++) {
+        // for (int i = 500; i < 550 ;i++) {
+        for (int i = 600; i < instances.length; i++) {
             Instance instance = instances[i];
             // using startRunning flag to debug start from a specific instance
             if (Param.debug && !belongToTest(instance)) {

@@ -123,17 +123,6 @@ public class Main {
         // Output the processed ArrayList
         System.out.println("Processed list: " + list);
 
-
-        // // Use an iterator to traverse the ArrayList and remove elements 1 and 2
-        // Iterator<Integer> iterator = list.iterator();
-        // while (iterator.hasNext()) {
-        //     Integer element = iterator.next();
-        //     System.out.println("element : " + element);
-        //     // Remove elements 1 and 2
-        //     if (element == 1 || element == 2) {
-        //         iterator.remove();
-        //     }
-        // }
     }
 
     public static void testHashMap() {

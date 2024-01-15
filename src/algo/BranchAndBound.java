@@ -107,7 +107,10 @@ public class BranchAndBound {
             str += node.getBranchInfo();
             if (Param.debug) {
                 System.out.println(str);
-                System.out.println(node.lpSol.toString());
+                if (node.lpSol != null) {
+                    // System.out.println(node.lpSol.toString());
+
+                }
             }
 
             if (isPrunedByInfeasibility(node)) {
@@ -318,6 +321,29 @@ public class BranchAndBound {
         return initialPool;
     }
 
+    private ColumnPool generateInitialPoolByHeuristics() {
+        ColumnPool initialPool = new ColumnPool();
+        Heuristics heuristics1 = new Heuristics(instance);
+        long s0 = 0;
+        Solution initialHeuristicSol = heuristics1.solve(null, null);
+        timeOnHeuristic += 0.001 * (System.currentTimeMillis() - s0);
+        cntHeuristicCall++;
+
+        if (globalUB > initialHeuristicSol.makespan + Base.EPS) {
+            // update primal bound and solution
+            globalUB = initialHeuristicSol.makespan;
+            if (Param.debug) {
+                System.out.println("globalUB has been updated by Heuristics: " + globalUB);
+            }
+            incumbentSol.clear();
+            for (Block block : initialHeuristicSol) {
+                incumbentSol.add(block);
+                initialPool.add(block);
+            }
+            incumbentSol.computeMakespan(instance);
+        }
+        return initialPool;
+    }
     /**
      * 使用列生成算法对于node的lp进行求解。
      *
@@ -335,6 +361,11 @@ public class BranchAndBound {
 
         if (node.parent == null) { // root node
             ColumnPool initialPool = generateInitialPool();
+           /*  ColumnPool initialPool2 = generateInitialPoolByHeuristics();
+            for (Block block : initialPool2) {
+                initialPool.add(block);
+            }
+ */
             columnGeneration.master.addColumnsWithoutCheck(initialPool);
             columnGeneration.solve(node);
             timeOnRoot += Base.getTimeCost(s0);
