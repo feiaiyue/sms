@@ -30,16 +30,6 @@ public class Block extends ArrayList<Integer> {
 
     }
 
-    public void add(int j, Instance inst) {
-        add(j);
-        processingTime += inst.p[j];
-    }
-
-    public void remove(int j, Instance inst) {
-        remove(j);
-        processingTime -= inst.p[j];
-    }
-
 
 
     @Override

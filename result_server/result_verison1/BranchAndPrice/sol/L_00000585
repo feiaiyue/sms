@@ -1,0 +1,30 @@
+The num of Batches: 25
+makespan: 5574.0
+The jobs in each Batch 
+Batch0:index:[161, 108, 83, 72, 11, 9, 8, 3, 2, 1, 0] Processing Time: 200
+Batch1:index:[39, 16, 15, 14, 13, 12, 10, 7] Processing Time: 200
+Batch2:index:[128, 127, 124, 60, 36, 22, 18, 17] Processing Time: 200
+Batch3:index:[197, 187, 184, 168, 143, 131] Processing Time: 200
+Batch4:index:[189, 170, 165, 154, 138] Processing Time: 200
+Batch5:index:[147, 135, 133, 117, 90, 82, 79, 69, 42] Processing Time: 200
+Batch6:index:[150, 140, 137, 129, 115, 97, 86, 76] Processing Time: 200
+Batch7:index:[177, 157, 156, 152, 148, 134, 132, 73] Processing Time: 200
+Batch8:index:[172, 159, 155, 126, 123, 111, 99, 47] Processing Time: 200
+Batch9:index:[71, 28, 167, 173, 19] Processing Time: 200
+Batch10:index:[61, 121, 37, 54, 40] Processing Time: 200
+Batch11:index:[81, 175, 178, 194, 59] Processing Time: 200
+Batch12:index:[68, 85, 114, 139, 48] Processing Time: 200
+Batch13:index:[62, 166, 192, 103, 33] Processing Time: 200
+Batch14:index:[26, 41, 58, 67, 30] Processing Time: 200
+Batch15:index:[96, 102, 153, 198, 34] Processing Time: 200
+Batch16:index:[5, 182, 183, 23, 74, 31] Processing Time: 200
+Batch17:index:[107, 141, 142, 174, 144, 193] Processing Time: 200
+Batch18:index:[146, 186, 6, 21, 57, 53, 4] Processing Time: 200
+Batch19:index:[80, 92, 118, 50, 65, 24] Processing Time: 200
+Batch20:index:[66, 91, 98, 44, 171, 163, 32, 100] Processing Time: 200
+Batch21:index:[191, 27, 95, 46, 77, 78, 109] Processing Time: 200
+Batch22:index:[190, 149, 185, 94, 160, 179, 51, 20] Processing Time: 200
+Batch23:index:[110, 199, 120, 169, 106, 130, 93, 43, 35] Processing Time: 200
+Batch24:index:[196, 151, 181, 195, 49, 105, 45, 52, 136, 113, 112, 162, 164, 188, 75, 122, 64] Processing Time: 200
+The last Batch
+index:[84, 104, 116, 125, 145, 158, 29, 38, 63, 70, 87, 119, 180, 55, 56, 88, 89, 101, 25, 176] Processing Time: 74

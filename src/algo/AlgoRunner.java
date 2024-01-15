@@ -16,8 +16,8 @@ public class AlgoRunner {
          * 最后的时候，不需要测试，debug = false ：不需要删掉每一块的check
          */
 
-        Param.debug = false;
-        // Param.debug = true;
+        // Param.debug = false;
+        Param.debug = true;
         Param.algoName = "BranchAndPrice";
         // Param.algoName = "MixedIntegerLinearProgramming";
         Param.nThreads = 1;
@@ -66,7 +66,7 @@ public class AlgoRunner {
 
     //    used to do debug
     boolean belongToTest(Instance inst) {
-        // Param.instancePrefix = "L_00000695";
+        // Param.instancePrefix = "L_00000678";
         // Param.instancePrefix = "L_00000496";
         // Param.instancePrefix = "L_00000076";
 

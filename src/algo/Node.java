@@ -134,13 +134,6 @@ public class Node {
             assert (!parent.removedJobs.get(b));
         }
 
-        /**
-         * when job B is merged into job A.
-         * the conflict job with job B
-         * must be conflict with job A,
-         * job A becomes a merged job
-         */
-
         if (anb) { // if item a and item b are packed in the same Block
             andJobs[a] = Base.mergeSort(parent.andJobs[a], parent.andJobs[b]);
             for (int i = 0; i < nJobs; i++) {

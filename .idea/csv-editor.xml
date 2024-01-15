@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="/result/Branch And Price/Branch And Price-.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice-20240107-1806.csv">
           <value>
             <Attribute>
@@ -220,6 +227,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-1418.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-1529.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-1553.csv">
           <value>
             <Attribute>
@@ -262,42 +283,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-1106.csv">
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2007.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2105.csv">
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2016.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2106.csv">
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2030.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2111.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2113.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2114.csv">
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240112-2038.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -311,105 +318,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2119.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2120.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2124.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2130.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2207.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2215.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2220.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2230.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2231.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2301.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2307.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2308.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2319.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2321.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240113-2322.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -458,91 +367,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1329.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1332.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1333.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1335.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1358.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1400.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1401.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1605.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1611.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1618.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1622.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240114-1623.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1059.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -557,6 +382,34 @@
           </value>
         </entry>
         <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1432.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1515.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1517.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1520.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/BranchAndPrice-20240115-1521.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -605,7 +458,14 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/bnp-(500-549)-mac-different_version.csv">
+        <entry key="/result/Mixed Integer Linear Programming/singleMachineScheduling-20231106-1420.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/Mixed Integer Linear Programming/singleMachineScheduling-20231106-1435.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -668,6 +528,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/server_result/MixedIntegerLinearProgramming-20240102-2224-copy.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/server_result/result/BranchAndPrice/BranchAndPrice-20240112-1627.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/server_result/result/MixedIntegerLinearProgramming/MixedIntegerLinearProgramming-20240112-1546.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/server_result/result_verison1/BranchAndPrice/BranchAndPrice-20240112-1627.csv">
           <value>
             <Attribute>
@@ -676,13 +557,6 @@
           </value>
         </entry>
         <entry key="/server_result/result_verison1/MixedIntegerLinearProgramming/MixedIntegerLinearProgramming-20240112-1546.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/server_result/result_version2/BranchAndPrice/BranchAndPrice-20240112-1627.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

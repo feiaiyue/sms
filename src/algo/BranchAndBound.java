@@ -108,8 +108,7 @@ public class BranchAndBound {
             if (Param.debug) {
                 System.out.println(str);
                 if (node.lpSol != null) {
-                    // System.out.println(node.lpSol.toString());
-
+                    System.out.println(node.lpSol.toString());
                 }
             }
 
@@ -190,7 +189,7 @@ public class BranchAndBound {
             String logNode = String.format("%3d  %4d  %s  %3d | %10f  %10f  %.2f%% | %.3f  %.3f  %.3f  %.3f  %.3f",
                     tree.size(), numNodes - tree.size(), (node.status == NodeStatus.INFEASIBLE ? "Infeasible" : String.valueOf(String.format("%.2f", node.lb))), node.nodeID,
                     globalLB, globalUB, gap,
-                    timeCost, timeOnRMP, timeOnPP, timeOnHeuristic, columnGeneration.pricing.timeOnLowerBound);
+                    timeCost, timeOnRMP, timeOnPP, timeOnHeuristic, columnGeneration.pricing.timeLabelLb);
 
             System.out.println(logNode);
 
@@ -215,16 +214,16 @@ public class BranchAndBound {
         feasible = incumbentSol.isFeasible(instance);
         gap = 100 * (globalUB - globalLB) /globalUB;
         optimal = Base.equals(gap, 0);
-        // String str = String.format("%-12s calls=%d \t time=%f \t avgTime=%f \t cols=%d \n",
-        //         "master:", cntRMPCall, timeOnRMP, (double)timeOnRMP / cntRMPCall, columnGeneration.master.columnPool.size());
-        // str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f " +
-        //                 "\t timeOnLB=%f \t avgTimeOnLB=%f \n",
-        //         "pricing:", cntPPCall, timeOnRMP, timeOnRMP / (double)cntPPCall,
-        //         columnGeneration.pricing.timeLabelLb, columnGeneration.pricing.timeLabelLb/ (double) cntPPCall);
-        // str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f \n",
-        //         "Heuristics:", cntHeuristicCall, timeOnHeuristic, (double)timeOnHeuristic / cntHeuristicCall);
-        // str += "globalLB: " + globalLB + " globalUB: " + globalUB + "\n";
-        // str += incumbentSol.toString();
+        String str = String.format("%-12s calls=%d \t time=%f \t avgTime=%f \t cols=%d \n",
+                "master:", cntRMPCall, timeOnRMP, (double)timeOnRMP / cntRMPCall, columnGeneration.master.columnPool.size());
+        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f " +
+                        "\t timeOnLB=%f \t avgTimeOnLB=%f \n",
+                "pricing:", cntPPCall, timeOnRMP, timeOnRMP / (double)cntPPCall,
+                columnGeneration.pricing.timeLabelLb, columnGeneration.pricing.timeLabelLb/ (double) cntPPCall);
+        str += String.format("%-12s calls=%d \t time=%f \t avgTime=%f \n",
+                "Heuristics:", cntHeuristicCall, timeOnHeuristic, (double)timeOnHeuristic / cntHeuristicCall);
+        str += "globalLB: " + globalLB + " globalUB: " + globalUB + "\n";
+        str += incumbentSol.toString();
         // System.out.println(str);
 
     }
@@ -321,29 +320,6 @@ public class BranchAndBound {
         return initialPool;
     }
 
-    private ColumnPool generateInitialPoolByHeuristics() {
-        ColumnPool initialPool = new ColumnPool();
-        Heuristics heuristics1 = new Heuristics(instance);
-        long s0 = 0;
-        Solution initialHeuristicSol = heuristics1.solve(null, null);
-        timeOnHeuristic += 0.001 * (System.currentTimeMillis() - s0);
-        cntHeuristicCall++;
-
-        if (globalUB > initialHeuristicSol.makespan + Base.EPS) {
-            // update primal bound and solution
-            globalUB = initialHeuristicSol.makespan;
-            if (Param.debug) {
-                System.out.println("globalUB has been updated by Heuristics: " + globalUB);
-            }
-            incumbentSol.clear();
-            for (Block block : initialHeuristicSol) {
-                incumbentSol.add(block);
-                initialPool.add(block);
-            }
-            incumbentSol.computeMakespan(instance);
-        }
-        return initialPool;
-    }
     /**
      * 使用列生成算法对于node的lp进行求解。
      *
@@ -361,11 +337,6 @@ public class BranchAndBound {
 
         if (node.parent == null) { // root node
             ColumnPool initialPool = generateInitialPool();
-           /*  ColumnPool initialPool2 = generateInitialPoolByHeuristics();
-            for (Block block : initialPool2) {
-                initialPool.add(block);
-            }
- */
             columnGeneration.master.addColumnsWithoutCheck(initialPool);
             columnGeneration.solve(node);
             timeOnRoot += Base.getTimeCost(s0);
@@ -476,7 +447,7 @@ public class BranchAndBound {
             int b = -1;
             double minDeviation = 1;
             for (int i = 0; i < instance.nJobs; i++) {
-                if (parent.removedJobs.get(i)) { // 就是没有这个job了。再也不会出现了。
+                if (parent.removedJobs.get(i)) {
                     continue;
                 }
                 for (int j = i + 1; j < instance.nJobs; j++) {
@@ -534,7 +505,7 @@ public class BranchAndBound {
                 + columnGeneration.pricing.numNewLabel + ","
                 + columnGeneration.pricing.numPrunedLabel + ","
                 + columnGeneration.pricing.numDominatedLabel + ","
-                + columnGeneration.pricing.timeOnLowerBound
+                + columnGeneration.pricing.timeLabelLb
                 ;
         return str;
     }

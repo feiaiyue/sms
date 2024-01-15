@@ -34,20 +34,17 @@ public class Heuristics {
         remainJobs.set(0, nJobs);
 
         // System.out.println("initial remainJobs : " + remainJobs.toString());
-        if (blocks != null) {
-            for (int i = 0; i < blocks.size(); i++) {
-                Block block = blocks.get(i);
-                double value = values.get(i);
-                if (value  > 0.5 + Base.EPS) {
-                    // System.out.println("column's value > 0.5 : " + column + "value" + value);
-                    heuristicsSol.add(block);
-                    for (int job : block) {
-                        remainJobs.clear(job);
-                    }
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
+            double value = values.get(i);
+            if (value  > 0.5 + Base.EPS) {
+                // System.out.println("column's value > 0.5 : " + column + "value" + value);
+                heuristicsSol.add(block);
+                for (int job : block) {
+                    remainJobs.clear(job);
                 }
             }
         }
-
         // System.out.println("after choose columns whose value > 0.5: " + remainJobs.toString());
         ArrayList<Integer> list = new ArrayList<>();
         for (int i = remainJobs.nextSetBit(0); i >= 0; i = remainJobs.nextSetBit(i + 1)) {
