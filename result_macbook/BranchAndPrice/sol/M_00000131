@@ -1,0 +1,42 @@
+The num of Batches: 37
+makespan: 8304.0
+The jobs in each Batch 
+Batch0:index:[9, 46, 60, 95, 100] Processing Time: 200
+Batch1:index:[11, 13, 21, 57] Processing Time: 200
+Batch2:index:[83, 106, 127, 132] Processing Time: 200
+Batch3:index:[32, 56, 90] Processing Time: 200
+Batch4:index:[22, 123, 138] Processing Time: 200
+Batch5:index:[58, 104, 105, 129] Processing Time: 200
+Batch6:index:[80, 112, 143] Processing Time: 200
+Batch7:index:[78, 91, 92] Processing Time: 200
+Batch8:index:[99, 118, 121] Processing Time: 200
+Batch9:index:[0, 25, 31] Processing Time: 200
+Batch10:index:[96, 107, 144] Processing Time: 200
+Batch11:index:[81, 82, 141, 145] Processing Time: 200
+Batch12:index:[61, 131, 136] Processing Time: 200
+Batch13:index:[120, 133, 139] Processing Time: 200
+Batch14:index:[76, 113, 119, 122] Processing Time: 200
+Batch15:index:[98, 109, 135, 146] Processing Time: 200
+Batch16:index:[15, 84, 89] Processing Time: 200
+Batch17:index:[128, 148, 149] Processing Time: 200
+Batch18:index:[8, 40, 55, 63] Processing Time: 200
+Batch19:index:[14, 47, 51, 93] Processing Time: 200
+Batch20:index:[101, 116, 75] Processing Time: 200
+Batch21:index:[5, 67, 125] Processing Time: 200
+Batch22:index:[87, 16, 52] Processing Time: 200
+Batch23:index:[18, 2, 12, 49, 115] Processing Time: 200
+Batch24:index:[4, 59, 70] Processing Time: 200
+Batch25:index:[26, 35, 71] Processing Time: 200
+Batch26:index:[10, 27, 38] Processing Time: 200
+Batch27:index:[74, 37, 88] Processing Time: 200
+Batch28:index:[140, 19, 124] Processing Time: 200
+Batch29:index:[28, 48, 44] Processing Time: 200
+Batch30:index:[24, 86, 103, 34] Processing Time: 200
+Batch31:index:[45, 53, 62, 39] Processing Time: 200
+Batch32:index:[65, 134, 1, 50] Processing Time: 200
+Batch33:index:[130, 3, 23, 43, 73, 117] Processing Time: 200
+Batch34:index:[114, 126, 29, 30, 42] Processing Time: 200
+Batch35:index:[6, 20, 54, 7, 17, 147] Processing Time: 200
+Batch36:index:[142, 36, 69, 68, 64, 79, 97, 111] Processing Time: 199
+The last Batch
+index:[137, 72, 110, 77, 108, 33, 85, 66, 102, 94, 41] Processing Time: 164

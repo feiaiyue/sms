@@ -1,16 +1,31 @@
-The num of Batches: 11
-makespan: 2490.0
+The num of Batches: 26
+makespan: 2270.0
 The jobs in each Batch 
-Batch0:index:[0, 2, 3, 4, 5, 6, 15, 22, 49] Processing Time: 200
-Batch1:index:[33, 34, 38, 39, 61, 82] Processing Time: 200
-Batch2:index:[37, 42, 47, 63, 73, 83] Processing Time: 200
-Batch3:index:[45, 48, 50, 53, 71] Processing Time: 200
-Batch4:index:[58, 76, 20, 18, 55] Processing Time: 200
-Batch5:index:[24, 78, 85, 23, 12] Processing Time: 200
-Batch6:index:[44, 80, 9, 13, 27] Processing Time: 200
-Batch7:index:[40, 41, 16, 56, 77, 1] Processing Time: 200
-Batch8:index:[87, 21, 25, 51, 74, 26] Processing Time: 200
-Batch9:index:[46, 11, 19, 35, 69, 89, 36, 88] Processing Time: 200
-Batch10:index:[54, 30, 72, 79, 67, 29, 14, 59, 66, 84, 32, 57, 8, 7] Processing Time: 200
+Batch0:index:[5, 22, 30, 31, 34] Processing Time: 85
+Batch1:index:[6, 26, 27, 62] Processing Time: 85
+Batch2:index:[19, 35, 83] Processing Time: 85
+Batch3:index:[16, 18] Processing Time: 85
+Batch4:index:[37, 57, 82] Processing Time: 85
+Batch5:index:[20, 39] Processing Time: 85
+Batch6:index:[85, 87] Processing Time: 85
+Batch7:index:[24, 77] Processing Time: 85
+Batch8:index:[33, 63, 65] Processing Time: 85
+Batch9:index:[41, 80] Processing Time: 85
+Batch10:index:[56, 71] Processing Time: 85
+Batch11:index:[4, 45, 59] Processing Time: 85
+Batch12:index:[76, 84, 89] Processing Time: 85
+Batch13:index:[23, 40] Processing Time: 85
+Batch14:index:[58, 74, 75] Processing Time: 85
+Batch15:index:[44, 51, 55] Processing Time: 85
+Batch16:index:[21, 38, 70] Processing Time: 85
+Batch17:index:[25, 42, 88] Processing Time: 85
+Batch18:index:[53, 61] Processing Time: 85
+Batch19:index:[0, 46, 17] Processing Time: 85
+Batch20:index:[48, 11, 47] Processing Time: 85
+Batch21:index:[78, 69, 14] Processing Time: 85
+Batch22:index:[9, 13, 43] Processing Time: 85
+Batch23:index:[73, 36, 54] Processing Time: 85
+Batch24:index:[72, 12, 79, 67, 2] Processing Time: 85
+Batch25:index:[3, 29, 15, 66, 32, 8, 64, 7] Processing Time: 85
 The last Batch
-index:[70, 52, 28, 17, 64, 10, 65, 68, 81, 86, 31, 60, 75, 43, 62] Processing Time: 70
+index:[49, 52, 28, 50, 10, 68, 81, 86, 1, 60] Processing Time: 60

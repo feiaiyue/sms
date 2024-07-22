@@ -4,6 +4,7 @@ import comn.Base;
 import comn.Param;
 import gurobi.GRBException;
 
+import javax.crypto.spec.OAEPParameterSpec;
 
 
 /**
@@ -30,7 +31,7 @@ public class ColumnGeneration {
     }
 
 
-    public boolean solve(Node node) throws GRBException {
+    public boolean solve(Node node, long timeLimit) throws GRBException {
         // String str = "-".repeat(30) + "Column Generation to solve node :"+node.nodeID + "-".repeat(30) + "\n";
         // System.out.println(str);
         master.set(node);
@@ -40,7 +41,7 @@ public class ColumnGeneration {
         }
 
         duals = master.getDualValues();
-        pricing.solve(duals);
+        pricing.solve(duals, timeLimit);
         // System.out.println("initial pricing problem has been solved");
         if (Param.debug) {
             // Column optimal_instance50 = new Column();
@@ -56,24 +57,28 @@ public class ColumnGeneration {
 
         }
         long start = System.currentTimeMillis();
-        if (node.parent == null) {
-            System.out.println("=".repeat(30) + "solve root node" + "=".repeat(30));
+        if (Param.debug) {
+            if (node.parent == null) {
+                System.out.println("=".repeat(30) + "solve root node" + "=".repeat(30));
+            }
         }
-        while (pricing.findNewColumns()) {
+        while (pricing.findNewBlocks()) {
             // System.out.println(pricing.newColumns.toString());
             master.addColumns(pricing.newBlocks);
             master.solve();
             /**
              * print the iteration information of root node
              */
-            if (node.parent == null) {
-                System.out.println("master : objVal = " + String.format("%.8f", master.getObjValue()) +
-                        "  colSize = " + master.columnPool.size() +
-                        "  time = " + String.format("%.3f", 0.001 * (System.currentTimeMillis() - start)));
-
+            if (Param.debug) {
+                if (node.parent == null) {
+                    System.out.println("master : objVal = " + String.format("%.8f", master.getObjValue()) +
+                            "  colSize = " + master.columnPool.size() +
+                            "  time = " + String.format("%.3f", 0.001 * (System.currentTimeMillis() - start)));
+                }
             }
+
             duals = master.getDualValues();
-            pricing.solve(duals);
+            pricing.solve(duals, timeLimit);
         }
 
 

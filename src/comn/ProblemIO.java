@@ -8,20 +8,26 @@ import java.util.Objects;
 
 public class ProblemIO {
 
+
     public static void makeFolders() {
-        File resultFolder = new File(Param.resultPath);
-        if (!resultFolder.exists() || !resultFolder.isDirectory()) {
-            resultFolder.mkdirs();
-        }
-        File algoFolder = new File(Param.algoPath);
-        if (!algoFolder.exists() || !algoFolder.isDirectory()) {
-            algoFolder.mkdirs();
-        }
-        File solFolder = new File(Param.algoPath + "/sol");
-        if (solFolder.exists() || !solFolder.isDirectory()) {
-            solFolder.mkdirs();
+        createFolder(Param.resultPath);
+        createFolder(Param.algoPath);
+        createFolder(Param.algoPath + "/sol");
+        createFolder(Param.algoPath + "/" + Param.dataSetName);
+    }
+
+    private static void createFolder(String path) {
+        File folder = new File(path);
+        if (!folder.exists() || !folder.isDirectory()) {
+            boolean created = folder.mkdirs();
+            if (created) {
+                System.out.println("Created folder: " + path);
+            } else {
+                System.err.println("Failed to create folder: " + path);
+            }
         }
     }
+
 
     /**
      * Writes the provided text to a CSV file, either in overwrite or append mode.
@@ -87,14 +93,49 @@ public class ProblemIO {
         return sb.toString().trim().split(System.lineSeparator());
     }
 
+    // public static File[] getDataFiles() {
+    //     File dataFolder = new File(Param.dataPath);
+    //     LinkedList<File> dirList = new LinkedList<>();
+    //     ArrayList<File> fileList = new ArrayList<>();
+    //     dirList.add(dataFolder);
+    //     while (!dirList.isEmpty()) {
+    //         File dir = dirList.remove();
+    //         dirList.addAll(Arrays.asList(Objects.requireNonNull(dir.listFiles(File::isDirectory))));
+    //         File[] files = dir.listFiles((_dir, name) -> {
+    //             if (!"".equals(Param.instanceSuffix) && !name.endsWith(Param.instanceSuffix)) {
+    //                 return false;
+    //             }
+    //             if (!"".equals(Param.instancePrefix) && !name.startsWith(Param.instancePrefix)) {
+    //                 return false;
+    //             }
+    //             return true;
+    //         });
+    //         fileList.addAll(Arrays.asList(Objects.requireNonNull(files)));
+    //     }
+    //     fileList.removeIf(File::isDirectory);
+    //     return fileList.toArray(new File[0]);
+    // }
+
     public static File[] getDataFiles() {
         File dataFolder = new File(Param.dataPath);
         LinkedList<File> dirList = new LinkedList<>();
         ArrayList<File> fileList = new ArrayList<>();
         dirList.add(dataFolder);
+
         while (!dirList.isEmpty()) {
             File dir = dirList.remove();
-            dirList.addAll(Arrays.asList(Objects.requireNonNull(dir.listFiles(File::isDirectory))));
+
+            // Log the directory being processed
+            System.out.println("Processing directory: " + dir.getAbsolutePath());
+
+            File[] subDirs = dir.listFiles(File::isDirectory);
+            if (subDirs == null) {
+                // Log if listing subdirectories fails
+                System.err.println("Failed to list subdirectories in: " + dir.getAbsolutePath());
+            } else {
+                dirList.addAll(Arrays.asList(subDirs));
+            }
+
             File[] files = dir.listFiles((_dir, name) -> {
                 if (!"".equals(Param.instanceSuffix) && !name.endsWith(Param.instanceSuffix)) {
                     return false;
@@ -104,9 +145,20 @@ public class ProblemIO {
                 }
                 return true;
             });
-            fileList.addAll(Arrays.asList(Objects.requireNonNull(files)));
+
+            if (files == null) {
+                // Log if listing files fails
+                System.err.println("Failed to list files in: " + dir.getAbsolutePath());
+            } else {
+                fileList.addAll(Arrays.asList(files));
+            }
         }
+
         fileList.removeIf(File::isDirectory);
+
+        // Log the number of files found
+        System.out.println("Total files found: " + fileList.size());
+
         return fileList.toArray(new File[0]);
     }
 }

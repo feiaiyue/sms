@@ -1,13 +1,38 @@
-The num of Batches: 8
-makespan: 1773.0
+The num of Batches: 33
+makespan: 1842.0
 The jobs in each Batch 
-Batch0:index:[0, 1, 2, 3, 5, 6, 40] Processing Time: 200
-Batch1:index:[10, 12, 14, 16, 26, 27, 45] Processing Time: 200
-Batch2:index:[15, 17, 19, 22, 24] Processing Time: 200
-Batch3:index:[50, 28, 44, 47, 18] Processing Time: 200
-Batch4:index:[25, 46, 57, 53, 32] Processing Time: 200
-Batch5:index:[29, 55, 30, 38, 41, 13] Processing Time: 200
-Batch6:index:[42, 48, 8, 37, 52, 11, 31, 56] Processing Time: 200
-Batch7:index:[23, 59, 51, 39, 7, 4, 58, 54, 49, 21, 33, 35, 43, 36] Processing Time: 200
+Batch0:index:[19, 27] Processing Time: 55
+Batch1:index:[25, 21] Processing Time: 54
+Batch2:index:[28, 35] Processing Time: 55
+Batch3:index:[32, 58, 9] Processing Time: 55
+Batch4:index:[44, 43] Processing Time: 55
+Batch5:index:[46, 40, 36] Processing Time: 55
+Batch6:index:[47, 33] Processing Time: 54
+Batch7:index:[50, 56] Processing Time: 54
+Batch8:index:[53, 4] Processing Time: 55
+Batch9:index:[55, 54] Processing Time: 52
+Batch10:index:[57, 20] Processing Time: 44
+Batch11:index:[1] Processing Time: 41
+Batch12:index:[24, 34, 49] Processing Time: 55
+Batch13:index:[2] Processing Time: 36
+Batch14:index:[10, 51] Processing Time: 53
+Batch15:index:[3] Processing Time: 32
+Batch16:index:[12, 39] Processing Time: 53
+Batch17:index:[11, 45] Processing Time: 53
+Batch18:index:[22] Processing Time: 36
+Batch19:index:[31, 48] Processing Time: 55
+Batch20:index:[0, 6] Processing Time: 54
+Batch21:index:[15, 18] Processing Time: 53
+Batch22:index:[8, 13] Processing Time: 55
+Batch23:index:[41, 59] Processing Time: 54
+Batch24:index:[17] Processing Time: 37
+Batch25:index:[16, 23] Processing Time: 54
+Batch26:index:[7, 29] Processing Time: 55
+Batch27:index:[30] Processing Time: 36
+Batch28:index:[26] Processing Time: 34
+Batch29:index:[14] Processing Time: 33
+Batch30:index:[38] Processing Time: 32
+Batch31:index:[42] Processing Time: 32
+Batch32:index:[5, 37] Processing Time: 55
 The last Batch
-index:[34, 9, 20] Processing Time: 13
+index:[52] Processing Time: 27

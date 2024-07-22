@@ -1,19 +1,40 @@
 import algo.*;
 import gurobi.GRBException;
 
-import java.awt.*;
 import java.util.*;
 
-import comn.ProblemIO;
-import algo.*;
+class Label {
+    int i;
+    double time;
+
+    public Label(int i, double time) {
+        this.i = i;
+        this.time = time;
+    }
+}
 
 public class Main {
     public static void main(String[] args) throws GRBException {
+
         System.out.println("Everything is OK!");
         System.out.println();
-        testBitSetOperator();
         new AlgoRunner().run(args);
         System.out.println("That is all");
+    }
+
+
+    public static void testLabelSort() {
+        Label a = new Label(1, 3);
+        Label b = new Label(2, 5);
+        Label c = new Label(3,4);
+        ArrayList<Label> labels = new ArrayList<>();
+        labels.add(a);
+        labels.add(b);
+        labels.add(c);
+        System.out.println("before sort: " + labels);
+        Collections.sort(labels, Comparator.comparing(label -> label.time));
+        System.out.println("after sort: "+ labels);
+
     }
 
     public static void testBitSetOperator() {
@@ -41,7 +62,25 @@ public class Main {
         // 输出结果
         System.out.println("R(L^f_2) \\ R(L^f_1): " + result);
     }
+    public static void testSolution() {
+        LPsol lPsol = new LPsol();
 
+        Block block1 = new Block(Arrays.asList(1, 2, 3));
+        block1.processingTime = 30;
+
+        lPsol.leftJobs = block1;
+
+
+        Solution solution1 = new Solution();
+        solution1.add(new Block(lPsol.leftJobs));
+
+
+        System.out.println("initial solution : " + "\n" + lPsol.toString());
+        System.out.println("-".repeat(50));
+        System.out.println("new() solution1: " + "\n" + solution1.toString());
+
+
+    }
 
     public static void testBitSet2() {
         // 新建一个大小为 10 的 BitSet
@@ -86,17 +125,6 @@ public class Main {
         // Output the processed ArrayList
         System.out.println("Processed list: " + list);
 
-
-        // // Use an iterator to traverse the ArrayList and remove elements 1 and 2
-        // Iterator<Integer> iterator = list.iterator();
-        // while (iterator.hasNext()) {
-        //     Integer element = iterator.next();
-        //     System.out.println("element : " + element);
-        //     // Remove elements 1 and 2
-        //     if (element == 1 || element == 2) {
-        //         iterator.remove();
-        //     }
-        // }
     }
 
     public static void testHashMap() {

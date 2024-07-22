@@ -1,0 +1,40 @@
+The num of Batches: 35
+makespan: 7776.0
+The jobs in each Batch 
+Batch0:index:[5, 6, 10, 77, 106] Processing Time: 200
+Batch1:index:[19, 96, 98, 100, 149] Processing Time: 200
+Batch2:index:[18, 27, 67] Processing Time: 200
+Batch3:index:[41, 46, 80, 101] Processing Time: 200
+Batch4:index:[49, 63, 94] Processing Time: 200
+Batch5:index:[28, 62, 72, 123] Processing Time: 200
+Batch6:index:[69, 79, 130] Processing Time: 200
+Batch7:index:[48, 107, 129] Processing Time: 200
+Batch8:index:[20, 118, 148] Processing Time: 200
+Batch9:index:[26, 78, 104, 115] Processing Time: 200
+Batch10:index:[16, 17, 35, 146] Processing Time: 200
+Batch11:index:[84, 113, 136] Processing Time: 200
+Batch12:index:[111, 127, 142] Processing Time: 200
+Batch13:index:[32, 86, 89, 120] Processing Time: 200
+Batch14:index:[52, 70, 128] Processing Time: 200
+Batch15:index:[22, 105, 138] Processing Time: 200
+Batch16:index:[71, 91, 93, 131] Processing Time: 200
+Batch17:index:[61, 64, 99, 147] Processing Time: 200
+Batch18:index:[87, 110, 114] Processing Time: 200
+Batch19:index:[42, 57, 73] Processing Time: 200
+Batch20:index:[65, 74, 116] Processing Time: 200
+Batch21:index:[34, 54, 112, 124, 125] Processing Time: 200
+Batch22:index:[0, 122, 39] Processing Time: 200
+Batch23:index:[31, 119, 37] Processing Time: 200
+Batch24:index:[103, 12, 36] Processing Time: 200
+Batch25:index:[85, 126, 108] Processing Time: 200
+Batch26:index:[30, 7, 83] Processing Time: 200
+Batch27:index:[8, 139, 40] Processing Time: 200
+Batch28:index:[1, 140, 58, 3] Processing Time: 200
+Batch29:index:[9, 50, 53, 90] Processing Time: 200
+Batch30:index:[29, 81, 135, 2] Processing Time: 200
+Batch31:index:[102, 141, 121, 133, 60] Processing Time: 200
+Batch32:index:[145, 33, 59, 15, 68, 43, 134] Processing Time: 200
+Batch33:index:[51, 109, 13, 66, 25, 44, 95] Processing Time: 200
+Batch34:index:[45, 23, 24, 82, 117, 14, 47, 92, 11, 56, 75, 88] Processing Time: 200
+The last Batch
+index:[137, 55, 76, 97, 4, 132, 144, 21, 38, 143] Processing Time: 76

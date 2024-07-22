@@ -1,0 +1,17 @@
+The num of Batches: 12
+makespan: 2731.0
+The jobs in each Batch 
+Batch0:index:[30, 35, 46, 55, 58, 60, 72, 85, 97] Processing Time: 200
+Batch1:index:[19, 56, 59, 91, 95] Processing Time: 200
+Batch2:index:[5, 6, 8, 11, 14, 18, 21, 22, 25, 32, 42] Processing Time: 200
+Batch3:index:[51, 63, 83, 17, 70] Processing Time: 200
+Batch4:index:[38, 27, 77, 29, 39, 69] Processing Time: 200
+Batch5:index:[28, 41, 84, 49, 1] Processing Time: 200
+Batch6:index:[71, 54, 76, 3, 61] Processing Time: 200
+Batch7:index:[96, 9, 73, 79, 23, 62] Processing Time: 200
+Batch8:index:[34, 43, 93, 98, 57, 0, 16, 80] Processing Time: 200
+Batch9:index:[68, 12, 20, 50, 52, 82, 64, 88] Processing Time: 200
+Batch10:index:[36, 31, 24, 33, 47, 66, 92, 89, 37] Processing Time: 200
+Batch11:index:[26, 81, 87, 86, 7, 75, 67, 2, 10, 13, 40, 74, 15] Processing Time: 200
+The last Batch
+index:[78, 90, 65, 44, 45, 48, 94, 4, 53, 99] Processing Time: 91

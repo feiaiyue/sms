@@ -149,4 +149,29 @@ public class Block extends ArrayList<Integer> {
         }
         return false;
     }
+
+    public void add(int job, Instance instance) {
+        add(job);
+        this.processingTime += instance.p[job];
+    }
+
+    /**
+     * remove job, not according to index, by its value
+     * @param job
+     * @param instance
+     */
+    public void remove(int job, Instance instance) {
+        Iterator<Integer> iterator = this.iterator();
+        while (iterator.hasNext()) {
+            int current = iterator.next();
+            if (current == job) {
+                iterator.remove();
+                this.processingTime -= instance.p[current];
+                break;
+            }
+        }
+
+    }
+
+
 }

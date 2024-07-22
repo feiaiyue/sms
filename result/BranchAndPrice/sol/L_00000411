@@ -1,16 +1,28 @@
-The num of Batches: 11
-makespan: 2505.0
+The num of Batches: 23
+makespan: 2285.0
 The jobs in each Batch 
-Batch0:index:[0, 1, 2, 4, 16, 17, 22, 32] Processing Time: 200
-Batch1:index:[18, 24, 34, 35, 46, 61, 67] Processing Time: 200
-Batch2:index:[21, 37, 41, 55, 60, 89] Processing Time: 200
-Batch3:index:[49, 42, 44, 48, 80] Processing Time: 200
-Batch4:index:[82, 6, 51, 5, 70, 27] Processing Time: 200
-Batch5:index:[39, 43, 11, 65, 29, 56] Processing Time: 200
-Batch6:index:[38, 50, 68, 72, 12, 57, 62] Processing Time: 200
-Batch7:index:[66, 76, 9, 36, 58, 81] Processing Time: 200
-Batch8:index:[85, 77, 13, 20, 69, 25, 75] Processing Time: 200
-Batch9:index:[30, 28, 63, 73, 19, 31, 47, 52] Processing Time: 200
-Batch10:index:[87, 15, 23, 54, 64, 86, 40, 59, 88, 10, 26, 74] Processing Time: 200
+Batch0:index:[0, 1, 10, 33] Processing Time: 96
+Batch1:index:[2, 4, 7, 23] Processing Time: 96
+Batch2:index:[5, 63, 73] Processing Time: 96
+Batch3:index:[9, 13, 20, 27] Processing Time: 96
+Batch4:index:[22, 28, 29, 31] Processing Time: 96
+Batch5:index:[25, 26, 30, 87] Processing Time: 96
+Batch6:index:[34, 37, 77] Processing Time: 96
+Batch7:index:[8, 66, 85, 86] Processing Time: 96
+Batch8:index:[51, 65, 71] Processing Time: 96
+Batch9:index:[38, 50, 64] Processing Time: 96
+Batch10:index:[55, 82] Processing Time: 96
+Batch11:index:[18, 68, 70] Processing Time: 96
+Batch12:index:[42, 46, 76] Processing Time: 96
+Batch13:index:[48, 60, 62, 78] Processing Time: 96
+Batch14:index:[44, 52, 89] Processing Time: 96
+Batch15:index:[11, 12, 40] Processing Time: 96
+Batch16:index:[49, 6] Processing Time: 96
+Batch17:index:[39, 43, 14] Processing Time: 96
+Batch18:index:[24, 72, 15, 32, 56] Processing Time: 96
+Batch19:index:[35, 36, 81, 74] Processing Time: 96
+Batch20:index:[58, 21, 69] Processing Time: 96
+Batch21:index:[67, 19, 47, 41] Processing Time: 96
+Batch22:index:[54, 17, 59, 88, 16, 3] Processing Time: 96
 The last Batch
-index:[79, 3, 7, 14, 45, 53, 71, 83, 8, 33, 78, 84] Processing Time: 85
+index:[75, 57, 79, 45, 53, 61, 83, 80, 84] Processing Time: 77

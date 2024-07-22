@@ -26,6 +26,12 @@ public class Heuristics {
 
     }
 
+    /**
+     * Constructs a solution based on provided blocks and their corresponding values.(LpSol)
+     * @param blocks
+     * @param values
+     * @return a solution constructed by adding blocks with values greater than 0.5 and sorting(decreasing) the remaining jobs.
+     */
     public Solution construct(ArrayList<Block> blocks, ArrayList<Double> values) {
         Solution heuristicsSol = new Solution();
 
@@ -33,31 +39,46 @@ public class Heuristics {
         BitSet remainJobs = new BitSet(nJobs);
         remainJobs.set(0, nJobs);
 
-        // System.out.println("initial remainJobs : " + remainJobs.toString());
-        for (int i = 0; i < blocks.size(); i++) {
-            Block block = blocks.get(i);
-            double value = values.get(i);
-            if (value  > 0.5 + Base.EPS) {
-                // System.out.println("column's value > 0.5 : " + column + "value" + value);
-                heuristicsSol.add(block);
-                for (int job : block) {
-                    remainJobs.clear(job);
+        if (blocks != null) {
+            for (int i = 0; i < blocks.size(); i++) {
+                Block block = blocks.get(i);
+                double value = values.get(i);
+                if (value  > 0.5 + Base.EPS) {
+                    boolean canAdd = true;
+                    for (int job : block) {
+                        if (!remainJobs.get(job)) {
+                            if (Param.debug) {
+                                System.out.println("job: " + job + "not remain");
+                            }
+                            canAdd = false;
+                        }
+                    }
+                    // System.out.println("column's value > 0.5 : " + column + "value" + value);
+                    if (canAdd) {
+                        heuristicsSol.add(block);
+                        for (int job : block) {
+                            remainJobs.clear(job);
+                        }
+                    }
+
                 }
             }
         }
+
         // System.out.println("after choose columns whose value > 0.5: " + remainJobs.toString());
         ArrayList<Integer> list = new ArrayList<>();
         for (int i = remainJobs.nextSetBit(0); i >= 0; i = remainJobs.nextSetBit(i + 1)) {
             list.add(i);
         }
 
+        // Sort the remained jobs in descending order based on the values of instance.p[job]
         Collections.sort(list, Comparator.comparingInt(job -> -instance.p[job]));
         packRemains(heuristicsSol, list);
-        String constructSol = "-".repeat(30) + "construct initial solution: " + "-".repeat(30) + "\n"
-                + heuristicsSol.toString();
-        // if (Param.debug) {
-        //     System.out.println(constructSol);
-        // }
+        if (Param.debug) {
+            String constructSol = "=".repeat(30) + "Construct Initial Solution" + "=".repeat(30) + "\n"
+                    + heuristicsSol.toString();
+            System.out.println(constructSol);
+        }
         return heuristicsSol;
     }
 
@@ -74,8 +95,7 @@ public class Heuristics {
 
             for (int i = colSize.nextSetBit(0); i >= 0 && !packed; i = colSize.nextSetBit(i + 1)) {
                 if (solution.get(i).canPackItem(instance, job)) {
-                    solution.get(i).add(job);
-                    solution.get(i).processingTime += instance.p[job];
+                    solution.get(i).add(job, instance);
                     packed = true;
 
                     if (solution.get(i).noMoreToPack(instance)) {
@@ -86,8 +106,7 @@ public class Heuristics {
 
             if (!packed) {
                 Block newBlock = new Block();
-                newBlock.add(job);
-                newBlock.processingTime += instance.p[job];
+                newBlock.add(job, instance);
                 solution.add(newBlock);
                 colSize.set(solution.size() - 1);
             }
@@ -112,10 +131,8 @@ public class Heuristics {
                     List<Integer> jobs = new ArrayList<>(sol.get(j)); // 创建副本，因为 sol(j) 后面会被修改
                     for (int job : jobs) {
                         if (sol.get(i).canPackItem(instance, job)) {
-                            sol.get(j).remove(Integer.valueOf(job));
-                            sol.get(j).processingTime -= instance.p[job];
-                            sol.get(i).add(job);
-                            sol.get(i).processingTime += instance.p[job];
+                            sol.get(j).remove(job, instance);
+                            sol.get(i).add(job, instance);
                            /*  if (Param.debug) {
                                 System.out.println("Column:" + j + " job:" + job  + " has been relocated to"
                                 + " Column:" + i);

@@ -1,12 +1,36 @@
-The num of Batches: 7
-makespan: 1734.0
+The num of Batches: 31
+makespan: 1597.0
 The jobs in each Batch 
-Batch0:index:[1, 2, 4, 6, 7, 10, 23, 25] Processing Time: 200
-Batch1:index:[29, 40, 61, 62, 65] Processing Time: 200
-Batch2:index:[19, 22, 67, 13, 68] Processing Time: 200
-Batch3:index:[18, 52, 16, 34, 35, 5] Processing Time: 200
-Batch4:index:[53, 31, 57, 38, 55, 11] Processing Time: 200
-Batch5:index:[21, 41, 28, 58, 66, 15, 0] Processing Time: 200
-Batch6:index:[69, 48, 51, 46, 63, 56, 60, 30, 44, 37] Processing Time: 200
+Batch0:index:[65] Processing Time: 50
+Batch1:index:[7, 11, 56] Processing Time: 51
+Batch2:index:[13, 32, 36] Processing Time: 51
+Batch3:index:[28, 44] Processing Time: 51
+Batch4:index:[21, 37, 59] Processing Time: 51
+Batch5:index:[15, 51] Processing Time: 51
+Batch6:index:[48, 69] Processing Time: 51
+Batch7:index:[16, 20] Processing Time: 51
+Batch8:index:[18, 49] Processing Time: 51
+Batch9:index:[34, 42] Processing Time: 50
+Batch10:index:[35, 63] Processing Time: 51
+Batch11:index:[19, 24] Processing Time: 51
+Batch12:index:[41, 64] Processing Time: 51
+Batch13:index:[29, 47] Processing Time: 51
+Batch14:index:[3, 43, 66] Processing Time: 51
+Batch15:index:[50, 52] Processing Time: 51
+Batch16:index:[22, 33] Processing Time: 51
+Batch17:index:[8, 53] Processing Time: 51
+Batch18:index:[38, 45] Processing Time: 51
+Batch19:index:[9, 26, 40] Processing Time: 51
+Batch20:index:[14, 67] Processing Time: 50
+Batch21:index:[2, 5, 68] Processing Time: 51
+Batch22:index:[39, 55] Processing Time: 51
+Batch23:index:[10, 58] Processing Time: 51
+Batch24:index:[1, 23] Processing Time: 51
+Batch25:index:[0, 6] Processing Time: 51
+Batch26:index:[54, 57] Processing Time: 51
+Batch27:index:[4, 12, 46] Processing Time: 51
+Batch28:index:[25, 61] Processing Time: 51
+Batch29:index:[17, 31] Processing Time: 51
+Batch30:index:[60, 30, 27] Processing Time: 51
 The last Batch
-index:[64, 27, 9, 39, 45, 17, 54, 3, 59, 8, 20, 42, 43, 49, 50, 14, 32, 33, 12, 24, 47, 26, 36] Processing Time: 194
+index:[62] Processing Time: 16

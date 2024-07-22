@@ -1,16 +1,35 @@
-The num of Batches: 11
-makespan: 2596.0
+The num of Batches: 30
+makespan: 2376.0
 The jobs in each Batch 
-Batch0:index:[36, 56, 57, 71, 74] Processing Time: 200
-Batch1:index:[13, 55, 63, 40, 77] Processing Time: 200
-Batch2:index:[80, 83, 5, 23, 25] Processing Time: 200
-Batch3:index:[3, 26, 1, 38, 41] Processing Time: 200
-Batch4:index:[21, 27, 70, 78, 10, 35] Processing Time: 200
-Batch5:index:[15, 43, 52, 17, 29, 30] Processing Time: 200
-Batch6:index:[85, 22, 65, 24, 87, 34] Processing Time: 200
-Batch7:index:[6, 28, 61, 9, 49, 76, 2] Processing Time: 200
-Batch8:index:[59, 89, 0, 16, 45, 82, 8, 68] Processing Time: 200
-Batch9:index:[12, 18, 64, 33, 53, 4, 88, 79, 84] Processing Time: 200
-Batch10:index:[44, 54, 20, 46, 69, 32, 37, 42, 60, 62, 67, 31, 50] Processing Time: 200
+Batch0:index:[0, 41, 42] Processing Time: 79
+Batch1:index:[9, 12, 33] Processing Time: 79
+Batch2:index:[16, 64, 82] Processing Time: 79
+Batch3:index:[34, 44, 59] Processing Time: 79
+Batch4:index:[21, 24, 86] Processing Time: 79
+Batch5:index:[15, 28, 58] Processing Time: 79
+Batch6:index:[38, 70] Processing Time: 79
+Batch7:index:[29, 56] Processing Time: 79
+Batch8:index:[57, 78] Processing Time: 79
+Batch9:index:[14, 80, 81] Processing Time: 79
+Batch10:index:[36, 72, 88] Processing Time: 79
+Batch11:index:[8, 54, 87] Processing Time: 79
+Batch12:index:[71, 83] Processing Time: 79
+Batch13:index:[63, 76] Processing Time: 79
+Batch14:index:[23, 85] Processing Time: 79
+Batch15:index:[3, 45, 68] Processing Time: 79
+Batch16:index:[27, 53, 60] Processing Time: 79
+Batch17:index:[17, 75, 89] Processing Time: 79
+Batch18:index:[26, 43] Processing Time: 79
+Batch19:index:[6, 74] Processing Time: 79
+Batch20:index:[40, 46, 66] Processing Time: 79
+Batch21:index:[13, 49] Processing Time: 79
+Batch22:index:[55, 18, 31] Processing Time: 79
+Batch23:index:[5, 61, 50] Processing Time: 79
+Batch24:index:[1, 10] Processing Time: 79
+Batch25:index:[52, 22, 84] Processing Time: 79
+Batch26:index:[65, 4, 79] Processing Time: 79
+Batch27:index:[20, 2, 69, 32, 73] Processing Time: 79
+Batch28:index:[37, 30, 62, 67, 11, 77] Processing Time: 79
+Batch29:index:[7, 39, 51, 25, 48, 19, 47] Processing Time: 79
 The last Batch
-index:[72, 7, 14, 39, 75, 81, 11, 51, 66, 48, 19, 58, 73, 86, 47] Processing Time: 176
+index:[35] Processing Time: 6

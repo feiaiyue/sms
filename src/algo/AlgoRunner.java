@@ -3,25 +3,20 @@ package algo;
 import comn.Base;
 import comn.Param;
 import comn.ProblemIO;
+import gurobi.GRB;
 import gurobi.GRBException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class AlgoRunner {
     public void run(String[] args) throws GRBException {
-        /**
-         * 一般为了测试算法的准确性，在代码中加入check feasibility只会在测试阶段使用
-         * 最后的时候，不需要测试，debug = false ：不需要删掉每一块的check
-         */
-
-        // Param.debug = false;
-        Param.debug = true;
-        Param.algoName = "BranchAndPrice";
-        // Param.algoName = "MixedIntegerLinearProgramming";
-        Param.nThreads = 1;
-        readParams(args);
+        initialParams();
+        readAlgoParams();
+        configurePaths();
         ProblemIO.makeFolders();  // create different folders
         ProblemIO.writeCSV(makeCSVTitle(), true); // make the CSVTitle of abstract result of all instances
         Instance[] instances = readInstances();
@@ -32,6 +27,8 @@ public class AlgoRunner {
             case "BranchAndPrice":
                 runBranchAndBound(instances);
                 break;
+            case "Test":
+                runTestRoot(instances);
             default:
                 System.err.println("No such method");
                 break;
@@ -39,40 +36,85 @@ public class AlgoRunner {
     }
 
 
-    public void readParams(String[] args) {
+
+    private void initialParams() {
+        Param.debug = getDebugModel();
+        Param.algoName = getAlgoName();
+        Param.dataSetName = getDataSetName();
+        Param.dataPath = getDataPath();
+        Param.resultPath = getResultPath();
+        Param.nThreads = 1;
         Param.problemName = "singleMachineScheduling";
-        Param.dataPath = "./data/Bat Low2010";
-        // Param.dataPath = "./data/Bat Grande";
-        // Param.dataPath = "./data/Bat Pequeña";
-        // Param.dataPath = "./data";
-        Param.resultPath = "./result";
-        // 结果下面跑不同算法的文件夹。代表着algo文件夹在result下面
-        Param.algoPath = Param.resultPath + "/" + Param.algoName;
-        // 因为这里存放的是路径，所以要先是algoPath,并且这个algoPath里面包括的algoName是不会出现在名字里的
-        if (Param.debug) {
-            Param.csvPath = Param.algoPath + "/" + Param.algoName
-                    + ".csv";
-        } else {
-            Param.csvPath = Param.algoPath + "/" + Param.algoName + "-"
-                    + Base.getCurrentTime()
-                    + ".csv";
-        }
-        Param.solPath = Param.algoPath + "/sol";
         Param.instancePrefix = "";
         Param.instanceSuffix = "";
-        // 1h = 60 * 60s each instance should be given 3600s
-        Param.timeLimit = 60 * 60;
+        Param.timeLimit = 60 * 60; // 1h = 60 * 60s each instance should be given 3600s
     }
 
-    //    used to do debug
-    boolean belongToTest(Instance inst) {
-        // Param.instancePrefix = "L_00000678";
-        // Param.instancePrefix = "L_00000496";
-        // Param.instancePrefix = "L_00000076";
+    private void readAlgoParams() {
+        Param.branchOnNumBlocks = true;
+        Param.branchOnY = true;
+        Param.branchOnPairs = true;
+        Param.tightenTBound = false;
+        Param.useHeuristics = true;
+        Param.dominanceFlag = true;
+        Param.fathomingFlag = true;
+        Param.T = 50;
+        Param.t = 20;
+        Param.experimentCondition = "eachT~U2";
+    }
 
-        // Param.instancePrefix = "G_00000001";
-        // Param.instancePrefix = "M_00000050";
+    private void configurePaths() {
+        Param.algoPath = Param.resultPath + "/" + Param.algoName;
+        Param.solPath = Param.algoPath + "/sol";
+        Param.csvPath = Param.algoPath + "/" + Param.dataSetName;
+        if (Param.debug) {
+            Param.csvPath += "/" + Param.algoName + ".csv";
+        } else {
+            Param.csvPath += "/" + Param.algoName + "-" + Param.experimentCondition + ".csv";
+        }
+    }
+
+
+
+    private boolean getDebugModel() {
+         //return true; // during the first debug phase
+        return false; // in the server
+    }
+
+    private String getAlgoName() {
+        //return "BranchAndPrice";
+         return "MixedIntegerLinearProgramming";
+        //return "Test";
+    }
+
+    private String getDataSetName(){
+        // return "Bat Grande";
+        // return "Bat Low2010";
+        //return "Bat Low2010-T1";
+         return "Bat Low2010-T2";
+        // return "Bat Pequena";
+    }
+    private String getDataPath() {
+        return "./data/" + Param.dataSetName;
+    }
+
+    private String getResultPath() {
+        return "./result"; // server;
+        // return "./result_macbook"; // default;
+    }
+
+
+
+
+
+    boolean belongToTest(Instance inst) {
+        // Param.instancePrefix = "L_00000260";
+        // Param.instancePrefix = "L_00000407";
+        // Param.instancePrefix = "L_00000428"; // special instance which run slower
+        //Param.instancePrefix = "L_00000360";
+
         return inst.instName.startsWith(Param.instancePrefix);
+
     }
 
 
@@ -90,15 +132,19 @@ public class AlgoRunner {
     }
 
     String makeCSVTitle() {
-        String title = "instName, numOfJobs, numOfThreads, timeLimit, timeCost, feasible, optimal, numOfNodes, globalUB, globalLB, gap,";
+        String title = "instName, numOfJobs, T, t, numOfThreads, timeLimit, feasible, optimal, globalUB, globalLB, gap,";
         if (Param.algoName.startsWith("MixedIntegerLinearProgramming")) {
             // in the minimization problem, objVal -> globalUB, objBound -> globalLB
-            title += "timeOnModel, timeOnOptimize, numOfVariables, numOfConstraints, gurobiModelStatus";
+            title += "timeCost, timeOnModel, timeOnOptimize, " +
+                    "numOfNodes," +
+                    "numOfVariables, numOfConstraints, gurobiModelStatus";
         }
         if (Param.algoName.startsWith("BranchAndPrice")) {
-            title += "rootUB, rootLB, timeOnRoot, timeOnCG, " +
-                    "timeOnRMP, timeOnPP, timeOnHeuristics, cntRMPCall, cntPPCall, cntHeuristicsCall, numSolvedNodes, numPrunedByInfeasibility, numPrunedByOptimality, numPrunedByBound, " +
-                    "numLeftNodes, numNewLabel, numDominatedLabel, numPrunedLabel, timeOnLabelLb";
+            title += "rootUB, rootLB, " +
+                    "timeCost, timeOnRoot, timeOnCG, timeOnRMP, timeOnPP, timeOnHeuristics, " +
+                    "cntRMPCall, cntPPCall, cntHeuristicsCall, " +
+                    "numOfNodes, numOfNodesSolved, numOfNodesRemained, numOfNodesPrunedByInfeasible, numOfNodesPrunedByBound, numOfNodesPrunedByOptimal, " +
+                    "numOfLabels, numOfLabelsPrunedByLb, numOfLabelsDominated";
         }
         return title;
     }
@@ -128,25 +174,29 @@ public class AlgoRunner {
      void runMILP(Instance[] instances) throws GRBException {
          for (int i = 0; i < instances.length; i++) {
              Instance instance = instances[i];
-            if (Param.debug && !belongToTest(instance)) {
+            if (!belongToTest(instance)) {
                 continue;
             }
             Base.renewRandom();
             ModelGurobi modelGurobi = new ModelGurobi(instance);
-            System.out.println("Gurobi Model to solve --> " + instance.instName);
+            String startMILP = "\n" + "=".repeat(30) + "Gurobi to solve MILP model: " + instance.instName + "start!" + "=".repeat(30);
+             System.out.println(startMILP);
             modelGurobi.run(Param.timeLimit);
             writeResult(instance.instName, modelGurobi.makeCsvItem(), modelGurobi.solution, modelGurobi.feasible);
+            if (Param.debug) {
+                String endMILP = modelGurobi.makeCsvItem();
+                System.out.println(endMILP);
+            }
             modelGurobi.end();
         }
     }
 
 
     void runBranchAndBound(Instance[] instances) throws GRBException {
-        // for (int i = 500; i < 550 ;i++) {
-        for (int i = 600; i < instances.length; i++) {
+        int startIndex = 0;
+        for (int i = startIndex; i < instances.length; i++) {
             Instance instance = instances[i];
-            // using startRunning flag to debug start from a specific instance
-            if (Param.debug && !belongToTest(instance)) {
+            if (!belongToTest(instance)) {
                 continue;
             }
             Base.renewRandom();
@@ -155,13 +205,86 @@ public class AlgoRunner {
             System.out.println(startBnp);
 
             bnp.solve(Param.timeLimit);
-
-            // String endBnp = "=".repeat(30) + "B&P to solve: " + instance.instName + "end!" + "=".repeat(30);
-            // System.out.println(endBnp);
-
             writeResult(instance.instName, bnp.makeCSVItem(), bnp.incumbentSol, true);
+            if (Param.debug) {
+                String endBnp = bnp.makeCSVItem();
+                System.out.println(endBnp);
+            }
             bnp.columnGeneration.master.end();
             System.gc();
         }
+    }
+
+    /**
+     * When T = 50, According to old Heuristics,
+     * two conflict column will be selected simultaneously
+     * @param instances
+     * @throws GRBException
+     */
+    void runTestRoot(Instance[] instances) throws GRBException {
+        for (int i = 0; i < instances.length; i++) {
+            Instance instance = instances[i];
+            if (!belongToTest(instance)) {
+                continue;
+            }
+
+            Base.renewRandom();
+            Master master = new Master(instance);
+            ArrayList<Block> allBlocks = findFeasibleBlocks(instance);
+            System.out.println("the all blocks add to the root node:  " + allBlocks.size());
+            for (Block block : allBlocks) {
+                System.out.println(block.toString());
+            }
+            master.addColumnsWithoutCheck(allBlocks);
+            master.model.optimize();
+            boolean feasible = (master.model.get(GRB.IntAttr.Status) == GRB.OPTIMAL);
+            if (feasible) {
+                System.out.println("master : objVal = " + String.format("%.8f", master.getObjValue()) +
+                        "  colSize = " + master.columnPool.size());
+            }
+            System.out.println(master.getLPSol());
+
+        }
+    }
+
+    public static ArrayList<Block> findFeasibleBlocks(Instance instance) {
+        ArrayList<Block> blocks = new ArrayList<>();
+        Block currentBlock = new Block();
+        int totalTime = 0;
+
+        backtrack(instance, 0, totalTime, currentBlock, blocks);
+
+        return blocks;
+    }
+
+    private static void backtrack(Instance instance, int index, int totalTime, Block currentBlock, List<Block> blocks) {
+        if (totalTime > 50) {
+            return; // 如果当前 Block 的总处理时间超过 50，直接返回
+        }
+
+        if (index == instance.p.length) {
+            Block newBlock = new Block(currentBlock);
+            if (totalTime != currentBlock.processingTime) {
+                System.err.println("ERROR! total Time not equal to block's processingTime");
+                System.out.println(currentBlock.toString());
+            }
+            blocks.add(newBlock);// 找到一个可行的 Block，加入到结果中
+            return;
+        }
+
+        // 尝试将当前作业加入当前 Block
+        if (totalTime + instance.p[index] <= 50) {
+            currentBlock.add(index, instance);
+            backtrack(instance, index + 1, totalTime + instance.p[index], currentBlock, blocks);
+            int jobIndex = currentBlock.get(currentBlock.size() - 1);
+            currentBlock.remove(currentBlock.size() - 1);
+            currentBlock.processingTime -= instance.p[jobIndex];
+            //currentBlock.remove(Integer.valueOf(jobIndex), instance);
+            //currentBlock.remove(currentBlock.size() - 1); // 回溯，移除最后一个作业
+
+        }
+
+        // 不将当前作业加入当前 Block，继续尝试下一个作业
+        backtrack(instance, index + 1, totalTime, currentBlock, blocks);
     }
 }

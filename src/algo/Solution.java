@@ -1,6 +1,8 @@
 package algo;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -56,6 +58,29 @@ public class Solution extends ArrayList<Block> {
             }
         }
         return true;
+    }
+
+    public void reconstruct(Instance instance){
+        int[] visit = new int[instance.nJobs];
+        List<Block> blocksToRemove = new ArrayList<>();
+
+        for (Block block : this) {
+            for (Iterator<Integer> it = block.iterator(); it.hasNext(); ) {
+                int job = it.next();
+                if (visit[job] > 0) {
+                    it.remove(); // 从 Block 中移除作业
+                    block.processingTime -= instance.p[job]; // 更新处理时间
+                }
+                visit[job]++;
+            }
+            if (block.isEmpty()) {
+                blocksToRemove.add(block); // 如果 block 为空，则标记为待移除
+            }
+        }
+
+        // 移除空的 blocks
+        this.removeAll(blocksToRemove);
+
     }
 
 

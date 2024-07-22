@@ -1,13 +1,17 @@
-The num of Blocks: 9
-makespan: 2047
-The jobs in each Block: 
-[0, 7, 21, 31, 34, 35, 41, 60, 69]
-[33, 44, 47, 50, 57, 65]
-[1, 6, 8, 14, 17, 20, 37, 54, 61]
-[9, 22, 26, 32, 43, 51, 62, 67]
-[2, 19, 27, 55, 63, 66]
-[11, 15, 18, 38, 46, 49, 68]
-[5, 10, 12, 28, 39, 48, 52]
-[3, 4, 13, 29, 42, 53, 56, 59]
-[16, 23, 24, 25, 36, 40, 64]
-leftJobs: [30, 45, 58]
+The num of Batches: 12
+makespan: 1867.0
+The jobs in each Batch 
+Batch0:index:[0, 2, 23, 29, 67] Processing Time: 155
+Batch1:index:[13, 14, 22, 54, 59, 61, 63] Processing Time: 155
+Batch2:index:[15, 31, 45, 50, 64] Processing Time: 155
+Batch3:index:[19, 21, 26, 37, 65, 66] Processing Time: 155
+Batch4:index:[1, 11, 17, 40, 41, 44] Processing Time: 155
+Batch5:index:[18, 28, 33, 34, 35] Processing Time: 155
+Batch6:index:[6, 16, 39, 53, 62] Processing Time: 155
+Batch7:index:[32, 38, 42, 55, 57] Processing Time: 155
+Batch8:index:[8, 10, 25, 36, 47, 60] Processing Time: 155
+Batch9:index:[3, 7, 12, 24, 48, 52, 56] Processing Time: 155
+Batch10:index:[5, 30, 49, 51, 58] Processing Time: 155
+Batch11:index:[4, 9, 20, 27, 68, 69] Processing Time: 155
+The last Batch
+index:[43, 46] Processing Time: 7

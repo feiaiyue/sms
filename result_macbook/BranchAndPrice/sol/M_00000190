@@ -1,0 +1,78 @@
+The num of Batches: 73
+makespan: 16201.0
+The jobs in each Batch 
+Batch0:index:[0, 4, 5, 9, 15, 58, 63, 85] Processing Time: 200
+Batch1:index:[8, 13, 17, 26, 34] Processing Time: 200
+Batch2:index:[68, 88, 246, 248] Processing Time: 200
+Batch3:index:[27, 92, 130, 277] Processing Time: 200
+Batch4:index:[29, 163, 201, 224] Processing Time: 200
+Batch5:index:[177, 186, 195, 267] Processing Time: 200
+Batch6:index:[30, 100, 136, 266] Processing Time: 200
+Batch7:index:[37, 44, 74, 81] Processing Time: 200
+Batch8:index:[47, 96, 149, 240] Processing Time: 200
+Batch9:index:[55, 191, 294] Processing Time: 200
+Batch10:index:[179, 208, 263] Processing Time: 200
+Batch11:index:[95, 99, 143, 239] Processing Time: 200
+Batch12:index:[60, 193, 205] Processing Time: 200
+Batch13:index:[181, 207, 220] Processing Time: 200
+Batch14:index:[97, 133, 270] Processing Time: 200
+Batch15:index:[91, 215, 255] Processing Time: 200
+Batch16:index:[38, 168, 289] Processing Time: 200
+Batch17:index:[112, 139, 278] Processing Time: 200
+Batch18:index:[219, 236, 254] Processing Time: 200
+Batch19:index:[171, 209, 295] Processing Time: 200
+Batch20:index:[84, 108, 141, 173] Processing Time: 200
+Batch21:index:[198, 214, 260] Processing Time: 200
+Batch22:index:[189, 197, 216] Processing Time: 200
+Batch23:index:[223, 242, 264] Processing Time: 200
+Batch24:index:[46, 103, 111, 202, 297] Processing Time: 200
+Batch25:index:[11, 233, 291] Processing Time: 200
+Batch26:index:[123, 147, 170, 238] Processing Time: 200
+Batch27:index:[178, 229, 256] Processing Time: 200
+Batch28:index:[23, 52, 137] Processing Time: 200
+Batch29:index:[196, 234, 292] Processing Time: 200
+Batch30:index:[231, 269, 285] Processing Time: 200
+Batch31:index:[10, 66, 98, 211] Processing Time: 200
+Batch32:index:[12, 32, 145, 162, 190] Processing Time: 200
+Batch33:index:[225, 244, 293] Processing Time: 200
+Batch34:index:[75, 124, 164] Processing Time: 200
+Batch35:index:[125, 154, 180, 210] Processing Time: 200
+Batch36:index:[160, 182, 273] Processing Time: 200
+Batch37:index:[104, 121, 126, 127] Processing Time: 200
+Batch38:index:[218, 232, 253] Processing Time: 200
+Batch39:index:[174, 203, 287] Processing Time: 200
+Batch40:index:[172, 221, 275] Processing Time: 200
+Batch41:index:[120, 148, 298] Processing Time: 200
+Batch42:index:[72, 115, 146] Processing Time: 200
+Batch43:index:[90, 94, 110, 142] Processing Time: 200
+Batch44:index:[199, 227, 243] Processing Time: 200
+Batch45:index:[109, 114, 281] Processing Time: 200
+Batch46:index:[67, 77, 184, 257] Processing Time: 200
+Batch47:index:[268, 274, 286] Processing Time: 200
+Batch48:index:[251, 51, 45] Processing Time: 200
+Batch49:index:[206, 7, 70] Processing Time: 200
+Batch50:index:[83, 228, 14] Processing Time: 200
+Batch51:index:[183, 59, 116] Processing Time: 200
+Batch52:index:[1, 128, 169] Processing Time: 200
+Batch53:index:[259, 261, 62, 53] Processing Time: 200
+Batch54:index:[28, 135, 41] Processing Time: 200
+Batch55:index:[16, 2, 19] Processing Time: 200
+Batch56:index:[175, 138, 71] Processing Time: 200
+Batch57:index:[31, 258, 69, 82] Processing Time: 200
+Batch58:index:[25, 290, 33, 64] Processing Time: 200
+Batch59:index:[20, 24, 6] Processing Time: 200
+Batch60:index:[39, 185, 79] Processing Time: 200
+Batch61:index:[153, 284, 105, 78] Processing Time: 200
+Batch62:index:[188, 226, 48, 86] Processing Time: 200
+Batch63:index:[93, 57, 18, 118] Processing Time: 200
+Batch64:index:[271, 65, 106, 279, 222] Processing Time: 200
+Batch65:index:[140, 247, 102, 21] Processing Time: 200
+Batch66:index:[212, 276, 165, 204, 194] Processing Time: 200
+Batch67:index:[36, 159, 119, 252, 107, 200] Processing Time: 200
+Batch68:index:[49, 150, 213, 288, 42] Processing Time: 200
+Batch69:index:[50, 22, 117, 3, 54, 80] Processing Time: 200
+Batch70:index:[176, 132, 151, 245, 167, 61] Processing Time: 200
+Batch71:index:[250, 299, 76, 237, 272, 56, 144] Processing Time: 200
+Batch72:index:[217, 157, 265, 122, 87, 158, 230, 282, 241, 131, 155] Processing Time: 200
+The last Batch
+index:[73, 101, 129, 187, 280, 192, 161, 40, 89, 113, 134, 283, 296, 156, 262, 35, 43, 152, 249, 235, 166] Processing Time: 141

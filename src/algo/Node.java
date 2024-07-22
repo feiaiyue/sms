@@ -21,7 +21,7 @@ public class Node {
 
     public int lbNumBlocks; // sum of Blocks >= lbNumBlocks
     public int ubNumBlocks; // sum of Blocks <= ubNumBlocks
-    // public int RHS;
+    public int RHS;
 
     public ArrayList<Integer> yZero;
     public ArrayList<Integer> yOne;

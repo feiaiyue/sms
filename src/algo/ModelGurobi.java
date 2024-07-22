@@ -32,7 +32,7 @@ public class ModelGurobi {
 
 
     public ModelGurobi(Instance instance) throws GRBException {
-        this.env = new GRBEnv();
+        this.env = new GRBEnv(true);
         this.instance = instance;
         this.N = instance.nJobs;
         this.p = instance.p;
@@ -134,6 +134,7 @@ public class ModelGurobi {
             env.set(GRB.IntParam.Seed, Base.SEED);
             env.set(GRB.IntParam.Threads, Param.nThreads);
             env.set(GRB.IntParam.LogToConsole, 0);
+            env.start();
             buildModel();
             model.set(GRB.DoubleParam.TimeLimit, timeLimit);
             // reducedModel = model.presolve();
@@ -141,10 +142,18 @@ public class ModelGurobi {
             model.optimize();
             timeOnOptimize = model.get(GRB.DoubleAttr.Runtime);
 
-            if (model.get(GRB.IntAttr.Status) == GRB.Status.OPTIMAL) {
+            if (model.get(GRB.IntAttr.Status) == GRB.Status.OPTIMAL
+                    || model.get(GRB.IntAttr.Status) == GRB.Status.TIME_LIMIT) {
                 solution = getSolution();
                 feasible = solution.isFeasible(instance);
+                if (feasible && Param.debug) {
+                    System.out.println(solution.toString());
+                }
+            }
+            if (model.get(GRB.IntAttr.Status) == GRB.Status.OPTIMAL) {
                 optimal = true;
+            } else {
+                optimal = false;
             }
 
             if (Param.debug == true) {
@@ -170,17 +179,11 @@ public class ModelGurobi {
                 continue;
             }
             if (Base.roundToInt(b[i].get(GRB.DoubleAttr.X)) == 1.0) {
-                // solution.numOfBlocks++;
-                HashSet<Integer> set = new HashSet<>();
-                List<Integer> list = new ArrayList<>();
+                Block block = new Block();
                 for (int j = 0; j < N; j++) {
                     if (Base.roundToInt(x[i][j].get(GRB.DoubleAttr.X)) == 1.0) {
-                        list.add(j);
+                        block.add(j, instance);
                     }
-                }
-                Block block = new Block(list);
-                for (int job : block) {
-                    block.processingTime += instance.p[job];
                 }
                 solution.add(block);
             }
@@ -190,8 +193,7 @@ public class ModelGurobi {
         solution.add(block);
         for (int j = 0; j < N; j++) {
             if (Base.roundToInt(x[indexMaxSlack][j].get(GRB.DoubleAttr.X)) == 1.0) {
-                solution.get(solution.size() - 1).add(j);
-                solution.get(solution.size() - 1).processingTime += instance.p[j];
+                solution.get(solution.size() - 1).add(j, instance);
             }
         }
         solution.computeMakespan(instance);
@@ -205,21 +207,23 @@ public class ModelGurobi {
     }
 
     public String makeCsvItem() throws GRBException {
-        String str = instance.instName + ", "
-                + instance.nJobs + ", "
-                + Param.nThreads + ", "
-                + timeLimit + ", "
-                + String.format("%.3f", timeOnModel + timeOnOptimize) + ", "
-                + feasible + ", "
-                + optimal + ", "
-                + (int)model.get(GRB.DoubleAttr.NodeCount) + ", "
-                + (feasible ? Base.ceilToInt(model.get(GRB.DoubleAttr.ObjVal)) : "infeasible") + ", "
-                + Base.ceilToInt(model.get(GRB.DoubleAttr.ObjBound)) + ", "
-                + String.format("%.3f", 100 * model.get(GRB.DoubleAttr.MIPGap)) + " , "
-                + String.format("%.3f", timeOnModel) + ", "
-                + String.format("%.3f", timeOnOptimize) + ", "
-                + model.get(GRB.IntAttr.NumVars) + ", "
-                + model.get(GRB.IntAttr.NumConstrs) + ", "
+        String str = instance.instName + ","
+                + instance.nJobs + ","
+                + instance.T + ","
+                + instance.t + ","
+                + Param.nThreads + ","
+                + timeLimit + ","
+                + String.format("%d", feasible == true  ? 1 : 0) + ","
+                + String.format("%d", optimal == true ? 1 : 0) + ","
+                + Base.ceilToInt(model.get(GRB.DoubleAttr.ObjVal)) + ","
+                + Base.ceilToInt(model.get(GRB.DoubleAttr.ObjBound)) + ","
+                + String.format("%.3f", 100 * model.get(GRB.DoubleAttr.MIPGap)) + ","
+                + String.format("%.3f", timeOnModel + timeOnOptimize) + ","
+                + String.format("%.3f", timeOnModel) + ","
+                + String.format("%.3f", timeOnOptimize) + ","
+                + (int) model.get(GRB.DoubleAttr.NodeCount) + ","
+                + model.get(GRB.IntAttr.NumVars) + ","
+                + model.get(GRB.IntAttr.NumConstrs) + ","
                 + model.get(GRB.IntAttr.Status);
         return str;
     }

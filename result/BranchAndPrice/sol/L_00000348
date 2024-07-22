@@ -1,12 +1,32 @@
-The num of Batches: 7
-makespan: 1676.0
+The num of Batches: 27
+makespan: 1536.0
 The jobs in each Batch 
-Batch0:index:[0, 1, 6, 7, 10, 24, 25, 42, 43, 48, 50] Processing Time: 200
-Batch1:index:[2, 16, 49, 59, 62, 63, 64, 69] Processing Time: 200
-Batch2:index:[14, 66, 19, 28, 35] Processing Time: 200
-Batch3:index:[8, 40, 55, 12, 21, 29] Processing Time: 200
-Batch4:index:[27, 53, 46, 65, 33, 68, 9] Processing Time: 200
-Batch5:index:[18, 39, 30, 38, 15, 17, 23, 44] Processing Time: 200
-Batch6:index:[56, 67, 22, 41, 47, 51, 3, 31, 36, 11] Processing Time: 200
+Batch0:index:[41, 47, 48] Processing Time: 55
+Batch1:index:[2, 11] Processing Time: 55
+Batch2:index:[33, 38] Processing Time: 55
+Batch3:index:[46, 59] Processing Time: 55
+Batch4:index:[40, 42] Processing Time: 55
+Batch5:index:[9, 13, 49] Processing Time: 55
+Batch6:index:[6, 12] Processing Time: 55
+Batch7:index:[14, 54] Processing Time: 55
+Batch8:index:[3, 53] Processing Time: 55
+Batch9:index:[8, 35] Processing Time: 55
+Batch10:index:[5, 37, 64] Processing Time: 55
+Batch11:index:[28, 29, 62] Processing Time: 55
+Batch12:index:[16, 43] Processing Time: 55
+Batch13:index:[20, 51, 56] Processing Time: 55
+Batch14:index:[19, 57, 63] Processing Time: 55
+Batch15:index:[4, 17, 25] Processing Time: 55
+Batch16:index:[1, 36] Processing Time: 55
+Batch17:index:[55, 60, 69] Processing Time: 55
+Batch18:index:[18, 39] Processing Time: 55
+Batch19:index:[22, 31, 32] Processing Time: 55
+Batch20:index:[15, 65] Processing Time: 55
+Batch21:index:[23, 58, 67] Processing Time: 55
+Batch22:index:[21, 26, 61] Processing Time: 55
+Batch23:index:[7, 50, 68] Processing Time: 55
+Batch24:index:[10, 34, 44] Processing Time: 55
+Batch25:index:[0, 30, 52] Processing Time: 55
+Batch26:index:[24, 27] Processing Time: 55
 The last Batch
-index:[4, 5, 60, 32, 52, 61, 20, 13, 58, 26, 54, 57, 34, 45, 37] Processing Time: 136
+index:[45, 66] Processing Time: 51

@@ -1,15 +1,31 @@
-The num of Batches: 10
-makespan: 2392.0
+The num of Batches: 26
+makespan: 2192.0
 The jobs in each Batch 
-Batch0:index:[27, 39, 47, 56, 58, 60] Processing Time: 200
-Batch1:index:[29, 34, 35, 46, 53] Processing Time: 200
-Batch2:index:[23, 28, 31, 61, 75, 76, 78] Processing Time: 200
-Batch3:index:[26, 44, 62, 73, 74] Processing Time: 200
-Batch4:index:[11, 18, 63, 66, 77, 79] Processing Time: 200
-Batch5:index:[54, 57, 13, 67, 68] Processing Time: 200
-Batch6:index:[50, 69, 36, 48, 0] Processing Time: 200
-Batch7:index:[40, 8, 7, 33, 19, 5] Processing Time: 200
-Batch8:index:[3, 10, 25, 21, 32, 4, 41] Processing Time: 200
-Batch9:index:[9, 42, 51, 52, 65, 24, 55, 72, 43] Processing Time: 200
+Batch0:index:[8, 43, 58] Processing Time: 83
+Batch1:index:[11, 14, 28] Processing Time: 83
+Batch2:index:[19, 32, 45] Processing Time: 83
+Batch3:index:[13, 16, 47] Processing Time: 83
+Batch4:index:[25, 33, 38] Processing Time: 83
+Batch5:index:[40, 46] Processing Time: 83
+Batch6:index:[36, 75] Processing Time: 83
+Batch7:index:[26, 27] Processing Time: 83
+Batch8:index:[48, 76] Processing Time: 83
+Batch9:index:[12, 69, 72] Processing Time: 83
+Batch10:index:[30, 44, 65] Processing Time: 83
+Batch11:index:[60, 73] Processing Time: 83
+Batch12:index:[3, 57] Processing Time: 83
+Batch13:index:[20, 22, 67, 78] Processing Time: 83
+Batch14:index:[18, 53] Processing Time: 83
+Batch15:index:[4, 5, 68, 79] Processing Time: 83
+Batch16:index:[50, 61] Processing Time: 83
+Batch17:index:[7, 63] Processing Time: 83
+Batch18:index:[0, 35, 39] Processing Time: 83
+Batch19:index:[1, 17, 74] Processing Time: 83
+Batch20:index:[29, 10] Processing Time: 83
+Batch21:index:[54, 21, 71] Processing Time: 83
+Batch22:index:[34, 56, 2] Processing Time: 83
+Batch23:index:[9, 31, 42, 64] Processing Time: 83
+Batch24:index:[51, 52, 24, 62] Processing Time: 83
+Batch25:index:[23, 55, 66, 49, 15] Processing Time: 83
 The last Batch
-index:[1, 12, 22, 45, 49, 17, 30, 20, 38, 6, 15, 2, 14, 64, 37, 71, 70, 16, 59] Processing Time: 192
+index:[41, 6, 37, 70, 59, 77] Processing Time: 34

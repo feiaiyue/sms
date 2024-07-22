@@ -1,0 +1,75 @@
+The num of Batches: 70
+makespan: 15535.0
+The jobs in each Batch 
+Batch0:index:[4, 5, 13, 28] Processing Time: 200
+Batch1:index:[71, 98, 238, 244, 267, 294] Processing Time: 200
+Batch2:index:[39, 45, 177, 227, 242] Processing Time: 200
+Batch3:index:[24, 80, 119, 222] Processing Time: 200
+Batch4:index:[41, 124, 132, 181] Processing Time: 200
+Batch5:index:[176, 179, 206, 266] Processing Time: 200
+Batch6:index:[106, 114, 137, 154, 186] Processing Time: 200
+Batch7:index:[44, 155, 198, 216] Processing Time: 200
+Batch8:index:[164, 235, 239, 255] Processing Time: 200
+Batch9:index:[37, 156, 223] Processing Time: 200
+Batch10:index:[95, 270, 292] Processing Time: 200
+Batch11:index:[170, 184, 211] Processing Time: 200
+Batch12:index:[109, 143, 168] Processing Time: 200
+Batch13:index:[86, 160, 194, 220] Processing Time: 200
+Batch14:index:[191, 219, 241] Processing Time: 200
+Batch15:index:[57, 59, 77, 108] Processing Time: 200
+Batch16:index:[48, 116, 183] Processing Time: 200
+Batch17:index:[139, 207, 262] Processing Time: 200
+Batch18:index:[122, 204, 243] Processing Time: 200
+Batch19:index:[88, 112, 145, 218] Processing Time: 200
+Batch20:index:[169, 178, 197] Processing Time: 200
+Batch21:index:[123, 202, 253] Processing Time: 200
+Batch22:index:[76, 146, 161, 232] Processing Time: 200
+Batch23:index:[115, 140, 229, 237] Processing Time: 200
+Batch24:index:[52, 60, 70, 265] Processing Time: 200
+Batch25:index:[72, 121, 150, 153] Processing Time: 200
+Batch26:index:[125, 171, 285] Processing Time: 200
+Batch27:index:[175, 190, 201] Processing Time: 200
+Batch28:index:[67, 158, 245] Processing Time: 200
+Batch29:index:[90, 275, 295] Processing Time: 200
+Batch30:index:[254, 288, 290] Processing Time: 200
+Batch31:index:[8, 9, 107, 251] Processing Time: 200
+Batch32:index:[69, 203, 40] Processing Time: 200
+Batch33:index:[233, 256, 277] Processing Time: 200
+Batch34:index:[81, 51, 172] Processing Time: 200
+Batch35:index:[82, 65, 212] Processing Time: 200
+Batch36:index:[130, 247, 47] Processing Time: 200
+Batch37:index:[74, 205, 196] Processing Time: 200
+Batch38:index:[35, 73, 33] Processing Time: 200
+Batch39:index:[134, 289, 55] Processing Time: 200
+Batch40:index:[138, 27, 299] Processing Time: 200
+Batch41:index:[167, 7, 21] Processing Time: 200
+Batch42:index:[148, 56, 3] Processing Time: 200
+Batch43:index:[105, 215, 63] Processing Time: 200
+Batch44:index:[268, 269, 261] Processing Time: 200
+Batch45:index:[283, 182, 83, 66] Processing Time: 200
+Batch46:index:[62, 97, 236] Processing Time: 200
+Batch47:index:[99, 96, 68] Processing Time: 200
+Batch48:index:[141, 287, 20] Processing Time: 200
+Batch49:index:[89, 163, 42] Processing Time: 200
+Batch50:index:[6, 276, 79, 91] Processing Time: 200
+Batch51:index:[291, 10, 29] Processing Time: 200
+Batch52:index:[263, 126, 19] Processing Time: 200
+Batch53:index:[32, 147, 14] Processing Time: 200
+Batch54:index:[286, 200, 199, 2] Processing Time: 200
+Batch55:index:[298, 0, 230, 278] Processing Time: 200
+Batch56:index:[34, 209, 1, 187] Processing Time: 200
+Batch57:index:[234, 87, 104, 22] Processing Time: 200
+Batch58:index:[208, 100, 144, 118] Processing Time: 200
+Batch59:index:[149, 260, 281, 120] Processing Time: 200
+Batch60:index:[157, 293, 159, 12] Processing Time: 200
+Batch61:index:[174, 185, 180, 217, 64, 111] Processing Time: 200
+Batch62:index:[280, 54, 162, 23, 192] Processing Time: 200
+Batch63:index:[94, 15, 110, 226, 18] Processing Time: 200
+Batch64:index:[17, 36, 53, 117, 11, 31] Processing Time: 200
+Batch65:index:[193, 78, 246, 297, 189, 25] Processing Time: 200
+Batch66:index:[93, 284, 50, 151, 173, 282, 26] Processing Time: 200
+Batch67:index:[75, 195, 92, 240, 250, 272, 101, 43] Processing Time: 200
+Batch68:index:[221, 85, 142, 166, 30, 102, 271, 103, 61, 127] Processing Time: 200
+Batch69:index:[113, 228, 296, 46, 128, 129, 84, 248, 252, 258, 274, 152, 133] Processing Time: 200
+The last Batch
+index:[16, 38, 49, 214, 264, 273, 257, 136, 165, 231, 225, 213, 58, 210, 224, 249, 259, 131, 135, 188, 279] Processing Time: 135

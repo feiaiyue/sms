@@ -1,15 +1,30 @@
-The num of Batches: 10
-makespan: 2279.0
+The num of Batches: 25
+makespan: 2079.0
 The jobs in each Batch 
-Batch0:index:[0, 1, 3, 5, 6, 7, 36, 39, 44] Processing Time: 200
-Batch1:index:[28, 45, 54, 57, 62, 63, 72, 78] Processing Time: 200
-Batch2:index:[16, 25, 26, 31, 46, 52, 58] Processing Time: 200
-Batch3:index:[4, 18, 24, 55, 56, 60, 61] Processing Time: 200
-Batch4:index:[22, 40, 48, 64, 71] Processing Time: 200
-Batch5:index:[49, 51, 65, 12, 9, 19] Processing Time: 200
-Batch6:index:[29, 70, 17, 34, 20, 38] Processing Time: 200
-Batch7:index:[32, 21, 27, 75, 10, 67] Processing Time: 200
-Batch8:index:[15, 33, 14, 42, 66, 59] Processing Time: 200
-Batch9:index:[13, 35, 73, 37, 41, 69, 76, 8, 47, 30, 2] Processing Time: 200
+Batch0:index:[3, 7, 8, 47] Processing Time: 82
+Batch1:index:[10, 20, 72] Processing Time: 82
+Batch2:index:[21, 57, 73] Processing Time: 82
+Batch3:index:[56, 58, 69] Processing Time: 82
+Batch4:index:[29, 60] Processing Time: 82
+Batch5:index:[1, 70] Processing Time: 82
+Batch6:index:[71, 77, 78] Processing Time: 82
+Batch7:index:[15, 37, 63] Processing Time: 82
+Batch8:index:[51, 61] Processing Time: 82
+Batch9:index:[49, 66] Processing Time: 82
+Batch10:index:[27, 36, 62] Processing Time: 82
+Batch11:index:[42, 65] Processing Time: 82
+Batch12:index:[48, 54, 67] Processing Time: 82
+Batch13:index:[16, 28, 30] Processing Time: 82
+Batch14:index:[55, 59, 76] Processing Time: 82
+Batch15:index:[12, 24, 35] Processing Time: 82
+Batch16:index:[0, 4, 64] Processing Time: 82
+Batch17:index:[5, 26, 75] Processing Time: 82
+Batch18:index:[40, 18, 38] Processing Time: 82
+Batch19:index:[17, 32] Processing Time: 82
+Batch20:index:[34, 33, 9, 2] Processing Time: 82
+Batch21:index:[14, 25, 43, 19] Processing Time: 82
+Batch22:index:[46, 52, 39, 68] Processing Time: 82
+Batch23:index:[13, 22, 6] Processing Time: 82
+Batch24:index:[45, 41, 50, 79, 11, 31] Processing Time: 82
 The last Batch
-index:[43, 50, 77, 79, 11, 23, 53, 74, 68] Processing Time: 79
+index:[23, 53, 74, 44] Processing Time: 29

@@ -13,8 +13,9 @@ public class Instance implements Comparable<Instance> {
         this.instName = data.instName;
         this.nJobs = data.nJobs;
         this.p = data.p;
-        this.T = 200;
-        this.t = 20;
+        this.T = data.T;
+        this.t = data.t;
+
         id = Integer.parseInt(instName.split("_")[1]);
     }
 

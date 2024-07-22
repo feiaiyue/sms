@@ -1,0 +1,2 @@
+instName, numOfJobs, numOfThreads, timeLimit, feasible, optimal, globalUB, globalLB, gap,rootUB, rootLB, timeCost, timeOnRoot, timeOnCG, timeOnRMP, timeOnPP, timeOnHeuristics, cntRMPCall, cntPPCall, cntHeuristicsCall, numOfNodes, numOfNodesSolved, numOfNodesRemained, numOfNodesPrunedByInfeasible, numOfNodesPrunedByBound, numOfNodesPrunedByOptimal, numOfLabels, numOfLabelsPrunedByLb, numOfLabelsDominated
+L_00000407,90,1,3600,1,1,2641.000, 2641.000, 0.000, 2646.000, 2622.000,28.578, 1.709, 23.581, 6.628, 7.263, 0.181,351, 351, 259,519,281,238,1,21,0,2468537,2359951,7476,

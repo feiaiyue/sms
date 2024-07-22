@@ -1,15 +1,33 @@
-The num of Batches: 10
-makespan: 2309.0
+The num of Batches: 28
+makespan: 2110.0
 The jobs in each Batch 
-Batch0:index:[7, 49, 58, 60, 61] Processing Time: 200
-Batch1:index:[30, 34, 41, 42, 62] Processing Time: 200
-Batch2:index:[16, 39, 48, 3, 5, 47] Processing Time: 200
-Batch3:index:[11, 15, 17, 18, 32] Processing Time: 200
-Batch4:index:[12, 50, 1, 66, 24] Processing Time: 200
-Batch5:index:[43, 59, 25, 52, 46] Processing Time: 200
-Batch6:index:[53, 22, 64, 67, 21, 2] Processing Time: 199
-Batch7:index:[26, 69, 0, 27, 45, 4] Processing Time: 200
-Batch8:index:[29, 31, 14, 36, 63, 51, 8] Processing Time: 200
-Batch9:index:[20, 37, 54, 10, 35, 38, 33, 40, 56, 28] Processing Time: 200
+Batch0:index:[12, 14] Processing Time: 74
+Batch1:index:[42, 60] Processing Time: 74
+Batch2:index:[64, 67] Processing Time: 74
+Batch3:index:[10, 29, 35] Processing Time: 74
+Batch4:index:[22, 69] Processing Time: 74
+Batch5:index:[41, 43] Processing Time: 74
+Batch6:index:[0, 52] Processing Time: 74
+Batch7:index:[27, 53] Processing Time: 74
+Batch8:index:[31, 61] Processing Time: 74
+Batch9:index:[48, 51] Processing Time: 74
+Batch10:index:[8, 19, 66] Processing Time: 74
+Batch11:index:[4, 59] Processing Time: 74
+Batch12:index:[9, 13, 17] Processing Time: 74
+Batch13:index:[30, 37, 47] Processing Time: 74
+Batch14:index:[24, 45, 68] Processing Time: 74
+Batch15:index:[15, 63] Processing Time: 74
+Batch16:index:[25, 34] Processing Time: 74
+Batch17:index:[7, 58] Processing Time: 74
+Batch18:index:[36, 50] Processing Time: 74
+Batch19:index:[28, 44, 62] Processing Time: 74
+Batch20:index:[20, 49] Processing Time: 74
+Batch21:index:[16, 23, 38] Processing Time: 74
+Batch22:index:[3, 5, 33] Processing Time: 74
+Batch23:index:[1, 40, 57] Processing Time: 74
+Batch24:index:[11, 55, 56] Processing Time: 74
+Batch25:index:[2, 18, 32] Processing Time: 74
+Batch26:index:[39, 54] Processing Time: 72
+Batch27:index:[21, 26, 6] Processing Time: 74
 The last Batch
-index:[13, 44, 68, 9, 57, 19, 55, 23, 6, 65] Processing Time: 109
+index:[46, 65] Processing Time: 38

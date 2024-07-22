@@ -1,0 +1,42 @@
+The num of Batches: 37
+makespan: 8295.0
+The jobs in each Batch 
+Batch0:index:[0, 3, 4, 10, 14] Processing Time: 200
+Batch1:index:[29, 71, 72, 92, 110] Processing Time: 200
+Batch2:index:[26, 36, 70, 85] Processing Time: 200
+Batch3:index:[20, 21, 34] Processing Time: 200
+Batch4:index:[91, 95, 111] Processing Time: 200
+Batch5:index:[74, 101, 118, 134] Processing Time: 200
+Batch6:index:[2, 28, 33, 51, 140] Processing Time: 200
+Batch7:index:[93, 100, 128] Processing Time: 200
+Batch8:index:[103, 109, 126] Processing Time: 200
+Batch9:index:[35, 54, 104, 129] Processing Time: 200
+Batch10:index:[61, 99, 107] Processing Time: 200
+Batch11:index:[44, 63, 73] Processing Time: 200
+Batch12:index:[121, 148, 149] Processing Time: 200
+Batch13:index:[75, 82, 145] Processing Time: 200
+Batch14:index:[18, 58, 80] Processing Time: 200
+Batch15:index:[56, 105, 133] Processing Time: 200
+Batch16:index:[13, 38, 43, 64] Processing Time: 200
+Batch17:index:[90, 94, 96, 131] Processing Time: 200
+Batch18:index:[77, 127, 142] Processing Time: 200
+Batch19:index:[15, 50, 87, 130] Processing Time: 200
+Batch20:index:[115, 116, 117] Processing Time: 200
+Batch21:index:[52, 60, 62] Processing Time: 200
+Batch22:index:[69, 137, 57] Processing Time: 200
+Batch23:index:[24, 17, 23] Processing Time: 200
+Batch24:index:[106, 124, 89] Processing Time: 200
+Batch25:index:[55, 5, 114] Processing Time: 200
+Batch26:index:[7, 53, 59] Processing Time: 200
+Batch27:index:[112, 37, 48, 32] Processing Time: 200
+Batch28:index:[88, 81, 68] Processing Time: 200
+Batch29:index:[144, 9, 86] Processing Time: 200
+Batch30:index:[139, 45, 119] Processing Time: 200
+Batch31:index:[113, 8, 6] Processing Time: 200
+Batch32:index:[49, 11, 135, 16] Processing Time: 200
+Batch33:index:[67, 25, 47, 46, 125] Processing Time: 200
+Batch34:index:[79, 97, 19, 40, 132, 141] Processing Time: 200
+Batch35:index:[83, 65, 84, 108, 138, 147] Processing Time: 200
+Batch36:index:[136, 41, 42, 39, 120, 122, 123] Processing Time: 200
+The last Batch
+index:[30, 27, 78, 31, 143, 66, 102, 146, 1, 22, 12, 76, 98] Processing Time: 155

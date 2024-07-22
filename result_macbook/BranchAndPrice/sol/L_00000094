@@ -1,0 +1,7 @@
+The num of Batches: 2
+makespan: 615.0
+The jobs in each Batch 
+Batch0:index:[5, 10, 12, 14, 16, 19] Processing Time: 200
+Batch1:index:[0, 2, 3, 6, 13, 15, 17] Processing Time: 200
+The last Batch
+index:[1, 4, 7, 8, 9, 11, 18] Processing Time: 175

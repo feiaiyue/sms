@@ -36,6 +36,8 @@ public class Pricing {
 
     public void formulate() throws GRBException {
         this.env = new GRBEnv();
+        env.set(GRB.IntParam.OutputFlag, 0);
+        env.start();
         this.model = new GRBModel(env);
         this.z = new GRBVar[nJobs];
         for (int i = 0; i < nJobs; i++) {
@@ -46,7 +48,6 @@ public class Pricing {
             expr.addTerm(instance.p[i], z[i]);
         }
         this.constrBlock = model.addConstr(expr, GRB.LESS_EQUAL, instance.T, "constraint1");
-        env.set(GRB.IntParam.OutputFlag, 0);
         env.set(GRB.IntParam.Seed, Base.SEED);
         env.set(GRB.IntParam.Threads, Param.nThreads);
     }
@@ -114,8 +115,7 @@ public class Pricing {
         Block block = new Block();
         for (int i = 0; i < nJobs; i++) {
             if (z[i].get(GRB.DoubleAttr.X) == 1.0) {
-                block.add(i);
-                block.processingTime += instance.p[i];
+                block.add(i, instance);
             }
         }
         // System.out.println("(不一定加入到结果里去）新生成的列为" + jobs);

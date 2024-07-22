@@ -44,10 +44,11 @@ public class Master {
     }
 
     public void formulate() throws GRBException {
-        this.env = new GRBEnv();
+        this.env = new GRBEnv(true);
         env.set(GRB.IntParam.OutputFlag, 0);
         env.set(GRB.IntParam.Seed, Base.SEED);
         env.set(GRB.IntParam.Threads, Param.nThreads);
+        env.start();
         this.model = new GRBModel(env);
         this.x = new ArrayList<>();
         this.y = new GRBVar[numJobs];
@@ -90,6 +91,14 @@ public class Master {
     public void set(Node node) throws GRBException {
         this.node = node;
 
+        /**
+         * tighten the RHS of [\sum_j p_j y_j <= RHS]
+         */
+        if(constraints[numJobs].get(GRB.DoubleAttr.RHS) > node.RHS){
+            // System.out.println("old RHS: " + constraints[numJobs].get(GRB.DoubleAttr.RHS));
+            // System.out.println("new RHS: " + node.RHS);
+            constraints[numJobs].set(GRB.DoubleAttr.RHS, node.RHS);
+        }
 
         /**
          * branch strategy 1
@@ -106,6 +115,19 @@ public class Master {
          * branch strategy 2
          * update the lb and ub of y according to yZero and yOne
          */
+        for (int i = 0; i < y.length; i++) {
+            if (node.yZero.contains(i)) {
+                y[i].set(GRB.DoubleAttr.LB, 0);
+                y[i].set(GRB.DoubleAttr.UB, 0);
+            } else if (node.yOne.contains(i)) {
+                y[i].set(GRB.DoubleAttr.LB, 1);
+                y[i].set(GRB.DoubleAttr.UB, 1);
+            } else {
+                y[i].set(GRB.DoubleAttr.LB, 0);
+                y[i].set(GRB.DoubleAttr.UB, GRB.INFINITY);
+            }
+        }
+      /*   }
         for (Integer ZeroIndex : node.yZero) {
             y[ZeroIndex].set(GRB.DoubleAttr.LB, 0);
             y[ZeroIndex].set(GRB.DoubleAttr.UB, 0);
@@ -113,7 +135,7 @@ public class Master {
         for (Integer oneIndex : node.yOne) {
             y[oneIndex].set(GRB.DoubleAttr.LB, 1);
             y[oneIndex].set(GRB.DoubleAttr.UB, 1);
-        }
+        } */
 
 
         /**
@@ -152,7 +174,7 @@ public class Master {
 
 
                     System.err.println("RMP.addColumns():column existed!" + block + "\t" + "rc1: " + rc1 + "\t" +
-                            "rc2: " + rc2 + "\t" + "ub: " + ub + "\t" +
+                            "rc2: " + rc2 + "\t" + "ub: " + ub + "\t" + "\n" +
                             instance.instName + "dual: " + Arrays.toString(dual) + "dual[22]");
                     if (ub == 0) {
                         System.err.println(node.getBranchInfo());
