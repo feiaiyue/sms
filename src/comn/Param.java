@@ -24,6 +24,8 @@ public class Param {
     /**
      * algorithm parameter to control branch
      */
+    public static boolean branchBy123;
+    public static boolean branchBy213;
     public static boolean branchOnNumBlocks;
     public static boolean branchOnY;
     public static boolean branchOnPairs;

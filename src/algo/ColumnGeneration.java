@@ -4,8 +4,6 @@ import comn.Base;
 import comn.Param;
 import gurobi.GRBException;
 
-import javax.crypto.spec.OAEPParameterSpec;
-
 
 /**
  * Column Generation
@@ -16,7 +14,7 @@ public class ColumnGeneration {
     Master master;
     // Pricing pricing;
     PricingLabelSetting pricing;
-    double[] duals;
+    double[] dualValues;
 
     long start;
     long timeLimit;
@@ -27,7 +25,7 @@ public class ColumnGeneration {
         this.nJobs = instance.nJobs;
         this.master = new Master(instance);
         this.pricing = new PricingLabelSetting(instance);
-        this.duals = new double[nJobs + 3];
+        this.dualValues = new double[nJobs + 3];
     }
 
 
@@ -40,22 +38,8 @@ public class ColumnGeneration {
             return false;
         }
 
-        duals = master.getDualValues();
-        pricing.solve(duals, timeLimit);
-        // System.out.println("initial pricing problem has been solved");
-        if (Param.debug) {
-            // Column optimal_instance50 = new Column();
-            // optimal_instance50.addAll(Set.of(1, 2, 3, 5, 6, 7, 8, 10, 11, 13, 15, 17, 19));
-            // for (int job : optimal_instance50) {
-            //     optimal_instance50.makespan += instance.p[job];
-            // }
-            // System.out.println("optimal_instance50.makespan" + optimal_instance50.makespan);
-            // if (pricing.newColumns.contains(optimal_instance50)) {
-            //     System.out.println("optimal_instance50 column is find");
-            // }
-
-
-        }
+        dualValues = master.getDualValues();
+        pricing.solve(dualValues, timeLimit);
         long start = System.currentTimeMillis();
         if (Param.debug) {
             if (node.parent == null) {
@@ -77,8 +61,8 @@ public class ColumnGeneration {
                 }
             }
 
-            duals = master.getDualValues();
-            pricing.solve(duals, timeLimit);
+            dualValues = master.getDualValues();
+            pricing.solve(dualValues, timeLimit);
         }
 
 
@@ -93,15 +77,15 @@ public class ColumnGeneration {
                 node.checkLPSolution();
             }
 
-            // if (Param.debug) {
-            //     System.out.println("nodeID: " + node.nodeID);
-            //
-            //     // System.out.println(master.getVarNames());
-            //     System.out.println(master.getPositiveVarNameAndValue());
-            //     // System.out.println(node.lpSol.toString());
-            //     System.out.println("node: " + node.nodeID + "'lb: " + node.lb);
-            //
-            // }
+            /*if (Param.debug) {
+                System.out.println("nodeID: " + node.nodeID);
+
+                // System.out.println(master.getVarNames());
+                System.out.println(master.getPositiveVarNameAndValue());
+                // System.out.println(node.lpSol.toString());
+                System.out.println("node: " + node.nodeID + "'lb: " + node.lb);
+
+            }*/
 
             if (node.lpSol.isIntegral()) {
                 node.status = NodeStatus.INTEGRAL;

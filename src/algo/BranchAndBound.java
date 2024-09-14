@@ -10,6 +10,8 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class BranchAndBound {
+    public boolean branchBy123;
+    public boolean branchBy213;
     public boolean branchOnNumBlocks;
     public boolean branchOnY;
     public boolean branchOnPairs;
@@ -54,11 +56,13 @@ public class BranchAndBound {
     double gap;
     boolean optimal;
 
-    long start;
+    long startT;
     long timeLimit;
 
 
     public BranchAndBound(Instance instance) throws GRBException {
+        this.branchBy123 = Param.branchBy123;
+        this.branchBy213 = Param.branchBy213;
         this.branchOnNumBlocks = Param.branchOnNumBlocks;
         this.branchOnY = Param.branchOnY;
         this.branchOnPairs = Param.branchOnPairs;
@@ -93,9 +97,11 @@ public class BranchAndBound {
      */
     public void solve(long timeLimit) throws GRBException {
         this.timeLimit = timeLimit;
-        this.start = System.currentTimeMillis();
-        // branch and bound tree : Best Lower Bound-First search strategy, priority queue
-        // tree is not defined in the class member which can implement different search strategies
+        this.startT = System.currentTimeMillis();
+        /**
+         * branch and bound Tree
+         * Search Strategy : Lower bound First
+         */
         PriorityQueue<Node> tree = new PriorityQueue<>(Comparator.comparing(node -> node.lb));
 
         Node root = createRoot();
@@ -194,17 +200,27 @@ public class BranchAndBound {
 
             node.ubNumBlocks = Math.min(incumbentSol.size() - 1, node.ubNumBlocks);
             // branch for fractional case
-            ArrayList<Node> children = branch(node);
-            for (Node child : children) {
-                tree.offer(child);
+            if (branchBy123) {
+                ArrayList<Node> children = branch123(node);
+                for (Node child : children) {
+                    tree.offer(child);
+                }
             }
+            if (branchBy213) {
+                ArrayList<Node> children = branch213(node);
+                for (Node child : children) {
+                    tree.offer(child);
+                }
+            }
+
+
             // if (tree.peek() != null) {
             //
             // }
             if (tree.peek() != null) {
                 globalLB = Math.max(globalLB, tree.peek().lb);
             }
-            timeCost = Base.getTimeCost(start);
+            timeCost = Base.getTimeCost(startT);
             gap = 100 * (globalUB - globalLB) /globalUB;
             String logNode = String.format("%3d  %4d  %s  %3d | %10f  %10f  %.2f%% | %.3f  %.3f  %.3f  %.3f  %.3f",
                     tree.size(), numOfNodes - tree.size(), (node.status == NodeStatus.INFEASIBLE ? "Infeasible" : String.valueOf(String.format("%.2f", node.lb))), node.nodeID,
@@ -232,7 +248,7 @@ public class BranchAndBound {
                 System.out.println(str);
             }
         }
-        timeCost = Base.getTimeCost(start);
+        timeCost = Base.getTimeCost(startT);
         feasible = incumbentSol.isFeasible(instance);
         if (!feasible) {
             if (Param.debug) {
@@ -271,7 +287,7 @@ public class BranchAndBound {
 
 
     private boolean timeIsOut() {
-        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - start) > timeLimit);
+        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - startT) > timeLimit);
     }
 
     private boolean isOptimal() {
@@ -289,11 +305,12 @@ public class BranchAndBound {
      * @return
      */
     public Node createRoot() {
-        /* int sumP = 0;
+        /* 可以通过所有的job的时长总和和T计算出新的下界 向下取整然后-1
+        int sumP = 0;
         for (int p : instance.p) {
             sumP += p;
         }
-        int lbNumOfBlocks = (int) Math.floor(sumP / instance.T); */
+        int lbNumOfBlocks = (int) Math.floor(sumP / instance.T) - 1;*/
         int lbNumOfBlocks = 0;
         int ubNumOfBlocks = nJobs;
         int[][] andItems = new int[nJobs][1];
@@ -382,21 +399,25 @@ public class BranchAndBound {
      * @throws GRBException
      */
     public void solve(Node node) throws GRBException {
-        String startStr = "=".repeat(30) + "solve node " + node.nodeID + " start" +
-                "=".repeat(30);
+        String startToSolveNodeStr = "=".repeat(30)
+                + "solve node " + node.nodeID + " start"
+                + "=".repeat(30);
         if (Param.debug) {
-            // System.out.println(startStr);
+            // System.out.println(startToSolveNodeStr);
         }
 
         long s0 = System.currentTimeMillis();
 
         if (node.parent == null) { // root node
+            /**
+             * 生成initialPool有两种方式，一种是一个Batch里放一个job
+             * 另一种是通过启发式算法获得一个初始解
+             */
             ColumnPool initialPool = generateInitialPool();
-           /*  ColumnPool initialPool2 = generateInitialPoolByHeuristics();
+            /*ColumnPool initialPool2 = generateInitialPoolByHeuristics();
             for (Block block : initialPool2) {
                 initialPool.add(block);
-            }
- */
+            }*/
             columnGeneration.master.addColumnsWithoutCheck(initialPool);
             columnGeneration.solve(node, timeLimit);
             timeOnRoot += Base.getTimeCost(s0);
@@ -462,16 +483,16 @@ public class BranchAndBound {
     }
 
     /**
-     * branch the node according to different conditions
-     * the assumption is node is fractional
-     * branching rule 1 : whether sum of Blocks is Integer
-     * branching rule 2 : if rule 1 not satisfied then branching by rule2
-     *
+     * If the current Node parent is fractional,
+     * branch the Node parent and create children
+     * branching rule 1 : branch on the numbers of batches
+     * branching rule 2 : branch on the value of y
+     * branching rule 3 : branch on pair jobs
      * @param parent
-     * @return
+     * @return children
      */
 
-    public ArrayList<Node> branch(Node parent) {
+    public ArrayList<Node> branch123(Node parent) {
         ArrayList<Node> children = new ArrayList<>();
         // branch rule 1 : branch on Num Of Blocks
         if (branchOnNumBlocks) {
@@ -484,6 +505,84 @@ public class BranchAndBound {
                 children.add(right);
             }
         }
+        /**
+         * branch rule 2 : branch on Y
+         */
+        if (branchOnY && children.isEmpty()) {
+            int yNearestIndex = -1; // the index of y nearest to 0.5
+            double minDeviation = 1;
+            for (int i = 0; i < parent.lpSol.leftJobs.size(); i++) {
+                double yValue = parent.lpSol.yValues.get(i);
+                if (!Base.isInt(yValue)) {
+                    double dev = Math.abs(yValue - 0.5);
+                    if (dev < minDeviation) {
+                        minDeviation = dev;
+                        yNearestIndex = parent.lpSol.leftJobs.get(i);
+                    }
+                }
+            }
+            if (yNearestIndex != -1) {
+                Node left = new Node(parent, ++numOfNodes, yNearestIndex, true); // y_index = 0
+                Node right = new Node(parent, ++numOfNodes, yNearestIndex, false); // y_index = 1
+                children.add(left);
+                children.add(right);
+            }
+        }
+        /**
+         * branch rule 3 : branch on pairs
+         */
+        if (branchOnPairs && children.isEmpty()) {
+            int a = -1;
+            int b = -1;
+            double minDeviation2 = 1;
+            for (int i = 0; i < instance.nJobs; i++) {
+                if (parent.removedJobs.get(i)) { // 就是没有这个job了。再也不会出现了。
+                    continue;
+                }
+                for (int j = i + 1; j < instance.nJobs; j++) {
+                    if (parent.orJobs[i][j] || parent.removedJobs.get(j)) {
+                        continue;
+                    }
+                    double numOfVisits = parent.lpSol.getNumOfVisits(i, j);
+                    if (!Base.isInt(numOfVisits)) {
+                        double dev = Math.abs(numOfVisits - 0.5);
+                        if (dev < minDeviation2) {
+                            minDeviation2 = dev;
+                            a = i;
+                            b = j;
+                        } else if (Base.equals(dev, minDeviation2) && minDeviation2 != 1) {
+                            double w_i = instance.mergedWeight(parent.andJobs[i]);
+                            double w_j = instance.mergedWeight(parent.andJobs[j]);
+                            double w_a = instance.mergedWeight(parent.andJobs[a]);
+                            double w_b = instance.mergedWeight(parent.andJobs[b]);
+                            if (w_i + w_j > w_a + w_b) {
+                                a = i;
+                                b = j;
+                            }
+                        }
+                    }
+                }
+            }
+            if (a > -1 && b > -1) {
+                Node left = new Node(parent, ++numOfNodes, a, b, true);
+                Node right = new Node(parent, ++numOfNodes, a, b, false);
+                children.add(left);
+                children.add(right);
+            }
+        }
+        return children;
+    }
+
+    /**
+     * 之前是按照1 -> 2 -> 3的顺序 现在修改了顺序是2 -> 1 -> 3
+     * first : branch 2
+     * second: branch 1
+     * third: branch 3
+     * @param parent
+     * @return
+     */
+    public ArrayList<Node> branch213(Node parent) {
+        ArrayList<Node> children = new ArrayList<>();
         // branch rule 2 : branch on Y
         if (branchOnY && children.isEmpty()) {
             int yNearestIndex = -1; // the index of y nearest to 0.5
@@ -505,7 +604,18 @@ public class BranchAndBound {
                 children.add(right);
             }
         }
-
+        // branch rule 1 : branch on Num Of Blocks
+        if (branchOnNumBlocks) {
+            double numBlocks = parent.lpSol.getNumOfBlocks();
+            if (!Base.isInt(numBlocks)) {
+                int v = (int) Math.floor(numBlocks);
+                Node left = new Node(parent, ++numOfNodes, parent.lbNumBlocks, v); // <=v
+                Node right = new Node(parent, ++numOfNodes, v + 1, parent.ubNumBlocks); // >= v + 1
+                children.add(left);
+                children.add(right);
+            }
+        }
+        // branch rule 3 : branch on jobs pairs
         if (branchOnPairs && children.isEmpty()) {
             int a = -1;
             int b = -1;

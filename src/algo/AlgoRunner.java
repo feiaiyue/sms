@@ -15,7 +15,7 @@ import java.util.List;
 public class AlgoRunner {
     public void run(String[] args) throws GRBException {
         initialParams();
-        readAlgoParams();
+        setAlgoComponentParams();
         configurePaths();
         ProblemIO.makeFolders();  // create different folders
         ProblemIO.writeCSV(makeCSVTitle(), true); // make the CSVTitle of abstract result of all instances
@@ -50,17 +50,19 @@ public class AlgoRunner {
         Param.timeLimit = 60 * 60; // 1h = 60 * 60s each instance should be given 3600s
     }
 
-    private void readAlgoParams() {
-        Param.branchOnNumBlocks = true;
-        Param.branchOnY = true;
-        Param.branchOnPairs = true;
-        Param.tightenTBound = false;
+    private void setAlgoComponentParams() {
+        Param.experimentCondition = "no-DominanceRule";
+        Param.branchBy123 = true;
+        Param.branchBy213 = false; // default:false
+        Param.branchOnNumBlocks = true; // branch rule 1
+        Param.branchOnY = true; // branch rule 2
+        Param.branchOnPairs = true; // branch rule 3
+        Param.tightenTBound = false; //default:false
         Param.useHeuristics = true;
-        Param.dominanceFlag = true;
+        Param.dominanceFlag = false;
         Param.fathomingFlag = true;
         Param.T = 50;
         Param.t = 20;
-        Param.experimentCondition = "eachT~U2";
     }
 
     private void configurePaths() {
@@ -82,17 +84,15 @@ public class AlgoRunner {
     }
 
     private String getAlgoName() {
-        //return "BranchAndPrice";
-         return "MixedIntegerLinearProgramming";
+        return "BranchAndPrice";
+        //return "MixedIntegerLinearProgramming";
         //return "Test";
     }
 
     private String getDataSetName(){
-        // return "Bat Grande";
-        // return "Bat Low2010";
-        //return "Bat Low2010-T1";
-         return "Bat Low2010-T2";
-        // return "Bat Pequena";
+        // return "Bat Low2010-T1"; // LOW Set(T~U1[150,200])
+        // return "Bat Low2010-T2"; // MOD Set(T~U1[50,100])
+        return "Test-algo"; // 这个是LOW的前250个，用于测试
     }
     private String getDataPath() {
         return "./data/" + Param.dataSetName;

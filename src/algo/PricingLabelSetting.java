@@ -74,8 +74,8 @@ public class PricingLabelSetting {
         this.searchDirection = SearchDirection.FORWARD;
         // this.searchDirection = SearchDirection.BIDIR;
         this.maxNumOfBlocks = 50; // 这个可以替换 比如32等等
-        this.dominanceFlag = true;
-        this.fathomingFlag = true;
+        this.dominanceFlag = Param.dominanceFlag;
+        this.fathomingFlag = Param.fathomingFlag;
     }
 
     public void set(Node node) {

@@ -61,22 +61,34 @@ public class Master {
 
             y[i] = model.addVar(0.0, GRB.INFINITY, instance.p[i], GRB.CONTINUOUS, "y_" + (i + 1));
         }
+        /** for each job j
+         * parameter : a_{jb} \in {0, 1} : job j in Batch b
+         * sum_{b \in B} a_{jb} x_b + y_j >= 1
+         */
         for (int i = 0; i < numJobs; i++) {
             GRBLinExpr constr1 = new GRBLinExpr(); // firstly, only put y in the constraint ,x will be generated lately
             constr1.addTerm(1, y[i]); // in the form of column
             constraints[i] = model.addConstr(constr1, GRB.GREATER_EQUAL, 1, "constraint1_" + (i + 1));
         }
-
-        GRBLinExpr constr2 = new GRBLinExpr(); // sum_i (p[i]y[i]) <= T
+        /**
+         * sum_{j} (p_j y_j) <= T
+         */
+        GRBLinExpr constr2 = new GRBLinExpr(); //
         for (int i = 0; i < numJobs; i++) {
             constr2.addTerm(instance.p[i], y[i]);
         }
         constraints[numJobs] = model.addConstr(constr2, GRB.LESS_EQUAL, instance.T, "constraint2");
 
-        GRBLinExpr constr3 = new GRBLinExpr(); // sum_p (x[p] >= lbNumOfBlocks)
+        /**
+         * sum_{b \in B} (x_b) >= lbNumOfBatches
+         */
+        GRBLinExpr constr3 = new GRBLinExpr();
         constraints[numJobs + 1] = model.addConstr(constr3, GRB.GREATER_EQUAL, 0, "constraint3");
 
-        GRBLinExpr constr4 = new GRBLinExpr(); // sum_p (x[p] <= ubNumOfBlocks)
+        /**
+         * sum_{b \in B} (x_b) <= lbNumOfBatches
+         */
+        GRBLinExpr constr4 = new GRBLinExpr();
         constraints[numJobs + 2] = model.addConstr(constr4, GRB.LESS_EQUAL, instance.nJobs, "constraint4");
 
         GRBLinExpr obj = new GRBLinExpr(); // set the objective to the model
@@ -84,7 +96,10 @@ public class Master {
             obj.addTerm(instance.p[i], y[i]);
         }
         model.setObjective(obj, GRB.MINIMIZE);
-        addArtificialVariable();
+        /**
+         * 只有约束中是 >= 的需要添加人工变量，其他不需要
+         */
+        addArtificialVariables();
 
     }
 
@@ -247,7 +262,7 @@ public class Master {
      * model is feasible when all the artificial variables are equal to 0
      * because < / <= can be satisfied
      */
-    public void addArtificialVariable() throws GRBException {
+    public void addArtificialVariables() throws GRBException {
         for (int i = 0; i < numJobs; i++) {
             GRBColumn column = new GRBColumn();
             column.addTerm(1, constraints[i]);

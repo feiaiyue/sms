@@ -87,6 +87,90 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-baseline.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-branch213.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-branchBy213.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-eachT~U1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-Dominance.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-DominanceRule.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-Primal.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-dominanceRule.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathoming.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathomingRule.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-with-branchRule1+3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-with-branchRule3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/MixedIntegerLinearProgramming/Bat Low2010-T1/MixedIntegerLinearProgramming-eachT~U1.csv">
           <value>
             <Attribute>
@@ -108,6 +192,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result/MixedIntegerLinearProgramming/Test-algo/MixedIntegerLinearProgramming-eachT~U2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result/Test/Bat Low2010/Test.csv">
           <value>
             <Attribute>
@@ -116,6 +207,13 @@
           </value>
         </entry>
         <entry key="/result_article/result/BranchAndPrice/Bat Low2010-T1/BranchAndPrice-eachT~U1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Bat Low2010-T2/BranchAndPrice-eachT~U2.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -206,7 +304,70 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-baseline.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-branchBy213.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-Primal.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-dominanceRule.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathoming.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-primal.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-with-branchRule1+3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-with-branchRule3.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result_article/result/MixedIntegerLinearProgramming/Bat Low2010-T1/MixedIntegerLinearProgramming-eachT~U1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result_article/result/MixedIntegerLinearProgramming/Bat Low2010-T2/MixedIntegerLinearProgramming-eachT~U2.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
