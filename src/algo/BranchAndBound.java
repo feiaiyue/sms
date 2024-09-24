@@ -95,9 +95,9 @@ public class BranchAndBound {
      * （3）fractional：解为小数
      * （4）Integral：整数解
      */
-    public void solve(long timeLimit) throws GRBException {
-        this.timeLimit = timeLimit;
+    public void run(long timeLimit) throws GRBException {
         this.startT = System.currentTimeMillis();
+        this.timeLimit = timeLimit;
         /**
          * branch and bound Tree
          * Search Strategy : Lower bound First
@@ -107,7 +107,7 @@ public class BranchAndBound {
         Node root = createRoot();
         tree.offer(root);
         int RHS = instance.T;
-        while (!tree.isEmpty() &&!timeIsOut() && !isOptimal()) {
+        while (!tree.isEmpty() && !Base.timeIsOut(startT, timeLimit) && !isOptimal()) {
             Node node = tree.peek();
             tree.poll();
             node.RHS = RHS;
@@ -121,7 +121,7 @@ public class BranchAndBound {
             if (isPrunedByBound(node)) {
                 continue;
             }
-            solve(node);
+            solveNode(node, startT, timeLimit);
 
             String branchInfo = "=".repeat(30) + "solved node: " + node.nodeID + "=".repeat(30) + "\n";
             branchInfo += "=".repeat(30) + "The branching information" + "=".repeat(30) + "\n";
@@ -286,9 +286,7 @@ public class BranchAndBound {
 
 
 
-    private boolean timeIsOut() {
-        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - startT) > timeLimit);
-    }
+
 
     private boolean isOptimal() {
         return globalLB + optimalGap > globalUB;
@@ -393,22 +391,23 @@ public class BranchAndBound {
         return initialPool;
     }
     /**
-     * 使用列生成算法对于node的lp进行求解。
-     *
+     * 使用列生成算法对于求解当前node，以此来更新当前node.lb
+     * 列生成算法是交替求解主、子问题
      * @param node
      * @throws GRBException
      */
-    public void solve(Node node) throws GRBException {
-        String startToSolveNodeStr = "=".repeat(30)
-                + "solve node " + node.nodeID + " start"
-                + "=".repeat(30);
+    public void solveNode(Node node, long bnpStartTime, long bnpTimeLimit) throws GRBException {
         if (Param.debug) {
-            // System.out.println(startToSolveNodeStr);
+            String printStartToSolveNode = "=".repeat(30)
+                    + "solve node " + node.nodeID + " start"
+                    + "=".repeat(30);
+            System.out.println(printStartToSolveNode);
         }
-
         long s0 = System.currentTimeMillis();
-
-        if (node.parent == null) { // root node
+        /**
+         * 求解root的时候，ColumPool里需要添加一些初始的列
+         */
+        if (node.parent == null) {
             /**
              * 生成initialPool有两种方式，一种是一个Batch里放一个job
              * 另一种是通过启发式算法获得一个初始解
@@ -419,11 +418,11 @@ public class BranchAndBound {
                 initialPool.add(block);
             }*/
             columnGeneration.master.addColumnsWithoutCheck(initialPool);
-            columnGeneration.solve(node, timeLimit);
+            columnGeneration.solve(node, bnpStartTime, bnpTimeLimit);
             timeOnRoot += Base.getTimeCost(s0);
             rootLB = node.lb;
         } else {
-            columnGeneration.solve(node, timeLimit);
+            columnGeneration.solve(node, bnpStartTime, bnpTimeLimit);
         }
 
         node.timeCost = Base.getTimeCost(s0);

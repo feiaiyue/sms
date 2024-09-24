@@ -87,13 +87,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-baseline.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-branch213.csv">
           <value>
             <Attribute>
@@ -102,13 +95,6 @@
           </value>
         </entry>
         <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-branchBy213.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-eachT~U1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -144,6 +130,13 @@
           </value>
         </entry>
         <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathoming.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathomingRule-没有加入精细控制时间.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -318,6 +311,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-DominanceRule.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-Primal.csv">
           <value>
             <Attribute>
@@ -326,13 +326,6 @@
           </value>
         </entry>
         <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-dominanceRule.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/result_article/result/BranchAndPrice/Test-algo/BranchAndPrice-no-fathoming.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

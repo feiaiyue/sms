@@ -14,9 +14,17 @@ public class Base {
         RND = new Random(SEED);
     }
 
+    /**
+     * 将毫秒转化为秒
+     * @param start
+     * @return
+     */
     public static double getTimeCost(long start) {
-        // millisecond -> second
         return 0.001 * (System.currentTimeMillis() - start);
+    }
+
+    public static boolean timeIsOut(long startT, double timeLimit) {
+        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - startT) > timeLimit);
     }
 
     public static String getCurrentDate() {

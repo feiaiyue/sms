@@ -47,11 +47,14 @@ public class AlgoRunner {
         Param.problemName = "singleMachineScheduling";
         Param.instancePrefix = "";
         Param.instanceSuffix = "";
+        /**
+         * 修改一下
+         */
         Param.timeLimit = 60 * 60; // 1h = 60 * 60s each instance should be given 3600s
     }
 
     private void setAlgoComponentParams() {
-        Param.experimentCondition = "no-DominanceRule";
+        Param.experimentCondition = "1Fathoming2Dominance";
         Param.branchBy123 = true;
         Param.branchBy213 = false; // default:false
         Param.branchOnNumBlocks = true; // branch rule 1
@@ -59,8 +62,10 @@ public class AlgoRunner {
         Param.branchOnPairs = true; // branch rule 3
         Param.tightenTBound = false; //default:false
         Param.useHeuristics = true;
-        Param.dominanceFlag = false;
-        Param.fathomingFlag = true;
+        Param.enableDominanceRuleCheck = true;
+        Param.enableFathomingRuleCheck = true;
+        Param.firstDominanceSecondPrunedByBound = false; // default:true
+        Param.firstPrunedByBoundSecondDominance = true; //default:false
         Param.T = 50;
         Param.t = 20;
     }
@@ -204,7 +209,7 @@ public class AlgoRunner {
             String startBnp = "\n" + "=".repeat(30) + "B&P to solve: " + instance.instName + "start!" + "=".repeat(30);
             System.out.println(startBnp);
 
-            bnp.solve(Param.timeLimit);
+            bnp.run(Param.timeLimit);
             writeResult(instance.instName, bnp.makeCSVItem(), bnp.incumbentSol, true);
             if (Param.debug) {
                 String endBnp = bnp.makeCSVItem();

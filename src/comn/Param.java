@@ -22,7 +22,7 @@ public class Param {
 
     public static boolean rootOnly = false;
     /**
-     * algorithm parameter to control branch
+     * Branching rule parameter
      */
     public static boolean branchBy123;
     public static boolean branchBy213;
@@ -37,8 +37,10 @@ public class Param {
     /**
      * Pricing Label Setting Algorithm Parameter
      */
-    public static boolean dominanceFlag;
-    public static boolean fathomingFlag;
+    public static boolean enableDominanceRuleCheck;
+    public static boolean enableFathomingRuleCheck;
+    public static boolean firstPrunedByBoundSecondDominance;
+    public static boolean firstDominanceSecondPrunedByBound;
 
     public static int T;
     public static int t;

@@ -41,8 +41,11 @@ public class PricingLabelSetting {
     double reducedCostUB;
 
 
-    long timeLimit;
-    long start;
+    long bnpStartTime;
+    long bnpTimeLimit;
+    private static final int TIMEOUT_FLAG = -2; // 定义一个新的标志用于超时
+
+
     double timeCost;
     double timeOnLowerBound;
     double timeOnDominanceRule;
@@ -51,8 +54,11 @@ public class PricingLabelSetting {
     long numOfLabelsPrunedByLb;
     long numOfLabelsDominated;
 
-    boolean dominanceFlag;
-    boolean fathomingFlag;
+    boolean enableDominanceRuleCheck;
+    boolean enableFathomingRuleCheck;
+    boolean firstDominanceSecondPrunedByBound;
+    boolean firstPrunedByBoundSecondDominance;
+
 
     enum SearchDirection {
         FORWARD, BACKWARD, BIDIR
@@ -74,8 +80,10 @@ public class PricingLabelSetting {
         this.searchDirection = SearchDirection.FORWARD;
         // this.searchDirection = SearchDirection.BIDIR;
         this.maxNumOfBlocks = 50; // 这个可以替换 比如32等等
-        this.dominanceFlag = Param.dominanceFlag;
-        this.fathomingFlag = Param.fathomingFlag;
+        this.enableDominanceRuleCheck = Param.enableDominanceRuleCheck;
+        this.enableFathomingRuleCheck = Param.enableFathomingRuleCheck;
+        this.firstPrunedByBoundSecondDominance = Param.firstPrunedByBoundSecondDominance;
+        this.firstDominanceSecondPrunedByBound = Param.firstDominanceSecondPrunedByBound;
     }
 
     public void set(Node node) {
@@ -86,12 +94,14 @@ public class PricingLabelSetting {
         this.removedJobs = node.removedJobs;
     }
 
-    public void solve(double[] duals, long timeLimit) {
+    public void solve(double[] duals, long bnpStartTime, long bnpTimeLimit) {
         this.duals = duals;
+        this.bnpStartTime = bnpStartTime;
+        this.bnpTimeLimit = bnpTimeLimit;
+
         this.timeCost = 0;
         this.timeOnLowerBound = 0;
         this.timeOnDominanceRule = 0;
-        this.timeLimit = timeLimit;
 
         newBlocks.clear();
         this.mostNegativeBlock = null;
@@ -114,13 +124,18 @@ public class PricingLabelSetting {
         timeCost = Base.getTimeCost(s0);
         node.timeOnPP += timeCost;
         node.cntPPCall++;
-        // if (Param.displayLevel >= 4) {
-        //     String str = String.format("PP:  node %d, RMP %d, PP %d | %d | %.3f, %.3f, %.3f",
-        //             node.nodeID, node.cntRMPCall, node.cntPPCall, newBlocks.size(), timeCost, timeOnLowerBound, timeOnDominanceRule);
-        //     System.out.println(str);
-        // }
+        /*if (Param.displayLevel >= 4) {
+            String str = String.format("PP:  node %d, RMP %d, PP %d | %d | %.3f, %.3f, %.3f",
+                    node.nodeID, node.cntRMPCall, node.cntPPCall, newBlocks.size(), timeCost, timeOnLowerBound, timeOnDominanceRule);
+            System.out.println(str);
+        }*/
     }
 
+    /**
+     * 在跑label setting 之前 需要先跑启发式算法去找一些初始的Batch
+     * 来提前更新一些reducedCost的UB
+     * 但是跑之后发现用处不多
+     */
     private void runHeurisitics() {
         ArrayList<Integer> remainJobs = new ArrayList<>();
         for (int i = 0; i < nJobs; i++) {
@@ -186,8 +201,9 @@ public class PricingLabelSetting {
 
 
     private void forwardLabelSetting() {
-        this.start = System.currentTimeMillis();
         PriorityQueue<Label> unexplored = new PriorityQueue<>(Comparator.comparing(label -> label.reducedCost));
+        // PriorityQueue<Label> unexplored = new PriorityQueue<>(Comparator.comparing(label -> label.processingTime));
+
         ArrayList<Label>[] states = new ArrayList[nJobs];
         double[] minCost = new double[nJobs];
         for (int i = 0; i < nJobs; i++) {
@@ -204,7 +220,7 @@ public class PricingLabelSetting {
         /**
          * start extend tree
          */
-        while (!timeIsOut() && !unexplored.isEmpty() && newBlocks.size() <= maxNumOfBlocks) {
+        while (!Base.timeIsOut(this.bnpStartTime, this.bnpTimeLimit) && !unexplored.isEmpty() && newBlocks.size() <= maxNumOfBlocks) {
             Label label = unexplored.poll();
             if (label.dominated) {
                 continue;
@@ -217,10 +233,6 @@ public class PricingLabelSetting {
 
     private void backwardLabelSetting() {
 
-    }
-
-    private boolean timeIsOut() {
-        return (timeLimit > 0 && 0.001 * (System.currentTimeMillis() - start) > timeLimit);
     }
 
     private void bidirLabelSetting() {
@@ -396,21 +408,49 @@ public class PricingLabelSetting {
             }
             Label label = createLabel(parent, j, dir);
             numOfLabels++;
-            if (dominanceFlag == true && fathomingFlag == true) {
-                int index = isDominated(label, states[j]);
-                if (index == -1) { // label is dominated by the label in states[j]
-                    numOfLabelsDominated++;
-                    continue;
+            if (enableDominanceRuleCheck == true && enableFathomingRuleCheck == true) {
+                if (firstDominanceSecondPrunedByBound) {
+                    int labelInsertIndex = isDominated(label, states[j]);
+
+                    if (labelInsertIndex == TIMEOUT_FLAG) {
+                        continue;
+                    }
+                    if (labelInsertIndex == -1) { // label is dominated by the label in states[j]
+                        numOfLabelsDominated++;
+                        continue;
+                    }
+                    boolean pruned = isPrunedByLB(label, dir);
+                    if (pruned) {
+                        numOfLabelsPrunedByLb++;
+                        continue;
+                    }
+                    unexplored.add(label);
+                    states[j].add(labelInsertIndex, label);
+                    minCosts[j] = Math.min(minCosts[j], label.reducedCost);
                 }
-                boolean pruned = isPrunedByLB(label, dir);
-                if (pruned) {
-                    numOfLabelsPrunedByLb++;
-                    continue;
+                if (firstPrunedByBoundSecondDominance){
+                    boolean pruned = isPrunedByLB(label, dir);
+                    if (pruned) {
+                        numOfLabelsPrunedByLb++;
+                        continue;
+                    }
+                    int labelInsertIndex = isDominated(label, states[j]);
+
+                    if (labelInsertIndex == TIMEOUT_FLAG) {
+                        continue;
+                    }
+                    if (labelInsertIndex == -1) { // label is dominated by the label in states[j]
+                        numOfLabelsDominated++;
+                        continue;
+                    }
+
+                    unexplored.add(label);
+                    states[j].add(labelInsertIndex, label);
+                    minCosts[j] = Math.min(minCosts[j], label.reducedCost);
                 }
-                unexplored.add(label);
-                states[j].add(index, label);
-                minCosts[j] = Math.min(minCosts[j], label.reducedCost);
-            } else if (dominanceFlag == false && fathomingFlag == true) {// no dominance rule
+
+
+            } else if (enableDominanceRuleCheck == false && enableFathomingRuleCheck == true) {// no dominance rule
                 boolean pruned = isPrunedByLB(label, dir);
                 if (pruned) {
                     numOfLabelsPrunedByLb++;
@@ -419,14 +459,19 @@ public class PricingLabelSetting {
                 unexplored.add(label);
                 states[j].add(label);
                 minCosts[j] = Math.min(minCosts[j], label.reducedCost);
-            } else if (dominanceFlag == true && fathomingFlag == false) {// no bounding
-                int index = isDominated(label, states[j]);
-                if (index == -1) { // label is dominated by the label in states[j]
+            } else if (enableDominanceRuleCheck == true && enableFathomingRuleCheck == false) {// no bounding
+                int labelInsertIndex = isDominated(label, states[j]);
+                // int labelInsertIndex = dominanceCheck(label, states[j]);
+
+                if (labelInsertIndex == TIMEOUT_FLAG) {
+                    continue;
+                }
+                if (labelInsertIndex == -1) { // label is dominated by the label in states[j]
                     numOfLabelsDominated++;
                     continue;
                 }
                 unexplored.add(label);
-                states[j].add(index, label);
+                states[j].add(labelInsertIndex, label);
                 minCosts[j] = Math.min(minCosts[j], label.reducedCost);
             }
         }
@@ -504,6 +549,13 @@ public class PricingLabelSetting {
         return lb + Base.EPS >= Math.min(0, reducedCostUB);
     }
 
+    /**
+     * 理论是上去求label的精确的lb但是没有必要，因为精确求解很慢
+     * 所以还是求解的松弛后的lb
+     * @param label
+     * @param dir
+     * @return
+     */
     private boolean isPrunedByLB(Label label, Direction dir) {
         long s0 = System.currentTimeMillis();
         double lb = computeLBOnCost(label, dir);
@@ -563,17 +615,33 @@ public class PricingLabelSetting {
      * @return -1 if a is dominated by other label || index if a dominates other labels in the state
      */
     private int isDominated(Label l2, ArrayList<Label> states) {
-        long s0 = 0;
-        int index = 0;
+        long dominanceRuleStartT = 0;
+        int l2InsertIndex = 0;
         for (int h = 0; h < states.size(); h++) {
+            // Time check: Exit if time limit is reached
+            if (Base.timeIsOut(bnpStartTime, bnpTimeLimit)) {
+                return TIMEOUT_FLAG;
+            }
             Label l1 = states.get(h);
-            if (l1.processingTime > l2.processingTime) {
-                index = h;
+            /**
+             *
+             * by reduced cost in the states[j] 这个好像有问题 因为不满足dominated情况。就是没有做dominated的判断
+             */
+            // if (l2.reducedCost < l1.reducedCost - Base.EPS) {
+            //     l2InsertIndex = h;
+            //     break;
+            //
+            // }
+            // Due to labels in states being ordered in ascending order
+            // by processingTime in the PriorityQueue<Label>
+            if (l2.processingTime < l1.processingTime - Base.EPS) {
+                l2InsertIndex = h;
                 break;
+
             }
             if (isDominated(l2, l1)) {
                 l2.dominated = true;
-                index = -1;
+                l2InsertIndex = -1;
                 break;
             }
         }
@@ -590,37 +658,112 @@ public class PricingLabelSetting {
                 }
             }
         } */
-        timeOnDominanceRule += 0.001 * (System.currentTimeMillis() - s0);
-        return index;
+        timeOnDominanceRule += 0.001 * (System.currentTimeMillis() - dominanceRuleStartT);
+        return l2InsertIndex;
     }
 
     /**
-     * whether l2 is dominated by l1
+     * whether L2 is dominated by L1
      *
      * @param l1
      * @param l2
-     * @return true if a is dominated by b <==> b dominates a
+     * @return
      */
     private boolean isDominated(Label l2, Label l1) {
         /**
+         * dominance rule 2 : strengthened dominance rule
          * l1 dominates l2
-         * l1.processingTime <= l2.processingTime
          */
-        if (l1.processingTime <= l2.processingTime && l2.reducedCost <= l1.reducedCost + Base.EPS) {
+        if (l1.processingTime <= l2.processingTime && l1.reducedCost <= l2.reducedCost + Base.EPS) {
             double sum = 0;
             for (int h = l2.nextJobs.nextSetBit(0); h >= 0; h = l2.nextJobs.nextSetBit(h + 1)) {
                 if (!l1.nextJobs.get(h)) {
                     sum += mergedDuals[h];
-
                 }
             }
-            if (l1.reducedCost + sum <= l2.reducedCost + Base.EPS) {
-                if (l1.processingTime < l2.processingTime || l1.reducedCost + sum < l2.reducedCost - Base.EPS) {
+            if (l1.reducedCost + sum <= l2.reducedCost + Base.EPS) { // all are met
+                if (l1.processingTime < l2.processingTime || l1.reducedCost + sum < l2.reducedCost - Base.EPS) { // at least one is strict
                     return true;
                 }
             }
         }
+        /**
+         * dominance rule 1
+         *
+         */
+        /*if (l1.processingTime <= l2.processingTime && l1.reducedCost <= l2.reducedCost + Base.EPS) {
+            if (isSubSet(l2.nextJobs, l1.nextJobs)) {
+                if (l1.processingTime < l2.processingTime
+                        || l1.reducedCost < l2.reducedCost - Base.EPS
+                        || !l2.nextJobs.equals(l1.nextJobs)
+                ) {
+                    return true;
+                }
+
+            }
+        }*/
         return false;
+    }
+
+    // 支配关系检查函数，返回应该插入的位置，如果被支配则返回 -1
+    // TODO: 2024/9/16 这个写的有问题 因为没考虑可行性感觉？？
+    public int dominanceCheck(Label r, List<Label> F) {
+        int m = F.size(); // Pareto 前沿的大小
+
+        // 如果 Pareto 前沿为空，返回应该插入的位置 0
+        if (m == 0) {
+            return 0;
+        }
+
+        // 如果 r 的 reducedCost 比 F[0] 小，且 processingTime 比 F[0] 大
+        if (r.reducedCost + Base.EPS < F.get(0).reducedCost && r.processingTime > F.get(0).processingTime) {
+            return 0;    // 应该插入的位置是 0
+        }
+
+        // 如果 r 的 reducedCost 比 F[m-1] 大，且 processingTime 比 F[m-1] 小
+        if (r.reducedCost - Base.EPS > F.get(m - 1).reducedCost && r.processingTime < F.get(m - 1).processingTime) {
+            return m;    // 应该插入的位置是 m
+        }
+
+        int left = 0, right = m - 1;
+        int middle = (left + right) / 2;
+
+        // 二分查找 r 的插入位置
+        while (left < middle) {
+            if (F.get(middle).reducedCost < r.reducedCost - Base.EPS) {
+                left = middle;
+            } else if (F.get(middle).processingTime < r.processingTime) {
+                right = middle;
+            } else {
+                break; // 找到一个位置
+            }
+            middle = (left + right) / 2;
+        }
+
+        // 移除 F[left] 到 F[right] 范围内被 r 支配的标签（只计算位置，不做实际移除操作）
+        for (int i = left; i <= right; i++) {
+            if (F.get(i).reducedCost + Base.EPS >= r.reducedCost && F.get(i).processingTime <= r.processingTime) {
+                return -1; // r 被支配，返回 -1
+            }
+        }
+
+        // 如果 r 没有被 F[left] 到 F[right] 的任何标签支配
+        if (!(r.reducedCost >= F.get(left).reducedCost + Base.EPS && r.processingTime <= F.get(left).processingTime)) {
+            return left + 1; // 返回应该插入的位置
+        }
+
+        // 否则 r 被支配，返回 -1
+        return -1;
+    }
+
+
+    public boolean isSubSet(BitSet set1, BitSet set2) {
+        // 创建 set1 的副本
+        BitSet tempSet = (BitSet) set1.clone();
+        // tempSet 和 set2 进行按位与操作，结果保存在 tempSet 中
+        tempSet.and(set2);
+        // 如果 tempSet 结果和 set1 一样，说明 set1 是 set2 的子集
+        return tempSet.equals(set1);
     }
 
 

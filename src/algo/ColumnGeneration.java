@@ -29,7 +29,7 @@ public class ColumnGeneration {
     }
 
 
-    public boolean solve(Node node, long timeLimit) throws GRBException {
+    public boolean solve(Node node, long bnpStartT, long bnpTimeLimit) throws GRBException {
         // String str = "-".repeat(30) + "Column Generation to solve node :"+node.nodeID + "-".repeat(30) + "\n";
         // System.out.println(str);
         master.set(node);
@@ -39,7 +39,7 @@ public class ColumnGeneration {
         }
 
         dualValues = master.getDualValues();
-        pricing.solve(dualValues, timeLimit);
+        pricing.solve(dualValues, bnpStartT, bnpTimeLimit);
         long start = System.currentTimeMillis();
         if (Param.debug) {
             if (node.parent == null) {
@@ -62,7 +62,7 @@ public class ColumnGeneration {
             }
 
             dualValues = master.getDualValues();
-            pricing.solve(dualValues, timeLimit);
+            pricing.solve(dualValues, bnpStartT, bnpTimeLimit);
         }
 
 
